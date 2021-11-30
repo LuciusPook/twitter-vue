@@ -9,7 +9,7 @@
             class="logo"
           />
           <a href=""
-            ><img src="../assets/home.png" alt="" class="icon-img" />首頁</a
+            ><img src="" alt="" class="icon-img" />首頁</a
           >
           <a href=""><img src="" alt="" class="icon-img" />個人資料</a>
           <a href=""><img src="" alt="" class="icon-img" />設定</a>
