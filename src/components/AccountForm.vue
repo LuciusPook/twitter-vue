@@ -30,9 +30,6 @@
       <button type="submit" :disabled="isProcessing">
         {{ isProcessing ? "處理中..." : "登入" }}
       </button>
-      <button type="submit" :disabled="isProcessing">
-        {{ isProcessing ? "處理中..." : "登入" }}
-      </button>
       <div class="form-link">
         <router-link to="/register">註冊 Alphitter</router-link>
         <span></span>
