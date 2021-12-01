@@ -4,7 +4,7 @@
       <h3>Popular</h3>
       <div class="list">
         <div>
-          <a href=""><img src="../assets/Blockjeans02.jpg" alt="" /></a>
+          <a href=""><img src="" alt="" /></a>
         </div>
         <div class="popular-info">
           <a href="" class="popular-name">名字</a>

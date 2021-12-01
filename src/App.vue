@@ -1,10 +1,11 @@
 <template>
-  <div id="twitter" class="scrollbar">
-    <Navbar />
+  <div id="twitter">
+    <Navbar/>
 
     <router-view />
 
-    <PopularList />
+    <PopularList/>
+
   </div>
 </template>
 
@@ -25,5 +26,6 @@ export default {
 #twitter {
   height: 1200px;
   display: flex;
+  height: 1200px;
 }
 </style>
