@@ -16,7 +16,22 @@
        </div>
        <img src="./../assets/Photo_avatar.png" alt="" class="user__card--avatar">
        <div class="user__card--info">
-         <button class="user__edit">編輯個人資料</button>
+         <div 
+          v-if="currentUser !=='self'"
+          class="user__interaction--other"
+        >
+           <button class="mail__btn">
+             <a href="mailto:email@example.com"><img src="./../assets/Vector_mail.svg" alt="" class="mail__icon"></a>
+           </button>
+           <button :class="['notification__btn' , {active:isNotificationOn}]">
+             <img src="./../assets/Vector_follow-bell.svg" alt="" class="notification__icon">
+           </button>
+           <button :class="['follow__btn', {active: isFollowed}]">{{isFollowed?'正在跟隨':'跟隨' }}</button>
+         </div>
+         <button 
+          v-else
+          class="user__interaction--self"
+        >編輯個人資料</button>
          <div class="userInfo__title">
           <h2 class="userInfo__title--name">John Doe</h2>
           <p class="userInfo__title--account">@heyjohn</p>
@@ -45,6 +60,13 @@ export default {
   name:'User',
   components: {
     UserTweets
+  },
+  data(){
+    return {
+      currentUser: 'self',
+      isFollowed: true,
+      isNotificationOn:true
+    }
   }
 }
 </script>
@@ -100,7 +122,45 @@ export default {
       position: relative;
       height: 50%;
       padding: 4.5rem 0 2rem 1rem;
-      .user__edit{
+      .user__interaction--other{
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: grid;
+        grid-auto-flow: column;
+        grid-gap: 0 0.5rem;
+        color:$btn-color;
+        button{
+          position: relative;
+          width: 35px;
+          height: 35px;
+          border-radius: 50%;
+          border: 1px solid $btn-color;
+          background-color: #fff;
+          color:$btn-color;
+          img{
+            position: absolute;
+            @extend %position-center;
+            height: 20px;
+            width: 20px;
+          }
+        }
+        .follow__btn{
+          width: 90px;
+          height: 35px;
+          border-radius: 100px;
+          font-weight: bold;
+        }
+        button.active , button:hover{
+          background-color: $btn-color;
+          color: #fff;
+          img{
+            border: 1px solid #fff;
+            z-index: 999;
+          }
+        }
+      }
+      .user__interaction--self{
         position: absolute;
         top: 1rem;
         right: 1rem;
@@ -111,6 +171,10 @@ export default {
         color: $btn-color;
         border: 1px solid $btn-color;
         font-weight: bold;
+        &:hover{
+          background-color: $btn-color;
+          color: #fff;
+        }
       }
       .userInfo__title--name{
         font-size: 19px;
