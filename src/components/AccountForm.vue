@@ -2,11 +2,12 @@
   <div class="form" @submit.prevent.stop="handleSubmit">
     <form>
       <img src="https://i.ibb.co/WD1YSyW/Logo.jpg" alt="Logo" />
-      <h2>登入 Aplhitter</h2>
+      <h2 class="form-title">登入</h2>
       <div class="form-group">
         <input
           id="email"
           type="email"
+          v-model="email"
           class="form-control"
           placeholder="Email"
           autocomplete="username"
@@ -19,12 +20,16 @@
         <input
           id="password"
           type="password"
+          v-model="password"
           class="form-control"
           placeholder="Password"
           autocomplete="current-password"
           required
         />
       </div>
+      <button type="submit" :disabled="isProcessing">
+        {{ isProcessing ? "處理中..." : "登入" }}
+      </button>
       <button type="submit" :disabled="isProcessing">
         {{ isProcessing ? "處理中..." : "登入" }}
       </button>
@@ -41,74 +46,42 @@
 </template>
 
 <script>
-import authorizationAPI from "./../apis/authorization";
-import { Toast } from "./../utils/helpers";
-
 export default {
   props: {
-    initialAccount: {
-      type: Object,
-      default: () => ({
-        email: "",
-        password: "",
-      }),
+    Account: {
+      type: String,
+      required: true,
+    },
+    Password: {
+      type: String,
+      required: true,
     },
     isProcessing: {
       type: Boolean,
       default: false,
     },
   },
+
   data() {
     return {
-      email: "",
-      password: "",
+      account: this.Account,
+      password: this.Password,
     };
   },
   methods: {
-    async handleSubmit() {
-      try {
-        if (!this.email || !this.password) {
-          Toast.fire({
-            icon: "warning",
-            title: "請填入 email 和 password",
-          });
-          return;
-        }
-
-        this.isProcessing = true;
-
-        const response = await authorizationAPI.signIn({
-          email: this.email,
-          password: this.password,
-        });
-
-        const { data } = response;
-
-        if (data.status !== "success") {
-          throw new Error(data.message);
-        }
-
-        localStorage.setItem("token", data.token);
-
-        this.$store.commit("setCurrentUser, data.user");
-
-        this.$router.push("/main");
-      } catch (error) {
-        this.password = "";
-        this.isProcessing = false;
-
-        Toast.fire({
-          icon: "warning",
-          title: "請確認您輸入正確的賬號密碼",
-        });
-      }
+    handleSubmit() {
+      const data = {
+        account: this.account,
+        password: this.password,
+      };
+      this.$emit("after-submit", data);
     },
   },
 };
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
 div.form {
   padding-top: 4rem;
   display: flex;

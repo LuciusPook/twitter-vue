@@ -1,15 +1,15 @@
 <template>
-  <div id="twitter">
-    <Navbar class="d-none" />
+  <div id="twitter" class="scrollbar">
+    <Navbar />
 
     <router-view />
 
-    <PopularList class="d-none" />
+    <PopularList />
   </div>
 </template>
 
 
-<script lang="ts">
+<script >
 import Navbar from "./components/Navbar.vue";
 import PopularList from "./components/PopularList.vue";
 
@@ -23,6 +23,7 @@ export default {
 
 <style scoped>
 #twitter {
+  height: 1200px;
   display: flex;
 }
 </style>

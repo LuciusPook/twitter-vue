@@ -32,7 +32,7 @@
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .popular {
   border-left: 1px solid #e6ecf0;
   width: 29%;
