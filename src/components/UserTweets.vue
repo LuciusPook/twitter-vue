@@ -161,11 +161,12 @@ export default {
     .user__tweet--content {
       display: flex;
       flex-direction: column;
-      padding: 0.5rem;
+      padding: 0.5rem; 
       .tweet__content--title {
-        display: flex;
-        align-items: center;
+
+          vertical-align: middle;
         .tweet__user--name{
+          display: inline-block;
           font-size: 1rem;
         }
         .tweet__user--account{

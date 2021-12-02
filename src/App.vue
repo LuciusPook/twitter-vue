@@ -26,6 +26,6 @@ export default {
 #twitter {
   height: 1200px;
   display: flex;
-  height: 1200px;
 }
+
 </style>
