@@ -3,21 +3,30 @@
     <li v-for="repliedTweet in repliedTweets" :key="repliedTweet.id">
       <div class="avatar__container">
         <img
-          src="./../assets/Photo_avatar.png"
+          :src="currentUser.avatar | emptyImage"
           alt=""
           class="user__tweet--avatar"
         />
       </div>
       <div class="user__repliedTweets--content">
         <div class="tweet__content--title">
-          <h3 class="tweet__user--name">{{ currentUser.name }}</h3>
-          <span class="tweet__user--account">@{{ currentUser.account }}．{{ repliedTweet.createdAt }}</span>
+          <h3 class="tweet__user--name">{{ repliedTweet.Tweet.User.name }}</h3>
+          <span class="tweet__user--account">
+            <router-link
+              :to="{ name: 'user' , params: {id: repliedTweet.Tweet.User.id}}"
+            >
+              @{{ currentUser.account }}
+            </router-link>
+            ．{{ repliedTweet.createdAt }}
+          </span>
         </div> 
         <p class="user__repliedTweets--tag">
           <span>回覆</span>  
-          <span class="user__repliedTweets--owner">
+          <router-link class="user__repliedTweets--owner"
+              :to="{ name: 'user' , params: {id: repliedTweet.Tweet.User.id}}"
+            >
             @{{repliedTweet.Tweet.User.account}}
-          </span>
+          </router-link>
         </p>
         <p class="tweet__content--text">
           {{ repliedTweet.comment }}
@@ -28,237 +37,34 @@
 </template>
 
  <script>
-const dummyUser = {
-  id: 47,
-  name: "daniel",
-  account: "daniel1010",
-  email: "daniel@example.com",
-  cover:
-    "http://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQfqVhftVmq27ogo9xRySbKOG6OHElHqrfwoO-g6Utm_uNhr_X5B_cBFLMgyT9pJ5UwrgEzCBkKl4rKnfb5_o8",
-  avatar:
-    "http://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQfqVhftVmq27ogo9xRySbKOG6OHElHqrfwoO-g6Utm_uNhr_X5B_cBFLMgyT9pJ5UwrgEzCBkKl4rKnfb5_o8",
-};
-const dummyData = [
-    {
-        "id": 1, //此 reply Id
-        "UserId": 1,
-        "TweetId": 1,
-        "comment": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?",
-        "createdAt": "2021-12-01T08:01:39.000Z",
-        "updatedAt": "2021-12-01T08:01:39.000Z",
-        "Tweet": {
-            "id": 1,
-            "description": "cooool~",
-            "UserId": 1, //發文者Id
-            "createdAt": "2021-12-01T08:01:39.000Z",
-            "updatedAt": "2021-12-01T08:01:39.000Z",
-            "User": {
-                "id": 1, //發文者 Id
-                "account": "Daniel",
-                "name": "123",
-                "email": "123",
-                "password": "$2a$10$cP/f.QWf2RnjZKhQjD6CDuAQzOanuBdf1S48Akrp2el9jPzUzfBNu",
-                "role": null,
-                "cover": null,
-                "avatar": null,
-                "introduction": null,
-                "createdAt": "2021-12-01T08:01:39.000Z",
-                "updatedAt": "2021-12-01T08:01:39.000Z"
-            }
-        }
-    },
-    {
-        "id": 2, //此 reply Id
-        "UserId": 1,
-        "TweetId": 1,
-        "comment": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?",
-        "createdAt": "2021-12-01T08:01:39.000Z",
-        "updatedAt": "2021-12-01T08:01:39.000Z",
-        "Tweet": {
-            "id": 1,
-            "description": "cooool~",
-            "UserId": 1, //發文者Id
-            "createdAt": "2021-12-01T08:01:39.000Z",
-            "updatedAt": "2021-12-01T08:01:39.000Z",
-            "User": {
-                "id": 1, //發文者 Id
-                "account": "Daniel",
-                "name": "123",
-                "email": "123",
-                "password": "$2a$10$cP/f.QWf2RnjZKhQjD6CDuAQzOanuBdf1S48Akrp2el9jPzUzfBNu",
-                "role": null,
-                "cover": null,
-                "avatar": null,
-                "introduction": null,
-                "createdAt": "2021-12-01T08:01:39.000Z",
-                "updatedAt": "2021-12-01T08:01:39.000Z"
-            }
-        }
-    },
-    {
-        "id": 3, //此 reply Id
-        "UserId": 1,
-        "TweetId": 1,
-        "comment": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?",
-        "createdAt": "2021-12-01T08:01:39.000Z",
-        "updatedAt": "2021-12-01T08:01:39.000Z",
-        "Tweet": {
-            "id": 1,
-            "description": "cooool~",
-            "UserId": 1, //發文者Id
-            "createdAt": "2021-12-01T08:01:39.000Z",
-            "updatedAt": "2021-12-01T08:01:39.000Z",
-            "User": {
-                "id": 1, //發文者 Id
-                "account": "Daniel",
-                "name": "123",
-                "email": "123",
-                "password": "$2a$10$cP/f.QWf2RnjZKhQjD6CDuAQzOanuBdf1S48Akrp2el9jPzUzfBNu",
-                "role": null,
-                "cover": null,
-                "avatar": null,
-                "introduction": null,
-                "createdAt": "2021-12-01T08:01:39.000Z",
-                "updatedAt": "2021-12-01T08:01:39.000Z"
-            }
-        }
-    },
-    {
-        "id": 4, //此 reply Id
-        "UserId": 1,
-        "TweetId": 1,
-        "comment": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?",
-        "createdAt": "2021-12-01T08:01:39.000Z",
-        "updatedAt": "2021-12-01T08:01:39.000Z",
-        "Tweet": {
-            "id": 1,
-            "description": "cooool~",
-            "UserId": 1, //發文者Id
-            "createdAt": "2021-12-01T08:01:39.000Z",
-            "updatedAt": "2021-12-01T08:01:39.000Z",
-            "User": {
-                "id": 1, //發文者 Id
-                "account": "Daniel",
-                "name": "123",
-                "email": "123",
-                "password": "$2a$10$cP/f.QWf2RnjZKhQjD6CDuAQzOanuBdf1S48Akrp2el9jPzUzfBNu",
-                "role": null,
-                "cover": null,
-                "avatar": null,
-                "introduction": null,
-                "createdAt": "2021-12-01T08:01:39.000Z",
-                "updatedAt": "2021-12-01T08:01:39.000Z"
-            }
-        }
-    },
-    {
-        "id": 5, //此 reply Id
-        "UserId": 1,
-        "TweetId": 1,
-        "comment": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?",
-        "createdAt": "2021-12-01T08:01:39.000Z",
-        "updatedAt": "2021-12-01T08:01:39.000Z",
-        "Tweet": {
-            "id": 1,
-            "description": "cooool~",
-            "UserId": 1, //發文者Id
-            "createdAt": "2021-12-01T08:01:39.000Z",
-            "updatedAt": "2021-12-01T08:01:39.000Z",
-            "User": {
-                "id": 1, //發文者 Id
-                "account": "Daniel",
-                "name": "123",
-                "email": "123",
-                "password": "$2a$10$cP/f.QWf2RnjZKhQjD6CDuAQzOanuBdf1S48Akrp2el9jPzUzfBNu",
-                "role": null,
-                "cover": null,
-                "avatar": null,
-                "introduction": null,
-                "createdAt": "2021-12-01T08:01:39.000Z",
-                "updatedAt": "2021-12-01T08:01:39.000Z"
-            }
-        }
-    },
-    {
-        "id": 6, //此 reply Id
-        "UserId": 1,
-        "TweetId": 1,
-        "comment": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?",
-        "createdAt": "2021-12-01T08:01:39.000Z",
-        "updatedAt": "2021-12-01T08:01:39.000Z",
-        "Tweet": {
-            "id": 1,
-            "description": "cooool~",
-            "UserId": 1, //發文者Id
-            "createdAt": "2021-12-01T08:01:39.000Z",
-            "updatedAt": "2021-12-01T08:01:39.000Z",
-            "User": {
-                "id": 1, //發文者 Id
-                "account": "Daniel",
-                "name": "123",
-                "email": "123",
-                "password": "$2a$10$cP/f.QWf2RnjZKhQjD6CDuAQzOanuBdf1S48Akrp2el9jPzUzfBNu",
-                "role": null,
-                "cover": null,
-                "avatar": null,
-                "introduction": null,
-                "createdAt": "2021-12-01T08:01:39.000Z",
-                "updatedAt": "2021-12-01T08:01:39.000Z"
-            }
-        }
-    },
-    {
-        "id": 7, //此 reply Id
-        "UserId": 1,
-        "TweetId": 1,
-        "comment": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?",
-        "createdAt": "2021-12-01T08:01:39.000Z",
-        "updatedAt": "2021-12-01T08:01:39.000Z",
-        "Tweet": {
-            "id": 1,
-            "description": "cooool~",
-            "UserId": 1, //發文者Id
-            "createdAt": "2021-12-01T08:01:39.000Z",
-            "updatedAt": "2021-12-01T08:01:39.000Z",
-            "User": {
-                "id": 1, //發文者 Id
-                "account": "Daniel",
-                "name": "123",
-                "email": "123",
-                "password": "$2a$10$cP/f.QWf2RnjZKhQjD6CDuAQzOanuBdf1S48Akrp2el9jPzUzfBNu",
-                "role": null,
-                "cover": null,
-                "avatar": null,
-                "introduction": null,
-                "createdAt": "2021-12-01T08:01:39.000Z",
-                "updatedAt": "2021-12-01T08:01:39.000Z"
-            }
-        }
-    },
-];
+import { mapState } from 'vuex'
+import {emptyImageFilter} from "./../utils/mixin"
 export default {
   name: "UserRepliedTweets",
+  mixins:[emptyImageFilter],
+  props:{
+    initialReplied:{
+      type:Array,
+      default: () => []
+    },
+    user:{
+      type:Object,
+      required:true
+    }
+  },
+  computed:{
+    ...mapState(['currentUser'])
+  },
   data() {
     return {
-      repliedTweets: [],
-      currentUser: {},
+      repliedTweets: this.initialReplied,
     };
   },
-  created() {
-    this.fetchUserRepliedTweets();
-    this.fetchCurrentUser();
-  },
-  methods: {
-    fetchUserRepliedTweets() {
-      this.repliedTweets = [...dummyData];
-    },
-    fetchCurrentUser() {
-      this.currentUser = {
-        ...this.currentUser,
-        ...dummyUser,
-      };
-    },
-  },
+  watch:{
+    initialReplied(newValue){
+      this.repliedTweets = [...newValue]
+    }
+  }
 };
 </script>
 
@@ -307,6 +113,8 @@ export default {
       }
       .tweet__content--text {
         margin: 0.5rem 0;
+        flex:1;
+        @include overflow-line-clamp(3);
       }
     }
   }

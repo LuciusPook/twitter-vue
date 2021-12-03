@@ -8,25 +8,25 @@
     <div class="user__navbar">
       <a class="user__navbar--prev" @click="$router.back()"></a>
       <div class="user__navbar--info">
-        <h2 class="user__navbar--userName">John Doe</h2>
-        <p class="user__navbar--totalTweetsCount">25推文</p>
+        <h2 class="user__navbar--userName">{{user.name}}</h2>
+        <p class="user__navbar--totalTweetsCount">25推文{{currentUser.id}}{{user.id}}</p>
       </div>
     </div>
     <div class="userCard">
       <div class="user__card--bannerWrapper">
         <img
           class="user__card--banner"
-          src="./../assets/Cover Photo_banner.png"
+          :src="user.cover | emptyImage"
           alt=""
         />
       </div>
       <img
-        src="./../assets/Photo_avatar.png"
+        :src="user.avatar | emptyImage"
         alt=""
         class="user__card--avatar"
       />
       <div class="user__card--info">
-        <div v-if="currentUser !== 'self'" class="user__interaction--other">
+        <div v-if="user.id !== currentUser.id" class="user__interaction--other">
           <button class="mail__btn">
             <a href="mailto:email@example.com"
               ><img src="./../assets/Vector_mail.svg" alt="" class="mail__icon"
@@ -52,12 +52,11 @@
           @click="handleEditInfoToggle"
         >編輯個人資料</button>
         <div class="userInfo__title">
-          <h2 class="userInfo__title--name">John Doe</h2>
-          <p class="userInfo__title--account">@heyjohn</p>
+          <h2 class="userInfo__title--name">{{user.name}}</h2>
+          <p class="userInfo__title--account">@{{user.account}}</p>
         </div>
         <p class="userInfo__introduction">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni neque
-          eum quos!
+          {{user.introduction}}
         </p>
         <div class="userInfo__follow">
           <span class="userInfo__followings"
@@ -72,21 +71,33 @@
     <ul class="user__navPills">
       <li 
         :class="['user__tweets' , { active: displayMode === 'tweets'}]"
-        @click="switchDisplayMode('tweets')"
+        @click="switchDisplayMode('tweets' , user.id)"
       >推文</li>
       <li 
         :class="['user__tweetsPlusReplies' , { active: displayMode === 'repliedTweets'}]"
-        @click="switchDisplayMode('repliedTweets')"
+        @click="switchDisplayMode('repliedTweets', user.id)"
       >推文與回覆</li>
       <li 
         :class="['user__likedTweets' , { active: displayMode === 'likedTweets'}]"
-        @click="switchDisplayMode('likedTweets')"
+        @click="switchDisplayMode('likedTweets' , user.id)"
       >喜歡的內容</li>
     </ul>
     <div class="user__tweetsContainer scrollbar">
-      <UserTweets v-if="displayMode ==='tweets'"/>
-      <UserRepliedTweets v-else-if="displayMode ==='repliedTweets'"/>
-      <UserLikedTweets v-else/>
+      <UserLikedTweets 
+        v-if="displayMode ==='likedTweets'"
+        :initial-liked-tweets="userLikedTweets"
+        :user="user"
+      />
+      <UserRepliedTweets 
+        v-else-if="displayMode ==='repliedTweets'"
+        :initial-replied="userRepliedTweets"
+        :user="user"
+      />
+      <UserTweets 
+        v-else
+        :initial-tweets="userTweets"
+        :user="user"
+      />
     </div>
   </div>
 </template>
@@ -95,6 +106,10 @@ import UserTweets from "./../components/UserTweets.vue";
 import UserEditModal from "./../components/UserEditModal.vue"
 import UserRepliedTweets from "./../components/UserRepliedTweets.vue"
 import UserLikedTweets from "./../components/UserLikedTweets.vue"
+import { emptyImageFilter } from "./../utils/mixin"
+import userAPI from "./../apis/users"
+import { Toast } from "./../utils/helpers"
+import {mapState} from 'vuex'
 export default {
   name: "User",
   components: {
@@ -103,21 +118,123 @@ export default {
     UserRepliedTweets,
     UserLikedTweets
   },
+  mixins:[emptyImageFilter],
   data() {
     return {
-      currentUser: "self",
+      user: {},
+      userTweets:[],
+      userRepliedTweets:[],
+      userLikedTweets:[],
       isFollowed: true,
       isNotificationOn: true,
       isEditing:false,
-      displayMode:''
+      displayMode:'tweets'
     };
   },
+  created(){
+    const {id} = this.$route.params
+    this.fetchUser(id)
+    this.fetchUserTweets(id)
+  },
+  beforeRouteUpdate (to, from, next) {
+    const {id} = to.params
+    this.fetchUser(id)
+    next()
+  },
+  computed:{
+    ...mapState(['currentUser'])
+  },
   methods: {
+    async fetchUser(userId){
+      try{
+        const { data } = await userAPI.getUsers({userId})
+        if(data.status !== 'success') throw new Error(data.message)
+        const {
+          id, 
+          account,
+          avatar,
+          cover,
+          email,
+          introduction,
+          name,
+          role } = data
+          this.user = {
+            ...this.user,
+            id, 
+            account,
+            avatar,
+            cover,
+            email,
+            introduction: introduction || '使用者未填寫自我介紹',
+            name,
+            role
+          }
+
+      }catch(error){
+        console.log(error)
+        Toast({
+          icon: 'error',
+          title: '無法取得使用者資料，請稍後再試'
+        })
+      }
+    },
+    async fetchUserTweets(userId){
+      try{
+        let { data } = await userAPI.tweets.getUserTweets({ userId })
+        data.pop()
+        this.userTweets = [...data]
+        // if(data.status !== 'success') throw new Error(data.message)
+      }catch(error){
+        console('error' , error)
+        Toast({
+          icon: 'error',
+          title: '無法取得使用者推文，請稍後再試!'
+        })
+      }
+    },
+    async fetchUserRepliedTweets(userId){
+      try{
+        const { data } = await userAPI.tweets.getUserRepliedTweets({userId})
+        // if(data.status !== 'success') throw new Error(data.message)
+        this.userRepliedTweets = [...data]
+      }catch(error){
+        console('error' , error)
+        Toast({
+          icon: 'error',
+          title: '無法取得使用者回覆推文，請稍後再試!'
+        })
+      }
+    },
+    async fetchUserLikedTweets(userId){
+      try{
+        const { data } = await userAPI.tweets.getUserLikedTweets({ userId })
+        // if(data.status !== 'success') throw new Error(data.message)
+        this.userLikedTweets = [...data]
+      }catch(error){
+        console('error' , error)
+        Toast({
+          icon: 'error',
+          title: '無法取得使用者按讚推文，請稍後再試!'
+        })
+      }
+
+    },
     handleEditInfoToggle(){
       this.isEditing = !this.isEditing
     },
-    switchDisplayMode(mode){
+    switchDisplayMode(mode , userId){
       this.displayMode = mode
+      switch(mode){
+        case 'tweets':
+          this.fetchUserTweets(userId)
+          break
+        case 'repliedTweets':
+          this.fetchUserRepliedTweets(userId)
+          break
+        case 'likedTweets':
+          this.fetchUserLikedTweets(userId)
+          break
+      }
     }  
   }
 };
@@ -152,7 +269,7 @@ export default {
         color: $account;
       }
     }
-  }
+  } 
   .userCard {
     position: relative;
     height: 33%;

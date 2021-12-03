@@ -3,18 +3,18 @@
     <li v-for="likedTweet in likedTweets" :key="likedTweet.id">
       <div class="avatar__container">
         <img
-          src="./../assets/Photo_avatar.png"
+          :src="likedTweet.Tweet.User.avatar"
           alt=""
           class="user__tweet--avatar"
         />
       </div>
       <div class="user__tweet--content">
         <div class="tweet__content--title">
-          <h3 class="tweet__user--name">{{ likedTweet.name }}</h3>
-          <span class="tweet__user--account">@{{ likedTweet.account }}．{{ likedTweet.createdAt }}</span>
+          <h3 class="tweet__user--name">{{ likedTweet.Tweet.User.name }}</h3>
+          <span class="tweet__user--account">@{{ likedTweet.Tweet.User.account }}．{{ likedTweet.createdAt }}</span>
         </div>
         <p class="tweet__content--text">
-          {{ likedTweet.description }}
+          {{ likedTweet.Tweet.description }}
         </p>
         <div class="tweet__content--interaction">
           <span class="tweet__interaction--replies">
@@ -23,9 +23,7 @@
               alt=""
               class="interaction__replies--icon"
             />
-            <span class="interaction__replies--counts">{{
-              likedTweet.comments_count
-            }}</span>
+            <span class="interaction__replies--counts">100</span>
           </span>
           <span class="tweet__interaction--likes">
             <img
@@ -33,7 +31,7 @@
               alt=""
               class="likes--icon"
             />
-            <span class="likes--counts">{{ likedTweet.likedCounts }}</span>
+            <span class="likes--counts">100</span>
           </span>
         </div>
       </div>
@@ -42,113 +40,29 @@
 </template>
 
  <script>
-const dummyData = [
-    {
-      "id": 1, // 這則 like 所屬的 TweetId
-      "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?", // 這則 tweet 所屬的 內文
-      "UserId": 2,   // 這則 tweet 所屬的發文者 Id
-      "name":'Devon Lane',
-      "account": 'DL',
-      "avatar": 'http://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQfqVhftVmq27ogo9xRySbKOG6OHElHqrfwoO-g6Utm_uNhr_X5B_cBFLMgyT9pJ5UwrgEzCBkKl4rKnfb5_o8',
-      "likedCounts": 76,
-      "commentCounts":13,
-      "createdAt": "2021-12-01T08:20:39.000Z",
-      "updatedAt": "2021-12-01T08:01:39.000Z"
-    },
-    {
-      "id": 2, // 這則 like 所屬的 TweetId
-      "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?", // 這則 tweet 所屬的 內文
-      "UserId": 2,   // 這則 tweet 所屬的發文者 Id
-      "account": 'DL',
-      "avatar": 'http://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQfqVhftVmq27ogo9xRySbKOG6OHElHqrfwoO-g6Utm_uNhr_X5B_cBFLMgyT9pJ5UwrgEzCBkKl4rKnfb5_o8',
-      "likedCounts": 76,
-      "commentCounts":13,
-      "createdAt": "2021-12-01T08:20:39.000Z",
-      "updatedAt": "2021-12-01T08:01:39.000Z"
-    },
-    {
-      "id": 3, // 這則 like 所屬的 TweetId
-      "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?", // 這則 tweet 所屬的 內文
-      "UserId": 2,   // 這則 tweet 所屬的發文者 Id
-      "account": 'DL',
-      "avatar": 'http://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQfqVhftVmq27ogo9xRySbKOG6OHElHqrfwoO-g6Utm_uNhr_X5B_cBFLMgyT9pJ5UwrgEzCBkKl4rKnfb5_o8',
-      "likedCounts": 76,
-      "commentCounts":13,
-      "createdAt": "2021-12-01T08:20:39.000Z",
-      "updatedAt": "2021-12-01T08:01:39.000Z"
-    },
-    {
-      "id": 4, // 這則 like 所屬的 TweetId
-      "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?", // 這則 tweet 所屬的 內文
-      "UserId": 2,   // 這則 tweet 所屬的發文者 Id
-      "account": 'DL',
-      "avatar": 'http://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQfqVhftVmq27ogo9xRySbKOG6OHElHqrfwoO-g6Utm_uNhr_X5B_cBFLMgyT9pJ5UwrgEzCBkKl4rKnfb5_o8',
-      "likedCounts": 76,
-      "commentCounts":13,
-      "createdAt": "2021-12-01T08:20:39.000Z",
-      "updatedAt": "2021-12-01T08:01:39.000Z"
-    },
-    {
-      "id": 5, // 這則 like 所屬的 TweetId
-      "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?", // 這則 tweet 所屬的 內文
-      "UserId": 2,   // 這則 tweet 所屬的發文者 Id
-      "account": 'DL',
-      "avatar": 'http://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQfqVhftVmq27ogo9xRySbKOG6OHElHqrfwoO-g6Utm_uNhr_X5B_cBFLMgyT9pJ5UwrgEzCBkKl4rKnfb5_o8',
-      "likedCounts": 76,
-      "commentCounts":13,
-      "createdAt": "2021-12-01T08:20:39.000Z",
-      "updatedAt": "2021-12-01T08:01:39.000Z"
-    },
-    {
-      "id": 6, // 這則 like 所屬的 TweetId
-      "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?", // 這則 tweet 所屬的 內文
-      "UserId": 2,   // 這則 tweet 所屬的發文者 Id
-      "account": 'DL',
-      "avatar": 'http://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQfqVhftVmq27ogo9xRySbKOG6OHElHqrfwoO-g6Utm_uNhr_X5B_cBFLMgyT9pJ5UwrgEzCBkKl4rKnfb5_o8',
-      "likedCounts": 76,
-      "commentCounts":13,
-      "createdAt": "2021-12-01T08:20:39.000Z",
-      "updatedAt": "2021-12-01T08:01:39.000Z"
-    },
-    {
-      "id": 7, // 這則 like 所屬的 TweetId
-      "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?", // 這則 tweet 所屬的 內文
-      "UserId": 2,   // 這則 tweet 所屬的發文者 Id
-      "account": 'DL',
-      "avatar": 'http://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQfqVhftVmq27ogo9xRySbKOG6OHElHqrfwoO-g6Utm_uNhr_X5B_cBFLMgyT9pJ5UwrgEzCBkKl4rKnfb5_o8',
-      "likedCounts": 76,
-      "commentCounts":13,
-      "createdAt": "2021-12-01T08:20:39.000Z",
-      "updatedAt": "2021-12-01T08:01:39.000Z"
-    },
-    {
-      "id": 8, // 這則 like 所屬的 TweetId
-      "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus numquam hic ullam deserunt adipisci doloremque, nemo iste optio cumque molestias?", // 這則 tweet 所屬的 內文
-      "UserId": 2,   // 這則 tweet 所屬的發文者 Id
-      "account": 'DL',
-      "avatar": 'http://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQfqVhftVmq27ogo9xRySbKOG6OHElHqrfwoO-g6Utm_uNhr_X5B_cBFLMgyT9pJ5UwrgEzCBkKl4rKnfb5_o8',
-      "likedCounts": 76,
-      "commentCounts":13,
-      "createdAt": "2021-12-01T08:20:39.000Z",
-      "updatedAt": "2021-12-01T08:01:39.000Z"
-    },
-];
+
 export default {
   name: "UserLikedTweets",
+  props:{
+    initialLikedTweets:{
+      type:Array,
+      default: () => []
+    },
+    user:{
+      type:Object,
+      required:true
+    }
+  },
   data() {
     return {
-      likedTweets: [],
+      likedTweets: this.initialLikedTweets,
     };
   },
-  created() {
-    this.fetchUserTweets();
-    this.fetchCurrentUser();
-  },
-  methods: {
-    fetchUserTweets() {
-      this.likedTweets = [...dummyData];
-    },
-  },
+  watch:{
+    initialLikedTweets(newValue){
+      this.likedTweets = [...newValue]
+    }
+  }
 };
 </script>
 
@@ -184,11 +98,14 @@ export default {
         }
       }
       .tweet__content--text {
-        margin: 0.5rem 0;
+        font-size: 15px;
+        margin-top:0.5rem;
+        flex:1;
+        @include overflow-line-clamp(3);
       }
       .tweet__content--interaction {
         display: flex;
-        margin: 0.5rem 0;
+        padding: 1.2rem 0 0;
         > span{
           display: flex;
           margin-right: 3rem;

@@ -2,7 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import NotFound from '../views/NotFound.vue'
-// import store from './../store'
+import Main from '../views/Main.vue'
+import store from './../store'
 
 // const authorizeIsAdmin = (to, from, next) => {
 //   const currentUser = store.state.currentUser
@@ -25,13 +26,16 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    meta: { title: "登入 Aplhitter" },
     component: Login,
+  },
+  {
+    path: '/main',
+    name: 'main',
+    component: Main,
   },
   {
     path: '/adminlogin',
     name: 'admin-login',
-    meta: { title: "後台登入" },
     // exact: true,
     component: () => import('../views/AdminLogin.vue')
   },
@@ -48,7 +52,33 @@ const routes = [
 ]
 
 const router = new VueRouter({
+  linkExactActiveClass: 'active',
   routes
 })
+
+router.beforeEach(async (to, from, next) => {
+
+  const tokenInLocalStorage = localStorage.getItem('token')
+  const tokenInStore = store.state.token
+  let isAuthenticated = store.state.isAuthenticated
+
+  if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
+    isAuthenticated = await store.dispatch('fetchCurrentUser')
+  }
+
+  const pathsWithoutAuthentication = ['login']
+
+  if (!isAuthenticated && !pathsWithoutAuthentication.includes(to.name)) {
+    next('/login')
+    return
+  }
+
+  if (isAuthenticated && pathsWithoutAuthentication.includes(to.name)) {
+    next('/main')
+    return
+  }
+  next()
+})
+
 
 export default router

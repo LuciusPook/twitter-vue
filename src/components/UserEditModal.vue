@@ -159,7 +159,7 @@ export default {
   z-index: 2;
   @extend %standard-boxshadow;
   @extend %position-center;
-  width: 600px;
+  width: 600px; 
   height: 657px;
   background-color: #fff;
   border-radius: 1rem;

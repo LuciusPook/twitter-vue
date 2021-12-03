@@ -5,3 +5,10 @@
       }
     }
 }
+
+@mixin overflow-line-clamp($line){
+  display:-webkit-box; 
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $line; /* 限定行數 */  
+  overflow: hidden; /*多的字隱藏起來 */ 
+}
