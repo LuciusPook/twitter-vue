@@ -61,12 +61,14 @@ button {
   background: #ff6600;
   border-radius: 50px;
   color: #fff;
+  font-weight: bold;
   cursor: pointer;
   border: none;
+  transition: all 0.3s ease-in-out;
 }
 
 button:hover {
-  border-style: groove;
+  background-color: #f75000;
 }
 
 button[disabled] {
