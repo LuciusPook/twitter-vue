@@ -4,37 +4,40 @@
     <div class="createTweet">
       <div class="createTweet__avatar--wrapper">
         <a href="">
-          <img src="./../assets/Photo_avatar.png" alt="" class="createTweet__avatar" />
+          <img :src="currentUser.avatar | emptyImage" alt="" class="createTweet__avatar" />
         </a>
       </div>
       <div class="form__group">
         <textarea
           class="newTweet form__control"
-          :rows="textAreaRows"
+          rows=3
           name="newTweet"
           id="newTweet"
           placeholder="有什麼新鮮事?"
-          @focus="handleInputFocus"
-          @blur="handleInputBlur"
         />
         <button type="submit">推文</button>
       </div>
     </div>
     <ul class="main__tweets">
-      <li class="main__tweet">
+      <li 
+        class="main__tweet"
+        v-for="tweet in tweets"
+        :key="tweet.id"
+      >
         <div class="tweet__avatar--wrapper">
           <a href="">
-            <img src="./../assets/Photo_avatar.png" alt="" class="tweet__avatar" />
+            <img :src="tweet.avatar | emptyImage" alt="" class="tweet__avatar" />
           </a>
         </div>
         <div class="tweet__content">
           <p class="tweet__title">
-            <span class="tweet__tweeter--name"> Apple </span>
-            <a href="" class="tweet__tweeter--account">@apple</a>
+            <span class="tweet__tweeter--name">{{tweet.name}}</span>
+            <a href="" class="tweet__tweeter--account">@等待api</a>
             <span class="tweet__createdTime">．3小時</span>
           </p>
           <p class="tweet__text">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed natus unde eaque dicta ipsa earum. Repellat fugiat ratione, provident cum tempora omnis! Molestiae facere at eligendi sapiente quam. Voluptatibus velit aspernatur consequatur voluptate inventore distinctio, consectetur qui ipsam et assumenda ducimus impedit commodi dolorem nobis debitis porro accusamus neque iure.
+            {{tweet.description}}
+          </p>
           <div class="tweet__content--interaction">
             <span class="tweet__interaction--replies">
               <img
@@ -42,15 +45,22 @@
                 alt=""
                 class="interaction__replies--icon"
               />
-              <span class="interaction__replies--counts">101</span>
+              <span class="interaction__replies--counts">{{tweet.reply_count}}</span>
             </span>
             <span class="tweet__interaction--likes">
               <img
-                src="./../assets/Vector_like-icon.svg"
+               v-if="tweet.isLiked"
+                src="./../assets/Vector_redLike-icon.svg"
                 alt=""
                 class="likes--icon"
               />
-              <span class="likes--counts">101</span>
+              <img 
+                v-else
+                src="./../assets/Vector_like-icon.svg" 
+                alt=""
+                class="likes--icon"
+              >
+              <span class="likes--counts">{{tweet.like_count}}</span>
             </span>
           </div>
         </div>
@@ -60,22 +70,40 @@
 </template>
 
   <script>
+  import tweetsAPI from "./../apis/tweets"
+  import { Toast } from "./../utils/helpers"
+  import { mapState } from "vuex"
+  import { emptyImageFilter } from "./../utils/mixin"
+
   export default {
     name: 'Main',
+    mixins:[emptyImageFilter],
     data(){
       return {
-        textAreaRows:3,
+        tweets:[]
       }
     },
+    created(){
+      this.fetchTweets()
+    },
+    computed:{
+      ...mapState(['currentUser'])
+    },
     methods:{
-      handleInputFocus(){
-        this.textAreaRows = 15
-      },
-      handleInputBlur(){
-        this.textAreaRows = 3
+      async fetchTweets(){
+        try{
+          const { data } = await tweetsAPI.getTweets()
+          if(!data) throw new Error()
+          this.tweets = [...data]
+        }catch(error){
+          console.log('error' , error)
+          Toast({
+            icon: 'error',
+            title: '無法取得推文，請稍後再試!'
+          })
+        }
       }
     }
-  
   }
   </script>
 
@@ -123,6 +151,7 @@
           font-size: 18px;
         }
         &:focus{
+          height: 15rem;
           @extend %standard-boxshadow; 
         }
       }
