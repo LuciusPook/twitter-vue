@@ -15,6 +15,7 @@ export default new Vuex.Store({
       avatar:'',
       isAdmin: false
     },
+    userTweetsCount:undefined,
     isAuthenticated: false,
     token: ''
   },
@@ -39,6 +40,9 @@ export default new Vuex.Store({
       // 登出時一併將 state 內的 token 移除
       state.token = ''
       localStorage.removeItem('token')
+    },
+    setUserTweetsCounts(state , userTweetsCount){
+      state.userTweetsCount = userTweetsCount
     }
   },
   actions: {

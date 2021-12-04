@@ -14,17 +14,25 @@ export default {
       return apiHelper.get(`/users/${userId}/likes`)
     }
   },
+  followship:{
+    getUserFollowers({ userId }){
+      return apiHelper.get(`/users/${userId}/followers`)
+    },
+    getUserFollowings({ userId }){
+      return apiHelper.get(`/users/${userId}/followings`)
+    },
+    addFollowing({ userId }) {
+      return apiHelper.post(`/following/${userId}`, null)
+    },
+    deleteFollowing({ userId }) {
+      return apiHelper.delete(`/following/${userId}`)
+    }
+  },
   getCurrentUser() {
     return apiHelper.get(`/users/self`)
   },
   getUsers({ userId }) {
     return apiHelper.get(`/users/${userId}`)
-  },
-  addFavorite({ restaurantId }) {
-    return apiHelper.post(`/favorite/${restaurantId}`, null)
-  },
-  deleteFavorite({ restaurantId }) {
-    return apiHelper.delete(`/favorite/${restaurantId}`)
   },
   addLike({ restaurantId }) {
     return apiHelper.post(`/like/${restaurantId}`, null)
@@ -35,10 +43,4 @@ export default {
   getTopUsers() {
     return apiHelper.get('/users/top')
   },
-  addFollowing({ userId }) {
-    return apiHelper.post(`/following/${userId}`, null)
-  },
-  deleteFollowing({ userId }) {
-    return apiHelper.delete(`/following/${userId}`)
-  }
 }

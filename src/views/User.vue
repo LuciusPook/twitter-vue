@@ -5,100 +5,118 @@
       :is-editing="isEditing"
       @after-cancel-edit="handleEditInfoToggle"
     />
-    <div class="user__navbar">
-      <a class="user__navbar--prev" @click="$router.back()"></a>
+    <div class="user__navbar" >
+      <a 
+        v-if="isDisplayFollow === false"      
+        class="user__navbar--prev" 
+        @click="$router.back()"
+      ></a>
+      <a 
+        v-else
+        class="user__navbar--prev" 
+        @click="handleUserFollowClicked"
+      ></a>
       <div class="user__navbar--info">
         <h2 class="user__navbar--userName">{{user.name}}</h2>
-        <p class="user__navbar--totalTweetsCount">25推文{{currentUser.id}}{{user.id}}</p>
+        <p class="user__navbar--totalTweetsCount">{{userTweets.length}}推文</p>
       </div>
     </div>
-    <div class="userCard">
-      <div class="user__card--bannerWrapper">
+    <UserFollow
+      v-if="isDisplayFollow === true"
+      :userId="user.id"
+    />
+    <template v-else>
+      <div class="userCard">
+        <div class="user__card--bannerWrapper">
+          <img
+            class="user__card--banner"
+            :src="user.cover | emptyImage"
+            alt=""
+          />
+        </div>
         <img
-          class="user__card--banner"
-          :src="user.cover | emptyImage"
+          :src="user.avatar | emptyImage"
           alt=""
+          class="user__card--avatar"
+        />
+        <div class="user__card--info">
+          <div v-if="user.id !== currentUser.id" class="user__interaction--other">
+            <button class="mail__btn">
+              <a href="mailto:email@example.com"
+                ><img src="./../assets/Vector_mail.svg" alt="" class="mail__icon"
+              /></a>
+            </button>
+            <button :class="['notification__btn', { active: isNotificationOn }]">
+              <img
+                src="./../assets/Vector_follow-bell.svg"
+                alt=""
+                class="notification__icon"
+              />
+            </button>
+            <button
+              type="submit"
+              :class="['follow__btn', { active: isFollowed }]"
+            >
+              {{ isFollowed ? "正在跟隨" : "跟隨" }}
+            </button>
+          </div>
+          <button 
+            v-else 
+            class="user__interaction--self"
+            @click="handleEditInfoToggle"
+          >編輯個人資料</button>
+          <div class="userInfo__title">
+            <h2 class="userInfo__title--name">{{user.name}}</h2>
+            <p class="userInfo__title--account">@{{user.account}}</p>
+          </div>
+          <p class="userInfo__introduction">
+            {{user.introduction}}
+          </p>
+          <div 
+            class="userInfo__follow"
+            @click="handleUserFollowClicked"
+          >
+            <span class="userInfo__followings"
+              ><span class="followingsCounts">34個</span>跟隨中</span
+            >
+            <span class="userInfo__followers"
+              ><span class="followersCounts">59位</span>跟隨者</span
+            >
+          </div>
+        </div>
+      </div>
+      <ul class="user__navPills">
+        <li 
+          :class="['user__tweets' , { active: displayMode === 'tweets'}]"
+          @click="switchDisplayMode('tweets' , user.id)"
+        >推文</li>
+        <li 
+          :class="['user__tweetsPlusReplies' , { active: displayMode === 'repliedTweets'}]"
+          @click="switchDisplayMode('repliedTweets', user.id)"
+        >推文與回覆</li>
+        <li 
+          :class="['user__likedTweets' , { active: displayMode === 'likedTweets'}]"
+          @click="switchDisplayMode('likedTweets' , user.id)"
+        >喜歡的內容</li>
+      </ul>
+      <div class="user__tweetsContainer scrollbar">
+        <UserLikedTweets 
+          v-if="displayMode ==='likedTweets'"
+          :initial-liked-tweets="userLikedTweets"
+          :user="user"
+        />
+        <UserRepliedTweets 
+          v-else-if="displayMode ==='repliedTweets'"
+          :initial-replied="userRepliedTweets"
+          :user="user"
+        />
+        <UserTweets 
+          v-else
+          :initial-tweets="userTweets"
+          :user="user"
         />
       </div>
-      <img
-        :src="user.avatar | emptyImage"
-        alt=""
-        class="user__card--avatar"
-      />
-      <div class="user__card--info">
-        <div v-if="user.id !== currentUser.id" class="user__interaction--other">
-          <button class="mail__btn">
-            <a href="mailto:email@example.com"
-              ><img src="./../assets/Vector_mail.svg" alt="" class="mail__icon"
-            /></a>
-          </button>
-          <button :class="['notification__btn', { active: isNotificationOn }]">
-            <img
-              src="./../assets/Vector_follow-bell.svg"
-              alt=""
-              class="notification__icon"
-            />
-          </button>
-          <button
-            type="submit"
-            :class="['follow__btn', { active: isFollowed }]"
-          >
-            {{ isFollowed ? "正在跟隨" : "跟隨" }}
-          </button>
-        </div>
-        <button 
-          v-else 
-          class="user__interaction--self"
-          @click="handleEditInfoToggle"
-        >編輯個人資料</button>
-        <div class="userInfo__title">
-          <h2 class="userInfo__title--name">{{user.name}}</h2>
-          <p class="userInfo__title--account">@{{user.account}}</p>
-        </div>
-        <p class="userInfo__introduction">
-          {{user.introduction}}
-        </p>
-        <div class="userInfo__follow">
-          <span class="userInfo__followings"
-            ><span class="followingsCounts">34個</span>跟隨中</span
-          >
-          <span class="userInfo__followers"
-            ><span class="followersCounts">59位</span>跟隨者</span
-          >
-        </div>
-      </div>
-    </div>
-    <ul class="user__navPills">
-      <li 
-        :class="['user__tweets' , { active: displayMode === 'tweets'}]"
-        @click="switchDisplayMode('tweets' , user.id)"
-      >推文</li>
-      <li 
-        :class="['user__tweetsPlusReplies' , { active: displayMode === 'repliedTweets'}]"
-        @click="switchDisplayMode('repliedTweets', user.id)"
-      >推文與回覆</li>
-      <li 
-        :class="['user__likedTweets' , { active: displayMode === 'likedTweets'}]"
-        @click="switchDisplayMode('likedTweets' , user.id)"
-      >喜歡的內容</li>
-    </ul>
-    <div class="user__tweetsContainer scrollbar">
-      <UserLikedTweets 
-        v-if="displayMode ==='likedTweets'"
-        :initial-liked-tweets="userLikedTweets"
-        :user="user"
-      />
-      <UserRepliedTweets 
-        v-else-if="displayMode ==='repliedTweets'"
-        :initial-replied="userRepliedTweets"
-        :user="user"
-      />
-      <UserTweets 
-        v-else
-        :initial-tweets="userTweets"
-        :user="user"
-      />
-    </div>
+    </template>
   </div>
 </template>
 <script>
@@ -106,17 +124,19 @@ import UserTweets from "./../components/UserTweets.vue";
 import UserEditModal from "./../components/UserEditModal.vue"
 import UserRepliedTweets from "./../components/UserRepliedTweets.vue"
 import UserLikedTweets from "./../components/UserLikedTweets.vue"
+import UserFollow from "./../components/UserFollow.vue"
 import { emptyImageFilter } from "./../utils/mixin"
 import userAPI from "./../apis/users"
 import { Toast } from "./../utils/helpers"
 import {mapState} from 'vuex'
 export default {
   name: "User",
-  components: {
+  components: { 
     UserTweets,
     UserEditModal,
     UserRepliedTweets,
-    UserLikedTweets
+    UserLikedTweets,
+    UserFollow
   },
   mixins:[emptyImageFilter],
   data() {
@@ -125,9 +145,11 @@ export default {
       userTweets:[],
       userRepliedTweets:[],
       userLikedTweets:[],
+      userFollowers:[],
       isFollowed: true,
       isNotificationOn: true,
       isEditing:false,
+      isDisplayFollow:false,
       displayMode:'tweets'
     };
   },
@@ -144,7 +166,7 @@ export default {
   computed:{
     ...mapState(['currentUser'])
   },
-  methods: {
+  methods: { 
     async fetchUser(userId){
       try{
         const { data } = await userAPI.getUsers({userId})
@@ -177,13 +199,14 @@ export default {
           title: '無法取得使用者資料，請稍後再試'
         })
       }
-    },
+    },  
     async fetchUserTweets(userId){
       try{
         let { data } = await userAPI.tweets.getUserTweets({ userId })
         data.pop()
         this.userTweets = [...data]
         // if(data.status !== 'success') throw new Error(data.message)
+        this.$store.commit('setUserTweetsCounts' , data.length)
       }catch(error){
         console('error' , error)
         Toast({
@@ -217,8 +240,22 @@ export default {
           title: '無法取得使用者按讚推文，請稍後再試!'
         })
       }
-
     },
+    // async fetchUserFollowers(userId){
+    //   try{
+    //     const { data } = await userAPI.followship.getUserFollowers({ userId })
+    //     // if(data.status !== 'success') throw new Error(data.message)
+    //     console.log(data)
+    //     data.pop()
+    //     this.userFollowers = [...data]
+    //   }catch(error){
+    //     console('error' , error)
+    //     Toast({
+    //       icon: 'error',
+    //       title: '無法取得使用者跟隨者資料，請稍後再試!'
+    //     })
+    //   }
+    // },
     handleEditInfoToggle(){
       this.isEditing = !this.isEditing
     },
@@ -235,6 +272,9 @@ export default {
           this.fetchUserLikedTweets(userId)
           break
       }
+    },
+    handleUserFollowClicked(){
+      this.isDisplayFollow = !this.isDisplayFollow
     }  
   }
 };
