@@ -7,65 +7,71 @@
           <img :src="currentUser.avatar | emptyImage" alt="" class="createTweet__avatar" />
         </a>
       </div>
-      <div class="form__group">
+      <div 
+        :class="['form__group' , {edit: isEditing}]"
+      >
         <textarea
           class="newTweet form__control"
-          rows=3
+          :rows="textareaRows"
           name="newTweet"
           id="newTweet"
           placeholder="有什麼新鮮事?"
+          @focus="handleTextareaFocused"
+          @blur="handleTextareaBlurred"
         />
         <button type="submit">推文</button>
       </div>
     </div>
-    <ul class="main__tweets">
-      <li 
-        class="main__tweet"
-        v-for="tweet in tweets"
-        :key="tweet.id"
-      >
-        <div class="tweet__avatar--wrapper">
-          <a href="">
-            <img :src="tweet.avatar | emptyImage" alt="" class="tweet__avatar" />
-          </a>
-        </div>
-        <div class="tweet__content">
-          <p class="tweet__title">
-            <span class="tweet__tweeter--name">{{tweet.name}}</span>
-            <a href="" class="tweet__tweeter--account">@等待api</a>
-            <span class="tweet__createdTime">．3小時</span>
-          </p>
-          <p class="tweet__text">
-            {{tweet.description}}
-          </p>
-          <div class="tweet__content--interaction">
-            <span class="tweet__interaction--replies">
-              <img
-                src="./../assets/Vector_reply-icon.svg"
-                alt=""
-                class="interaction__replies--icon"
-              />
-              <span class="interaction__replies--counts">{{tweet.reply_count}}</span>
-            </span>
-            <span class="tweet__interaction--likes">
-              <img
-               v-if="tweet.isLiked"
-                src="./../assets/Vector_redLike-icon.svg"
-                alt=""
-                class="likes--icon"
-              />
-              <img 
-                v-else
-                src="./../assets/Vector_like-icon.svg" 
-                alt=""
-                class="likes--icon"
-              >
-              <span class="likes--counts">{{tweet.like_count}}</span>
-            </span>
+    <div class="main__tweets--container scrollbar">
+      <ul class="main__tweets">
+        <li 
+          class="main__tweet"
+          v-for="tweet in tweets"
+          :key="tweet.id"
+        >
+          <div class="tweet__avatar--wrapper">
+            <a href="">
+              <img :src="tweet.avatar | emptyImage" alt="" class="tweet__avatar" />
+            </a>
           </div>
-        </div>
-      </li>
-    </ul>
+          <div class="tweet__content">
+            <p class="tweet__title">
+              <span class="tweet__tweeter--name">{{tweet.name}}</span>
+              <a href="" class="tweet__tweeter--account">@等待api</a>
+              <span class="tweet__createdTime">．3小時</span>
+            </p>
+            <p class="tweet__text">
+              {{tweet.description}}
+            </p>
+            <div class="tweet__content--interaction">
+              <span class="tweet__interaction--replies">
+                <img
+                  src="./../assets/Vector_reply-icon.svg"
+                  alt=""
+                  class="interaction__replies--icon"
+                />
+                <span class="interaction__replies--counts">{{tweet.reply_count}}</span>
+              </span>
+              <span class="tweet__interaction--likes">
+                <img
+                v-if="tweet.isLiked"
+                  src="./../assets/Vector_redLike-icon.svg"
+                  alt=""
+                  class="likes--icon"
+                />
+                <img 
+                  v-else
+                  src="./../assets/Vector_like-icon.svg" 
+                  alt=""
+                  class="likes--icon"
+                >
+                <span class="likes--counts">{{tweet.like_count}}</span>
+              </span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div> 
   </div>
 </template>
 
@@ -80,7 +86,9 @@
     mixins:[emptyImageFilter],
     data(){
       return {
-        tweets:[]
+        tweets:[],
+        isEditing:false,
+        textareaRows:3
       }
     },
     created(){
@@ -90,6 +98,14 @@
       ...mapState(['currentUser'])
     },
     methods:{
+      handleTextareaFocused(){
+        this.textareaRows = 15
+        this.isEditing = true
+      },
+      handleTextareaBlurred(){
+        this.textareaRows = 3
+        this.isEditing = false
+      },
       async fetchTweets(){
         try{
           const { data } = await tweetsAPI.getTweets()
@@ -138,6 +154,7 @@
     }
     .form__group{
       position: relative;
+      z-index: 2;
       flex:1;
       textarea{
         resize:none;
@@ -151,7 +168,6 @@
           font-size: 18px;
         }
         &:focus{
-          height: 15rem;
           @extend %standard-boxshadow; 
         }
       }
@@ -164,14 +180,28 @@
         font-size: 18px;
         font-weight: bold;
       }
+      &.edit::before{
+      content:'';
+      position:absolute;
+      z-index: -1;
+      top: -1000%;
+      left: -1000%;
+      right: -1000%;
+      bottom: -1022px;
+      background-color: gray;
+      opacity: 0.8;
+      }
     }
   }
+.main__tweets--container{
+  height: 1022px;
   .main__tweets {
     background-color: $white;
     margin-top: 10px;
     .main__tweet {
       display: flex;
       height: 145px;
+      border: 1px solid $tweet-border;
       .tweet__avatar--wrapper{
         position: relative;
         width: 75px;
@@ -225,5 +255,6 @@
       }
     }
   }
+}
 }
 </style>
