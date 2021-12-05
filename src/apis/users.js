@@ -22,10 +22,10 @@ export default {
       return apiHelper.get(`/users/${userId}/followings`)
     },
     addFollowing({ userId }) {
-      return apiHelper.post(`/following/${userId}`, null)
+      return apiHelper.post('/followships', { id:userId })
     },
     deleteFollowing({ userId }) {
-      return apiHelper.delete(`/following/${userId}`)
+      return apiHelper.delete(`/followships/${userId}`)
     }
   },
   getCurrentUser() {

@@ -2,21 +2,27 @@
   <ul class="user__tweets">
     <li v-for="tweet in userTweets" :key="tweet.id">
       <div class="avatar__container">
-        <img
-          :src="currentUser.avatar | emptyImage"
-          alt=""
-          class="user__tweet--avatar"
-        />
+        <router-link
+          :to="{name:'user' , params:{id:user.id}}"
+        >
+          <img
+            :src="user.avatar | emptyImage"
+            alt=""
+            class="user__tweet--avatar"
+          />
+        </router-link>
       </div>
       <div class="user__tweet--content">
         <div class="tweet__content--title">
-          <h3 class="tweet__user--name">{{ currentUser.name }}</h3>
+          <h3 class="tweet__user--name">{{ user.name }}</h3>
           <span class="tweet__user--account">
-            <a>
-              @{{ currentUser.account }}
-            </a>
+            <router-link
+              :to="{name:'user' , params:{id:user.id}}"
+            >
+              @{{ user.account }}
+            </router-link>
             <span>
-              ．{{ tweet.createdAt }}
+              ．{{ tweet.createdAt | fromNow}}
             </span>
           </span>
         </div>
@@ -30,7 +36,7 @@
               alt=""
               class="interaction__replies--icon"
             />
-            <span class="interaction__replies--counts">101</span>
+            <span class="interaction__replies--counts">{{tweet.reply_count}}</span>
           </span>
           <span class="tweet__interaction--likes">
             <img
@@ -38,7 +44,7 @@
               alt=""
               class="likes--icon"
             />
-            <span class="likes--counts">101</span>
+            <span class="likes--counts">{{tweet.like_count}}</span>
           </span>
         </div>
       </div>
@@ -47,11 +53,12 @@
 </template>
 
  <script>
- import {mapState} from 'vuex'
- import {emptyImageFilter} from "./../utils/mixin"
+ import { mapState } from 'vuex'
+ import { emptyImageFilter } from "./../utils/mixin"
+ import { fromNowFilter } from './../utils/mixin'
 export default {
   name: "UserTweets",
-  mixins:[emptyImageFilter],
+  mixins:[emptyImageFilter , fromNowFilter],
   props:{
     initialTweets:{
       type:Array,

@@ -14,7 +14,7 @@
       <a 
         v-else
         class="user__navbar--prev" 
-        @click="handleUserFollowClicked"
+        @click="handleUserFollowshipClicked"
       ></a>
       <div class="user__navbar--info">
         <h2 class="user__navbar--userName">{{user.name}}</h2>
@@ -54,10 +54,20 @@
               />
             </button>
             <button
+              v-if="user.isFollowed"
               type="submit"
-              :class="['follow__btn', { active: isFollowed }]"
+              :class="['follow__btn', { active: user.isFollowed }]"
+              @click.stop.prevent="handleUnfollowBtnClicked(user.id)"
             >
-              {{ isFollowed ? "正在跟隨" : "跟隨" }}
+              正在跟隨
+            </button>
+            <button
+              v-else
+              type="submit"
+              :class="['follow__btn', { active: user.isFollowed }]"
+              @click.stop.prevent="handleFollowBtnClicked(user.id)"
+            >
+              跟隨
             </button>
           </div>
           <button 
@@ -74,13 +84,13 @@
           </p>
           <div 
             class="userInfo__follow"
-            @click="handleUserFollowClicked"
+            @click.stop.prevent="handleUserFollowshipClicked"
           >
             <span class="userInfo__followings"
-              ><span class="followingsCounts">34個</span>跟隨中</span
+              ><span class="followingsCounts">???個</span>跟隨中</span
             >
             <span class="userInfo__followers"
-              ><span class="followersCounts">59位</span>跟隨者</span
+              ><span class="followersCounts">???位</span>跟隨者</span
             >
           </div>
         </div>
@@ -145,9 +155,7 @@ export default {
       userTweets:[],
       userRepliedTweets:[],
       userLikedTweets:[],
-      userFollowers:[],
-      isFollowed: true,
-      isNotificationOn: true,
+      isNotificationOn: false,
       isEditing:false,
       isDisplayFollow:false,
       displayMode:'tweets'
@@ -179,21 +187,22 @@ export default {
           email,
           introduction,
           name,
-          role } = data
-          this.user = {
-            ...this.user,
-            id, 
-            account,
-            avatar,
-            cover,
-            email,
-            introduction: introduction || '使用者未填寫自我介紹',
-            name,
-            role
-          }
-
+          role,
+          isFollowed } = data
+        this.user = {
+          ...this.user,
+          id, 
+          account,
+          avatar,
+          cover,
+          email,
+          introduction: introduction || '使用者未填寫自我介紹',
+          name,
+          role,
+          isFollowed
+        }
       }catch(error){
-        console.log(error)
+        console.log('error' , error)
         Toast({
           icon: 'error',
           title: '無法取得使用者資料，請稍後再試'
@@ -241,21 +250,6 @@ export default {
         })
       }
     },
-    // async fetchUserFollowers(userId){
-    //   try{
-    //     const { data } = await userAPI.followship.getUserFollowers({ userId })
-    //     // if(data.status !== 'success') throw new Error(data.message)
-    //     console.log(data)
-    //     data.pop()
-    //     this.userFollowers = [...data]
-    //   }catch(error){
-    //     console('error' , error)
-    //     Toast({
-    //       icon: 'error',
-    //       title: '無法取得使用者跟隨者資料，請稍後再試!'
-    //     })
-    //   }
-    // },
     handleEditInfoToggle(){
       this.isEditing = !this.isEditing
     },
@@ -273,9 +267,38 @@ export default {
           break
       }
     },
-    handleUserFollowClicked(){
+    handleUserFollowshipClicked(){
       this.isDisplayFollow = !this.isDisplayFollow
-    }  
+    },
+    async handleFollowBtnClicked(userId){
+      try{
+        const {data} = await userAPI.followship.addFollowing({ userId })
+        // if(data.status !== 'success') throw new Error(data.message)
+        console.log(data)
+        this.user.isFollowed = !this.user.isFollowed
+      }catch(error){
+        console('error' , error)
+        Toast({
+          icon: 'error',
+          title: '無法追蹤使用者，請稍後再試!'
+        })
+      }
+    },
+    async handleUnfollowBtnClicked(userId){
+      try{
+        const {data} = await userAPI.followship.deleteFollowing({ userId })
+        // if(data.status !== 'success') throw new Error(data.message)
+        console.log(data)
+        this.user.isFollowed = !this.user.isFollowed
+      }catch(error){
+        console('error' , error)
+        Toast({
+          icon: 'error',
+          title: '無法取消追蹤使用者，請稍後再試!'
+        })
+      }
+    }
+
   }
 };
 </script>

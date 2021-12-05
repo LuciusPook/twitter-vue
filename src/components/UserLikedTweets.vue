@@ -2,19 +2,29 @@
   <ul class="user__tweets">
     <li v-for="likedTweet in likedTweets" :key="likedTweet.id">
       <div class="avatar__container">
-        <img
-          :src="likedTweet.Tweet.User.avatar"
-          alt=""
-          class="user__tweet--avatar"
-        />
+        <router-link
+          :to="{name:'user' , params:{id:likedTweet.tweet_user_id}}"
+        >
+          <img
+            :src="likedTweet.tweet_user_avatar | emptyImage"
+            alt=""
+            class="user__tweet--avatar"
+          />
+        </router-link>
       </div>
       <div class="user__tweet--content">
         <div class="tweet__content--title">
-          <h3 class="tweet__user--name">{{ likedTweet.Tweet.User.name }}</h3>
-          <span class="tweet__user--account">@{{ likedTweet.Tweet.User.account }}．{{ likedTweet.createdAt }}</span>
+          <h3 class="tweet__user--name">{{ likedTweet.tweet_user_name }}</h3>
+          <span class="tweet__user--account">
+            <router-link
+              :to="{name:'user' , params:{id:likedTweet.tweet_user_id}}"
+            >
+              @{{ likedTweet.tweet_user_account }}
+            </router-link>
+            ．{{ likedTweet.createdAt | fromNow}}</span>
         </div>
         <p class="tweet__content--text">
-          {{ likedTweet.Tweet.description }}
+          {{ likedTweet.description }}
         </p>
         <div class="tweet__content--interaction">
           <span class="tweet__interaction--replies">
@@ -23,7 +33,7 @@
               alt=""
               class="interaction__replies--icon"
             />
-            <span class="interaction__replies--counts">100</span>
+            <span class="interaction__replies--counts">{{likedTweet.reply_count}}</span>
           </span>
           <span class="tweet__interaction--likes">
             <img
@@ -31,7 +41,7 @@
               alt=""
               class="likes--icon"
             />
-            <span class="likes--counts">100</span>
+            <span class="likes--counts">{{likedTweet.like_count}}</span>
           </span>
         </div>
       </div>
@@ -40,9 +50,13 @@
 </template>
 
  <script>
+  import { emptyImageFilter } from './../utils/mixin'
+  import { fromNowFilter } from './../utils/mixin'
+
 
 export default {
   name: "UserLikedTweets",
+  mixins:[emptyImageFilter , fromNowFilter],
   props:{
     initialLikedTweets:{
       type:Array,

@@ -3,9 +3,11 @@
     <div class="main__navbar">首頁</div>
     <div class="createTweet">
       <div class="createTweet__avatar--wrapper">
-        <a href="">
+        <router-link 
+          :to="{ name: 'user' , params:{id: currentUser.id}}"
+        >
           <img :src="currentUser.avatar | emptyImage" alt="" class="createTweet__avatar" />
-        </a>
+        </router-link>
       </div>
       <div 
         :class="['form__group' , {edit: isEditing}]"
@@ -30,9 +32,11 @@
           :key="tweet.id"
         >
           <div class="tweet__avatar--wrapper">
-            <a href="">
+            <router-link 
+              :to="{ name: 'user' , params:{ id: tweet.UserId }}"
+            >
               <img :src="tweet.avatar | emptyImage" alt="" class="tweet__avatar" />
-            </a>
+            </router-link>
           </div>
           <div class="tweet__content">
             <p class="tweet__title">

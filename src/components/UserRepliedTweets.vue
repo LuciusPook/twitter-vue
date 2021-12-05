@@ -2,29 +2,33 @@
   <ul class="user__repliedTweets">
     <li v-for="repliedTweet in repliedTweets" :key="repliedTweet.id">
       <div class="avatar__container">
-        <img
-          :src="currentUser.avatar | emptyImage"
-          alt=""
-          class="user__tweet--avatar"
-        />
+        <router-link
+          :to="{ name: 'user' , params:{id: user.id}}"
+        >
+          <img
+            :src="user.avatar | emptyImage"
+            alt=""
+            class="user__tweet--avatar"
+          />
+        </router-link>
       </div>
       <div class="user__repliedTweets--content">
         <div class="tweet__content--title">
-          <h3 class="tweet__user--name">{{ repliedTweet.Tweet.User.name }}</h3>
+          <h3 class="tweet__user--name">{{ user.name }}</h3>
           <span class="tweet__user--account">
             <router-link
-              :to="{ name: 'user' , params: {id: repliedTweet.Tweet.User.id}}"
+              :to="{ name: 'user' , params: {id: user.id}}"
             >
-              @{{ currentUser.account }}
+              @{{ user.account }}
             </router-link>
-            ．{{ repliedTweet.createdAt }}
+            ．{{ repliedTweet.createdAt | fromNow}}
           </span>
         </div> 
         <p class="user__repliedTweets--tag">
           <span>回覆</span>  
           <router-link class="user__repliedTweets--owner"
-              :to="{ name: 'user' , params: {id: repliedTweet.Tweet.User.id}}"
-            >
+            :to="{ name: 'user' , params: {id: repliedTweet.Tweet.User.id}}"
+          >
             @{{repliedTweet.Tweet.User.account}}
           </router-link>
         </p>
@@ -39,9 +43,10 @@
  <script>
 import { mapState } from 'vuex'
 import {emptyImageFilter} from "./../utils/mixin"
+ import { fromNowFilter } from './../utils/mixin'
 export default {
   name: "UserRepliedTweets",
-  mixins:[emptyImageFilter],
+  mixins:[emptyImageFilter , fromNowFilter],
   props:{
     initialReplied:{
       type:Array,
