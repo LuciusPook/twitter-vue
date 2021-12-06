@@ -15,7 +15,6 @@ export default new Vuex.Store({
       avatar:'',
       isAdmin: false
     },
-    userTweetsCount:undefined,
     isAuthenticated: false,
     token: ''
   },
@@ -41,9 +40,6 @@ export default new Vuex.Store({
       state.token = ''
       localStorage.removeItem('token')
     },
-    setUserTweetsCounts(state , userTweetsCount){
-      state.userTweetsCount = userTweetsCount
-    }
   },
   actions: {
     // 在 actions 中可以透過參數的方式取得 commit 的方法

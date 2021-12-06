@@ -40,7 +40,10 @@
           class="user__card--avatar"
         />
         <div class="user__card--info">
-          <div v-if="user.id !== currentUser.id" class="user__interaction--other">
+          <div 
+            v-if="user.id !== currentUser.id" 
+            class="user__interaction--other"
+          >
             <button class="mail__btn">
               <a href="mailto:email@example.com"
                 ><img src="./../assets/Vector_mail.svg" alt="" class="mail__icon"
@@ -162,7 +165,7 @@ export default {
     };
   },
   created(){
-    const {id} = this.$route.params
+    const { id } = this.$route.params
     this.fetchUser(id)
     this.fetchUserTweets(id)
   },
@@ -178,7 +181,7 @@ export default {
     async fetchUser(userId){
       try{
         const { data } = await userAPI.getUsers({userId})
-        if(data.status !== 'success') throw new Error(data.message)
+        // if(data.status !== 'success') throw new Error(data.message)
         const {
           id, 
           account,
@@ -215,7 +218,6 @@ export default {
         data.pop()
         this.userTweets = [...data]
         // if(data.status !== 'success') throw new Error(data.message)
-        this.$store.commit('setUserTweetsCounts' , data.length)
       }catch(error){
         console('error' , error)
         Toast({
@@ -425,6 +427,7 @@ export default {
       .userInfo__follow {
         font-size: 14px;
         color: $follow-text;
+        cursor: pointer;
         > span {
           margin-right: 1rem;
           > span {

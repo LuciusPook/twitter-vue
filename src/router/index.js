@@ -44,11 +44,11 @@ const routes = [
     name: 'user',
     component: () => import('../views/User.vue'),
   },
-  // {
-  //   path: '/users/:id/follow',
-  //   name: 'user-follow',
-  //   component: () => import('../views/UserFollow.vue'),
-  // },
+  {
+    path: '/tweets/:id',
+    name: 'tweet',
+    component: () => import('../views/Tweet.vue'),
+  },
   {
     path: '*',
     name: 'not-found',
