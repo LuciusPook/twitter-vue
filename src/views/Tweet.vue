@@ -116,6 +116,7 @@
         position: relative;
         width: 5rem;
         img {
+          border-radius: 50%;
           position: absolute;
           @extend %position-center;
           height: 50px;

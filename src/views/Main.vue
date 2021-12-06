@@ -1,5 +1,6 @@
 <template>
   <div class="main">
+    <ReplyModal/>
     <div class="main__navbar">首頁</div>
     <div class="createTweet">
       <div class="createTweet__avatar--wrapper">
@@ -80,6 +81,7 @@
 </template>
 
   <script>
+  import ReplyModal from './../components/ReplyModal.vue'
   import tweetsAPI from "./../apis/tweets"
   import { Toast } from "./../utils/helpers"
   import { mapState } from "vuex"
@@ -88,6 +90,9 @@
   export default {
     name: 'Main',
     mixins:[emptyImageFilter],
+    components:{
+      ReplyModal,
+    },
     data(){
       return {
         tweets:[],
@@ -129,6 +134,7 @@
 
 <style lang="scss" scoped>
 .main {
+  position: relative;
   background-color: $tweet-border;
   flex:1;
   .main__navbar{
