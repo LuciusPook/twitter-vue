@@ -1,14 +1,19 @@
 <template>
-  <div class="ring">
-    <p>Alphitter</p>
-    <span></span>
+  <div class="content">
+    <div class="ring">
+      <p>Alphitter</p>
+      <span></span>
+    </div>
   </div>
 </template>
 
-<style scoped>
-body {
-  margin: 0;
-  padding: 0;
+<style lang="scss" scoped>
+.content {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  position: fixed;
+  z-index: 99;
 }
 
 .ring {
@@ -18,14 +23,13 @@ body {
   transform: translate(-50%, -50%);
   width: 150px;
   height: 150px;
-  background: transparent;
   border: 3px solid #3c3c3c;
   border-radius: 50%;
-  box-shadow: 0 0 20px rgb(0, 0, 0, 0.5);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 p {
-  line-height: 120px;
+  line-height: 145px;
   text-align: center;
   font-family: sans-serif;
   font-size: 17px;
@@ -42,8 +46,8 @@ p {
   position: absolute;
   top: -3px;
   left: -3px;
-  width: 100%;
-  height: 100%;
+  width: 150px;
+  height: 150px;
   border: 3px solid transparent;
   border-top: 3px solid #ff6600;
   border-right: 3px solid #ff6600;
