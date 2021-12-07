@@ -1,15 +1,15 @@
 <template>
-  <form @submit.prevent.stop="handleSubmit">
-    <div class="form-group">
+  <form @submit.prevent.stop="handleSubmit" novalidate>
+    <div class="form-group" tabindex="0">
       <input
-        id="email"
-        type="email"
-        v-model="email"
-        placeholder="Email"
-        autocomplete="email"
-        required
+        id="account"
+        type="text"
+        v-model="account"
+        :class="[Checked ? 'form-error' : '']"
+        placeholder="Account"
         autofocus
       />
+      <span class="invalid-feedback" v-show="Checked">帳號不存在！</span>
     </div>
 
     <div class="form-group">
@@ -18,8 +18,6 @@
         type="password"
         v-model="password"
         placeholder="Password"
-        autocomplete="current-password"
-        required
       />
     </div>
     <button type="submit" :disabled="isProcessing">
@@ -42,6 +40,10 @@ export default {
     isProcessing: {
       type: Boolean,
       default: false,
+    },
+    Checked: {
+      type: Boolean,
+      require: true,
     },
   },
 
@@ -68,7 +70,6 @@ export default {
 .form-group {
   width: 540px;
   height: 52px;
-  border-bottom: 2px solid #657786;
   margin: 32px auto;
 }
 
@@ -79,13 +80,28 @@ input {
   background: #f5f8fa;
   font-size: 19px;
   border: none;
+  border-bottom: 2px solid #657786;
   border-radius: 0 0 4px 4px;
+}
+
+input:focus {
+  border-bottom: 2px solid #50b5ff;
 }
 
 input::placeholder {
   position: absolute;
   padding: 5px 0;
   font-size: 15px;
+}
+
+.form-error {
+  border-bottom-color: #fc5a5a;
+}
+
+.invalid-feedback {
+  display: flex;
+  font-size: 15px;
+  color: #fc5a5a;
 }
 
 button {

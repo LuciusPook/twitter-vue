@@ -3,15 +3,16 @@
     <img src="https://i.ibb.co/WD1YSyW/Logo.jpg" alt="Logo" />
     <h2 class="form-title">登入 Alphitter</h2>
     <AccountForm
-      :Email="email"
+      :Account="account"
       :Password="password"
       @after-submit="handleAfterSubmit"
       :is-processing="isProcessing"
+      :Checked="checked"
     />
     <div class="form-link">
       <router-link to="/register">註冊 Alphitter</router-link>
       <span></span>
-      <router-link to="/adminlogin">後台登入</router-link>
+      <router-link to="/admin/login">後台登入</router-link>
     </div>
   </div>
 </template>
@@ -25,34 +26,39 @@ export default {
   components: {
     AccountForm,
   },
+
   data() {
     return {
       email: "",
       password: "",
       isProcessing: false,
+      checked: false,
     };
   },
+
   methods: {
     async handleAfterSubmit(data) {
-      const { email, password } = data;
+      const { account, password } = data;
+
+      if (!account || !password) {
+        Toast.fire({
+          icon: "warning",
+          title: "請填入帳號和密碼",
+        });
+        this.checked = true;
+        this.password = "";
+        return;
+      }
 
       try {
-        if (!email || !password) {
-          Toast.fire({
-            icon: "warning",
-            title: "請填入帳號和密碼",
-          });
-          return;
-        }
-
         this.isProcessing = true;
 
         const { data } = await authorizationAPI.signIn({
-          email,
+          account,
           password,
         });
-        console.log(data)
-        if (data.status !== 200) {
+
+        if (data.status === "error" || data.user.role === "admin") {
           throw new Error(data.message);
         }
 
@@ -64,11 +70,16 @@ export default {
 
         this.$store.commit("setCurrentUser", data.user);
 
+        Toast.fire({
+          icon: "success",
+          title: `${data.user.name}, 歡迎回來`,
+        });
         this.$router.push("/main");
       } catch (error) {
-        this.password = "";
+        this.checked = true;
         this.isProcessing = false;
-        console.log('errorrr' , error)
+        this.password = "";
+
         Toast.fire({
           icon: "warning",
           title: "請確認您輸入正確的賬號密碼",
@@ -80,7 +91,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-div.container {
+.container {
   text-align: center;
   padding-top: 4rem;
   flex: 1;

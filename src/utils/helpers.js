@@ -1,4 +1,3 @@
-// ./src/utils/helpers.js
 import axios from 'axios'
 import Swal from 'sweetalert2'
 const herokuURL = 'https://twitter101.herokuapp.com/api'
