@@ -69,13 +69,13 @@ export default {
       try{
         const response = await tweetAPI.reply.addReply({tweetId , comment:this.replyText})
         console.log(response)
-        this.$emit('after-submit-reply' , response.status)
+        const payload = {status:response.status , tweetId}
+        this.$emit('after-submit-reply' , payload)
         this.handleCancelReplyModal()
         if(response.status !== 200) throw new Error(response.statusText)
         
       }catch(error){
         console.log('error' , error)
-        
       }
     }
   }

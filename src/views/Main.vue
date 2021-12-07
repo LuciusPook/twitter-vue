@@ -146,7 +146,12 @@
       },
       afterSubmitReply(payload){
         console.log(payload)
-        if(payload === 200){
+        if(payload.status === 200){
+          this.tweets.map( tweet => {
+            if(tweet.id === payload.tweetId){
+              tweet.reply_count++
+            }
+          })
           Toast.fire({
             icon:'success',
             title:'成功回覆推文'
