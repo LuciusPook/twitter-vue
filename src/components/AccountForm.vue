@@ -4,7 +4,7 @@
       <input
         id="account"
         type="text"
-        v-model="email"
+        v-model="account"
         :class="[Checked ? 'form-error' : '']"
         placeholder="Account"
         autofocus

@@ -15,8 +15,8 @@ export default {
   getTopUsers() {
     return apiHelper.get('/users/top')
   },
-  postFollow({ userId }) {
-    return apiHelper.post(`/followships/${userId}`, null)
+  postFollow() {
+    return apiHelper.post('/followships', null)
   },
   deleteFollow({ userId }) {
     return apiHelper.delete(`/followships/${userId}`)

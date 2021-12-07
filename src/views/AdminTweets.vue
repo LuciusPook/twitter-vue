@@ -2,7 +2,7 @@
   <div class="container">
     <Spinner v-if="isLoading" />
 
-    <Navbar :currentPage="currentPage" />
+    <!-- <Navbar :currentPage="currentPage" /> -->
 
     <div class="admin_tweets">
       <div class="admin_tweets-container">
@@ -65,7 +65,7 @@
 
 
 <script>
-import Navbar from "./../components/Navbar.vue";
+// import Navbar from "./../components/Navbar.vue";
 import { fromNowFilter } from "./../utils/mixins";
 import { emptyImageFilter } from "./../utils/mixins";
 import adminAPI from "./../apis/admin";
@@ -76,7 +76,7 @@ export default {
   mixins: [fromNowFilter, emptyImageFilter],
 
   components: {
-    Navbar,
+    // Navbar,
     Spinner,
   },
 

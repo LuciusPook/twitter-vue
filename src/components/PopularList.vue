@@ -106,12 +106,12 @@ export default {
           throw new Error(data.message);
         }
 
-        this.topUsers.map((topUser) => {
-          if (topUser.id === id) {
-            topUser.isFollowed = true;
+        this.topUsers.map((user) => {
+          if (user.id === id) {
+            user.isFollowed = true;
             this.isFollowed = true;
           }
-          return topUser;
+          return user;
         });
 
         Toast.fire({

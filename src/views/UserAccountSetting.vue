@@ -2,7 +2,7 @@
   <div class="container">
     <Spinner v-if="isLoading" />
 
-    <Navbar @showModal="showModal" :currentPage="currentPage" />
+    <!-- <Navbar @showModal="showModal" :currentPage="currentPage" /> -->
     <div class="account-container">
       <div class="account-setting">
         <div class="account-title">
@@ -86,7 +86,7 @@
 
 
 <script>
-import Navbar from "./../components/Navbar.vue";
+// import Navbar from "./../components/Navbar.vue";
 import usersAPI from "./../apis/users";
 import { Toast } from "./../utils/helpers";
 import { mapState } from "vuex";
@@ -94,7 +94,7 @@ import { mapState } from "vuex";
 import Spinner from "./../components/Spinner";
 export default {
   components: {
-    Navbar,
+    // Navbar,
     Spinner,
   },
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="menu">
+  <div class="menu" :class="{'d-none' : checked}">
     <div class="navbar">
       <router-link to="/main">
         <img src="https://i.ibb.co/WD1YSyW/Logo.jpg" alt="Logo" class="logo" />
@@ -65,7 +65,7 @@
               </router-link>
             </div>
           </template>
-          <template v-else>
+          <template v-if="currentUser.role === 'Admin'">
             <div class="navbar-item" :class="['page-item', active]">
               <router-link to="/admin/tweets">
                 <img
@@ -81,7 +81,7 @@
                 推文清單
               </router-link>
             </div>
-            <div class="navbar-item" :class="['page-item', { active }]">
+            <div class="navbar-item" :class="['page-item', active]">
               <router-link to="/admin/users">
                 <img
                   src="./../assets/Vector_user-action.svg"

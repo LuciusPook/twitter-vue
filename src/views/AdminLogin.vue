@@ -17,7 +17,7 @@
 
 <script>
 import AccountForm from "./../components/AccountForm";
-import authorizationAPI from "./../apis/authorization";
+import adminAPI from "./../apis/admin";
 import { Toast } from "./../utils/helpers";
 
 export default {
@@ -49,12 +49,12 @@ export default {
       try {
         this.isProcessing = true;
 
-        const { data } = await authorizationAPI.signIn({
+        const { data } = await adminAPI.signIn({
           account,
           password,
         });
 
-        if (data.status === "error" || data.user.role !== "Admin") {
+        if (data.status === "error" || data.user.role !== "admin") {
           throw new Error(data.message);
         }
 

@@ -58,7 +58,7 @@ export default {
           password,
         });
 
-        if (data.status === "error" || data.user.role === "Admin") {
+        if (data.status === "error" || data.user.role === "admin") {
           throw new Error(data.message);
         }
 

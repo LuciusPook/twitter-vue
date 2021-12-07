@@ -9,10 +9,10 @@
 
     <NewPostModal
       v-if="createNewModal"
-      @afterSubmit="createNewTweet"
       :currentUserData="currentUserData"
       :newDescription="newDescription"
       :checked="checked"
+      @afterSubmit="createNewTweet"
       @close-after-create="closeButton"
       @checkedMsg="checkedMsg"
     />
