@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
+import Register from '../views/UserRegister.vue'
 import NotFound from '../views/NotFound.vue'
+
 // import store from './../store'
 
 // const authorizeIsAdmin = (to, from, next) => {
@@ -25,20 +27,39 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    meta: { title: "登入 Aplhitter" },
     component: Login,
   },
   {
-    path: '/adminlogin',
-    name: 'admin-login',
-    meta: { title: "後台登入" },
-    // exact: true,
-    component: () => import('../views/AdminLogin.vue')
+    path: '/register',
+    name: 'register',
+    component: Register,
   },
   {
     path: '/users/:id',
     name: 'user',
     component: () => import('../views/User.vue'),
+  },
+  {
+    path: '/users/self/setting',
+    name: 'setting',
+    component: () => import('../views/UserAccountSetting.vue')
+  },
+  {
+    path: '/admin/login',
+    name: 'admin-login',
+    // exact: true,
+    component: () => import('../views/AdminLogin.vue')
+  },
+  {
+    path: '/admin/tweets',
+    name: 'admin-tweets',
+    // exact: true,
+    component: () => import('../views/AdminTweets.vue')
+  },
+  {
+    path: '/admin/users',
+    name: 'admin-users',
+    component: () => import('../views/AdminUsers.vue')
   },
   {
     path: '*',
@@ -48,7 +69,34 @@ const routes = [
 ]
 
 const router = new VueRouter({
+  linkExactActiveClass: 'active',
   routes
 })
+
+// router.beforeEach(async (to, from, next) => {
+
+//   const tokenInLocalStorage = localStorage.getItem('token')
+//   const tokenInStore = store.state.token
+//   let isAuthenticated = store.state.isAuthenticated
+
+
+//   if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
+//     isAuthenticated = await store.dispatch('fetchCurrentUser')
+//   }
+
+//   const pathsWithoutAuthentication = ['sign-up', 'sign-in']
+
+//   if (!isAuthenticated && !pathsWithoutAuthentication.includes(to.name)) {
+//     next('/signin')
+//     return
+//   }
+
+//   if (isAuthenticated && pathsWithoutAuthentication.includes(to.name)) {
+//     next('/main')
+//     return
+//   }
+//   next()
+// })
+
 
 export default router

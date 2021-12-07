@@ -1,11 +1,19 @@
 <template>
   <div id="twitter">
-    <Navbar/>
+    <Navbar @showCreateModal="showCreateModal" />
+    <!-- <Navbar :current-page="currentPage" /> -->
 
     <router-view />
 
-    <PopularList/>
+    <PopularList />
 
+    <NewPostModal
+      v-if="createNewModal"
+      @afterSubmit="createNewTweet"
+      :currentUserData="currentUserData"
+      :newDescription="newDescription"
+      @close-after-create="closeButton"
+    />
   </div>
 </template>
 
@@ -13,19 +21,117 @@
 <script >
 import Navbar from "./components/Navbar.vue";
 import PopularList from "./components/PopularList.vue";
+import { mapState } from "vuex";
+import NewPostModal from "./components/NewPostModal.vue";
+import { Toast } from "./utils/helpers";
+import usersAPI from "./apis/users.js";
+import tweetsAPI from "./apis/tweets.js";
 
 export default {
   components: {
     Navbar,
     PopularList,
+    NewPostModal,
+  },
+
+  data() {
+    return {
+      createNewModal: false,
+      description: "",
+      currentUserData: {
+        id: "",
+        name: "",
+        account: "",
+        avatar: "",
+      },
+    };
+  },
+
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
+  },
+
+  created() {
+    this.fetchUserTweets();
+    this.fetchCurrentUserData(this.currentUser.id);
+  },
+
+  methods: {
+    showCreateModal() {
+      this.createNewModal = true;
+    },
+
+    closeButton() {
+      this.createNewModal = false;
+    },
+
+    async fetchCurrentUserData(id) {
+      const { data } = await usersAPI.getUser({ userId: id });
+      const { account, name, avatar } = data;
+      this.currentUserData.account = account;
+      this.currentUserData.name = name;
+      this.currentUserData.avatar = avatar;
+    },
+
+    async createNewTweet(newDescription) {
+      try {
+        if (newDescription.length === 0) {
+          Toast.fire({
+            icon: "warning",
+            title: "內文不能留白！",
+          });
+          return;
+        }
+        if (newDescription.length > 140) {
+          Toast.fire({
+            icon: "warning",
+            title: "推文只限140個字數內！",
+          });
+          return;
+        }
+
+        const { data } = await tweetsAPI.postTweet({
+          description: newDescription,
+        });
+
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+
+        this.tweets.splice(0, 0, {
+          id: data.id,
+          createdAt: new Date(),
+          description: newDescription,
+          User: {
+            id: data.UserId,
+            name: this.currentUser.name,
+            account: this.currentUser.account,
+            avatar: this.currentUser.avatar,
+          },
+          Likes: [],
+        });
+
+        Toast.fire({
+          icon: "success",
+          title: "推文發送成功！",
+        });
+
+        this.closeButton();
+        this.description = "";
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法新增推文，請稍後再試看",
+        });
+      }
+    },
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 #twitter {
-  height: 1200px;
+  height: 100%;
   display: flex;
-  height: 1200px;
 }
 </style>
