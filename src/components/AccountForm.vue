@@ -29,7 +29,7 @@
 <script>
 export default {
   props: {
-    Email: {
+    Account: {
       type: String,
       required: true,
     },
@@ -49,14 +49,14 @@ export default {
 
   data() {
     return {
-      email: this.Email,
+      account: this.Account,
       password: this.Password,
     };
   },
   methods: {
     handleSubmit() {
       const data = {
-        email: this.email,
+        account: this.account,
         password: this.password,
       };
       this.$emit("after-submit", data);

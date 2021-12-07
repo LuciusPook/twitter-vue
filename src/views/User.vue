@@ -138,7 +138,7 @@ import UserEditModal from "./../components/UserEditModal.vue"
 import UserRepliedTweets from "./../components/UserRepliedTweets.vue"
 import UserLikedTweets from "./../components/UserLikedTweets.vue"
 import UserFollow from "./../components/UserFollow.vue"
-import { emptyImageFilter } from "./../utils/mixin"
+import { emptyImageFilter } from "../utils/mixins"
 import userAPI from "./../apis/users"
 import { Toast } from "./../utils/helpers"
 import {mapState} from 'vuex'

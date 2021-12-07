@@ -29,7 +29,7 @@ export default {
 
   data() {
     return {
-      email: "",
+      account: "",
       password: "",
       isProcessing: false,
       checked: false,

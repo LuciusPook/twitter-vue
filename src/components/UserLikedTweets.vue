@@ -50,8 +50,8 @@
 </template>
 
  <script>
-  import { emptyImageFilter } from './../utils/mixin'
-  import { fromNowFilter } from './../utils/mixin'
+  import { emptyImageFilter } from '../utils/mixins'
+  import { fromNowFilter } from '../utils/mixins'
 
 
 export default {

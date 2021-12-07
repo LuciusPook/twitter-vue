@@ -106,9 +106,9 @@
 import ReplyModal from "./../components/ReplyModal.vue";
 import tweetsAPI from "./../apis/tweets";
 import { Toast } from "./../utils/helpers";
-import { fromNowFilter } from './../utils/mixin'
-import { timeTransForm } from './../utils/mixin'
-import { emptyImageFilter } from './../utils/mixin'
+import { fromNowFilter } from '../utils/mixins'
+import { timeTransForm } from '../utils/mixins'
+import { emptyImageFilter } from '../utils/mixins'
 export default {
   name: "Tweet",
   components: {

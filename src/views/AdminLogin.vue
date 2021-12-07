@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import AccountForm from "./../components/AccountForm";
+import AccountForm from "./../components/AccountForm.vue";
 import adminAPI from "./../apis/admin";
 import { Toast } from "./../utils/helpers";
 

@@ -51,7 +51,7 @@
               <a href="" class="tweet__tweeter--account"
                 >@{{ tweet.User.account }}</a
               >
-              <span class="tweet__createdTime">．3小時</span>
+              <span class="tweet__createdTime">．{{tweet.createdAt | fromNow}}</span>
             </p>
             <router-link
               class="tweet__text--container"
@@ -103,11 +103,12 @@ import ReplyModal from "./../components/ReplyModal.vue";
 import tweetsAPI from "./../apis/tweets";
 import { Toast } from "./../utils/helpers";
 import { mapState } from "vuex";
-import { emptyImageFilter } from "./../utils/mixin";
+import { emptyImageFilter } from "../utils/mixins";
+import { fromNowFilter } from "../utils/mixins";
 
 export default {
   name: "Main",
-  mixins: [emptyImageFilter],
+  mixins: [emptyImageFilter , fromNowFilter],
   components: {
     ReplyModal,
   },

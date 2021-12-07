@@ -54,8 +54,8 @@
 
  <script>
  import { mapState } from 'vuex'
- import { emptyImageFilter } from "./../utils/mixin"
- import { fromNowFilter } from './../utils/mixin'
+ import { emptyImageFilter } from "../utils/mixins"
+ import { fromNowFilter } from '../utils/mixins'
 export default {
   name: "UserTweets",
   mixins:[emptyImageFilter , fromNowFilter],

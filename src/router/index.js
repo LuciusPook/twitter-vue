@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Register from '../views/UserRegister.vue'
 import NotFound from '../views/NotFound.vue'
-
 import Main from '../views/Main.vue'
 import store from './../store'
 
@@ -36,7 +35,7 @@ const routes = [
     component: Main,
   },
   {
-    path: '/adminlogin',
+    path: '/admin/login',
     name: 'admin-login',
     // exact: true,
     component: () => import('../views/AdminLogin.vue')
@@ -100,7 +99,7 @@ router.beforeEach(async (to, from, next) => {
     isAuthenticated = await store.dispatch('fetchCurrentUser')
   }
 
-  const pathsWithoutAuthentication = ['login']
+  const pathsWithoutAuthentication = ['login', 'admin-login', 'register']
 
   if (!isAuthenticated && !pathsWithoutAuthentication.includes(to.name)) {
     next('/login')
