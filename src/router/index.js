@@ -55,6 +55,8 @@ const routes = [
     path: '/tweets/:id',
     name: 'tweet',
     component: () => import('../views/Tweet.vue'),
+  },
+  {
     path: '/users/self/setting',
     name: 'setting',
     component: () => import('../views/UserAccountSetting.vue')
