@@ -142,6 +142,7 @@ export default {
     async handleFollowBtnClicked(id , btnType){
       try{
         const response = await userAPI.followship.addFollowing({ userId: id})
+        if(response.status !== 200) throw new Error(response.statusText)
         console.log(response)
         console.log('id',id,'btnType',btnType , typeof(btnType))
         if(btnType === 'follower'){
@@ -159,14 +160,13 @@ export default {
             }
           })
         } 
-        // if(data.status !== 'success') throw new Error(data.message)
-        // Toast({
-        //   icon:'success',
-        //   title:'成功追蹤使用者'
-        // })
+        Toast.fire({
+          icon:'success',
+          title:'成功追蹤使用者'
+        })
       }catch(error){
         console.log('error' , error)
-        Toast({
+        Toast.fire({
           icon: 'error',
           title: '無法追蹤使用者，請稍後再試'
         })
@@ -175,6 +175,7 @@ export default {
     async handleUnfollowBtnClicked(id , btnType){
       try{
         const response = await userAPI.followship.deleteFollowing({ userId: id})
+        if(response.status !== 200) throw new Error(response.statusText)
         console.log(response)
         console.log('id',id,'btnType',btnType , typeof(btnType))
         if(btnType === 'follower'){
@@ -192,14 +193,14 @@ export default {
             }
           })
         } 
-        // if(data.status !== 'success') throw new Error(data.message)
-        // Toast({
-        //   icon:'success',
-        //   title:'成功取消追蹤使用者'
-        // })
+        if(response.status !== 200) throw new Error(response.statusText)
+        Toast.fire({
+          icon:'success',
+          title:'成功取消追蹤使用者'
+        })
       }catch(error){
         console.log('error' , error)
-        Toast({
+        Toast.fire({
           icon: 'error',
           title: '無法取取消追蹤使用者，請稍後再試'
         })
@@ -207,12 +208,13 @@ export default {
     },
     async fetchUserFollowers(userId){
       try{
-        const { data } = await userAPI.followship.getUserFollowers({ userId })
-        // if(data.status !== 'success') throw new Error(data.message)
+        const response = await userAPI.followship.getUserFollowers({ userId })
+        const data = response.data
+        if(response.status !== 200) throw new Error(response.statusText)
         this.userFollowers = [...data]
       }catch(error){
         console('error' , error)
-        Toast({
+        Toast.fire({
           icon: 'error',
           title: '無法取得使用者跟隨者資料，請稍後再試!'
         })
@@ -220,13 +222,14 @@ export default {
     },
     async fetchUserFollowings(userId){
       try{
-        const { data } = await userAPI.followship.getUserFollowings({ userId })
-        // if(data.status !== 'success') throw new Error(data.message)
+        const response = await userAPI.followship.getUserFollowings({ userId })
+        const data = response.data
+        if(response.status !== 200) throw new Error(response.statusText)
         data.map(userFollowing => userFollowing.isFollowed = true)
         this.userFollowings = [...data]
       }catch(error){
         console('error' , error)
-        Toast({
+        Toast.fire({
           icon: 'error',
           title: '無法取得使用者正在跟隨者資料，請稍後再試!'
         })

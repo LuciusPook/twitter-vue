@@ -1,6 +1,10 @@
 <template>
   <div class="main">
-    <ReplyModal/>
+    <ReplyModal
+      v-if="isReplying"
+      @after-cancel-reply="handleReplyModalToggle"
+      :tweetId="clickedTweetId"
+    />
     <div class="main__navbar">首頁</div>
     <div class="createTweet">
       <div class="createTweet__avatar--wrapper">
@@ -42,7 +46,7 @@
           <div class="tweet__content">
             <p class="tweet__title">
               <span class="tweet__tweeter--name">{{tweet.name}}</span>
-              <a href="" class="tweet__tweeter--account">@等待api</a>
+              <a href="" class="tweet__tweeter--account">@{{tweet.User.account}}</a>
               <span class="tweet__createdTime">．3小時</span>
             </p>
             <p class="tweet__text">
@@ -54,21 +58,24 @@
                   src="./../assets/Vector_reply-icon.svg"
                   alt=""
                   class="interaction__replies--icon"
+                  @click="handleReplyModalToggle(tweet.id)"
                 />
                 <span class="interaction__replies--counts">{{tweet.reply_count}}</span>
               </span>
               <span class="tweet__interaction--likes">
                 <img
-                v-if="tweet.isLiked"
+                  v-if="tweet.isLiked"
                   src="./../assets/Vector_redLike-icon.svg"
                   alt=""
                   class="likes--icon"
+                  @click="handleRedLikeIconClicked(tweet.id)"
                 />
                 <img 
                   v-else
                   src="./../assets/Vector_like-icon.svg" 
                   alt=""
                   class="likes--icon"
+                  @click="handleLikeIconClicked(tweet.id)"
                 >
                 <span class="likes--counts">{{tweet.like_count}}</span>
               </span>
@@ -96,7 +103,9 @@
     data(){
       return {
         tweets:[],
+        clickedTweetId:undefined,
         isEditing:false,
+        isReplying:false,
         textareaRows:3
       }
     },
@@ -107,6 +116,62 @@
       ...mapState(['currentUser'])
     },
     methods:{
+      handleReplyModalToggle(tweetId){
+        this.isReplying = !this.isReplying
+        this.clickedTweetId = tweetId
+      },
+      handleRedLikeIconClicked(tweetId){
+        this.deleteLike(tweetId)
+        this.tweets.map(tweet => {
+          if(tweet.id === tweetId){
+            tweet.isLiked = !tweet.isLiked
+            tweet.like_count-- 
+          }
+        })
+      },
+      handleLikeIconClicked(tweetId){
+        this.addLike(tweetId)
+        this.tweets.map(tweet => {
+          if(tweet.id === tweetId){
+            tweet.isLiked = !tweet.isLiked
+            tweet.like_count++
+          }
+        })
+      },
+      async addLike(tweetId){
+        try{
+          const response = await tweetsAPI.like.addLike({tweetId})
+          console.log(response)
+          if(response.status !== 200) throw new Error(response.statusText)
+          Toast.fire({
+            icon: 'success',
+            title: '成功對推文按讚'
+          })
+        }catch(error){
+          console.log('error' , error)
+          Toast.fire({
+            icon: 'error',
+            title: '無法對推文按讚，請稍後再試'
+          })
+        }
+      },
+      async deleteLike(tweetId){
+        try{
+          const response= await tweetsAPI.like.deleteLike({tweetId})
+          console.log(response)
+          if(response.status !== 200) throw new Error(response.statusText)
+          Toast.fire({
+            icon: 'success',
+            title: '成功取消推文按讚'
+          })
+        }catch(error){
+          console.log('error' , error)
+          Toast.fire({
+            icon: 'error',
+            title: '無法取消推文按讚，請稍後再試'
+          })
+        }
+      },
       handleTextareaFocused(){
         this.textareaRows = 15
         this.isEditing = true

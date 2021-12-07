@@ -180,8 +180,9 @@ export default {
   methods: { 
     async fetchUser(userId){
       try{
-        const { data } = await userAPI.getUsers({userId})
-        // if(data.status !== 'success') throw new Error(data.message)
+        const response = await userAPI.getUsers({userId})
+        const data = response.data
+        if(response.status !== 200) throw new Error(response.statusText)
         const {
           id, 
           account,
@@ -206,7 +207,7 @@ export default {
         }
       }catch(error){
         console.log('error' , error)
-        Toast({
+        Toast.fire({
           icon: 'error',
           title: '無法取得使用者資料，請稍後再試'
         })
@@ -214,13 +215,13 @@ export default {
     },  
     async fetchUserTweets(userId){
       try{
-        let { data } = await userAPI.tweets.getUserTweets({ userId })
-        data.pop()
+        const response = await userAPI.tweets.getUserTweets({ userId })
+        const data = response.data
         this.userTweets = [...data]
-        // if(data.status !== 'success') throw new Error(data.message)
+        if(response.status !== 200) throw new Error(response.statusText)
       }catch(error){
         console('error' , error)
-        Toast({
+        Toast.fire({
           icon: 'error',
           title: '無法取得使用者推文，請稍後再試!'
         })
@@ -228,12 +229,13 @@ export default {
     },
     async fetchUserRepliedTweets(userId){
       try{
-        const { data } = await userAPI.tweets.getUserRepliedTweets({userId})
-        // if(data.status !== 'success') throw new Error(data.message)
+        const response = await userAPI.tweets.getUserRepliedTweets({userId})
+        const data = response.data
+        if(response.status !== 200) throw new Error(response.statusText)
         this.userRepliedTweets = [...data]
       }catch(error){
         console('error' , error)
-        Toast({
+        Toast.fire({
           icon: 'error',
           title: '無法取得使用者回覆推文，請稍後再試!'
         })
@@ -241,12 +243,13 @@ export default {
     },
     async fetchUserLikedTweets(userId){
       try{
-        const { data } = await userAPI.tweets.getUserLikedTweets({ userId })
-        // if(data.status !== 'success') throw new Error(data.message)
+        const response = await userAPI.tweets.getUserLikedTweets({ userId })
+        const data = response.data
+        if(response.status !== 200) throw new Error(response.statusText)
         this.userLikedTweets = [...data]
       }catch(error){
         console('error' , error)
-        Toast({
+        Toast.fire({
           icon: 'error',
           title: '無法取得使用者按讚推文，請稍後再試!'
         })
@@ -274,13 +277,14 @@ export default {
     },
     async handleFollowBtnClicked(userId){
       try{
-        const {data} = await userAPI.followship.addFollowing({ userId })
-        // if(data.status !== 'success') throw new Error(data.message)
+        const response = await userAPI.followship.addFollowing({ userId })
+        const data = response.data  
+        if(response.status !== 200) throw new Error(response.statusText)
         console.log(data)
         this.user.isFollowed = !this.user.isFollowed
       }catch(error){
         console('error' , error)
-        Toast({
+        Toast.fire({
           icon: 'error',
           title: '無法追蹤使用者，請稍後再試!'
         })
@@ -288,13 +292,14 @@ export default {
     },
     async handleUnfollowBtnClicked(userId){
       try{
-        const {data} = await userAPI.followship.deleteFollowing({ userId })
-        // if(data.status !== 'success') throw new Error(data.message)
+        const response = await userAPI.followship.deleteFollowing({ userId })
+        const data = response.data
+        if(response.status !== 200) throw new Error(response.statusText)
         console.log(data)
         this.user.isFollowed = !this.user.isFollowed
       }catch(error){
         console('error' , error)
-        Toast({
+        Toast.fire({
           icon: 'error',
           title: '無法取消追蹤使用者，請稍後再試!'
         })
