@@ -12,7 +12,9 @@
       @afterSubmit="createNewTweet"
       :currentUserData="currentUserData"
       :newDescription="newDescription"
+      :checked="checked"
       @close-after-create="closeButton"
+      @checkedMsg="checkedMsg"
     />
   </div>
 </template>
@@ -37,6 +39,7 @@ export default {
   data() {
     return {
       createNewModal: false,
+      checked: false,
       description: "",
       currentUserData: {
         id: "",
@@ -63,6 +66,16 @@ export default {
 
     closeButton() {
       this.createNewModal = false;
+    },
+
+    checkedMsg(data) {
+      const { description } = data;
+      if (description.length > 140) {
+        this.checked = true;
+      } else if (description.length < 141) {
+        this.checked = false;
+      }
+      return;
     },
 
     async fetchCurrentUserData(id) {

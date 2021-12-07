@@ -24,10 +24,15 @@
               class="tweet-input-content scrollbar"
               id=""
               v-model="description"
+              :class="{ checked }"
+              @keyup="checkedMsg"
               cols="30"
               rows="10"
               placeholder="有什麼新鮮事？"
             ></textarea>
+            <span class="invalid-feedback" v-show="checked"
+              >字數不可超過 140 字</span
+            >
             <button
               type="submit"
               class="tweet-create-btn"
@@ -45,6 +50,7 @@
 <script>
 import { mapState } from "vuex";
 import { emptyImageFilter } from "./../utils/mixins";
+
 export default {
   mixins: [emptyImageFilter],
   props: {
@@ -56,26 +62,40 @@ export default {
       type: Object,
       default: () => {},
     },
+    checked: {
+      type: Boolean,
+      required: true,
+    },
   },
+
   computed: {
     ...mapState(["currentUser"]),
   },
+
   data() {
     return {
       description: this.newDescription,
     };
   },
+
   methods: {
     closeButton() {
       this.$emit("close-after-create");
     },
+
     handleSubmit() {
       const newDescription = this.description;
       console.log(newDescription);
       this.$emit("afterSubmit", newDescription);
     },
+
     finishCreate() {
       this.$emit("close-after-create");
+    },
+
+    checkedMsg() {
+      const data = { description: this.description };
+      this.$emit("checkedMsg", data);
     },
   },
 };
@@ -135,6 +155,12 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+.invalid-feedback {
+  font-size: 15px;
+  color: #fc5a5a;
+  margin: 10px 35px;
 }
 
 .tweet-input-content {
