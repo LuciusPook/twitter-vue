@@ -1,5 +1,6 @@
 <template>
   <div class="tweet__container">
+    <ReplyModal v-if="isReplying" />
     <div class="tweet__navbar">
       <a class="tweet__navbar--prev" @click="$router.back()"></a>
       <div class="tweet__navbar--info">推文</div>
@@ -7,31 +8,32 @@
     <div class="tweet__card">
       <div class="tweet__title">
         <div class="tweet__avatar--container">
-          <a href="">
-            <img
-              src="./../assets/Photo_avatar.png"
-              alt=""
-              class="tweet__avatar"
-            />
-          </a>
+          <router-link
+            :to="{name:'user' , params:{id:tweet.User.id}}"
+          >
+            <img :src="tweet.User.avatar | emptyImage" alt="" class="tweet__avatar" />
+          </router-link>
         </div>
         <div class="tweet__title--info">
-          <h3 class="tweet__title--name">Apple</h3>
-          <a href=""><p class="tweet__title--account">@apple</p></a>
+          <h3 class="tweet__title--name">{{ tweet.User.name }}</h3>
+          <router-link
+            :to="{name:'user' , params:{id:tweet.User.id}}"
+          >
+            <p class="tweet__title--account">@{{ tweet.User.account }}</p>
+          </router-link>
         </div>
       </div>
       <p class="tweet__context">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rem dolorum
-        iusto dolor assumenda exercitationem unde sed commodi magni ex! Quas
-        accusamus recusandae cum et voluptate magni quasi amet tempora, labore
-        nobis natus enim ut, nemo hic dignissimos dolorem debitis repellat
-        exercitationem facilis mollitia. Magnam, recusandae! Sit a hic id
-        doloremque?
+        {{ tweet.description }}
       </p>
-      <span class="tweet__time">上午10:05．2020年6月10號</span>
+      <span class="tweet__time">{{ tweet.createdAt | timeTransForm }}</span>
       <div class="tweet__counts">
-        <span class="tweet__commentCounts">34 <span>回覆</span></span>
-        <span class="tweet__likeCounts">808<span>喜歡次數</span></span>
+        <span class="tweet__commentCounts"
+          >{{ tweet.like_cont }}<span>回覆</span></span
+        >
+        <span class="tweet__likeCounts"
+          >{{ tweet.reply_count }}<span>喜歡次數</span></span
+        >
       </div>
       <div class="tweet__interactions">
         <img
@@ -40,38 +42,59 @@
           class="tweet__commentBtn"
         />
         <img
+          v-if="tweet.isliked"
+          src="./../assets/Vector_redLike-icon.svg"
+          alt=""
+          class="tweet__likeBtn"
+          @click="deleteLike(tweet.id)"
+        />
+        <img
+          v-else
           src="./../assets/Vector_like-icon.svg"
           alt=""
           class="tweet__likeBtn"
+          @click="addLike(tweet.id)"
         />
       </div>
     </div>
     <div class="tweet__replies--container scroll">
       <ul class="tweet__replies">
-        <li class="tweet__reply">
+        <li
+          v-for="tweetReply in tweetReplies"
+          :key="tweetReply.id"
+          class="tweet__reply"
+        >
           <div class="reply__avatar--container">
-            <img src="./../assets/Photo_avatar.png" alt="" class="reply__avatar" />
+            <img
+              src="./../assets/Photo_avatar.png"
+              alt=""
+              class="reply__avatar"
+            />
           </div>
           <div class="tweet__reply--content">
             <div class="tweet__reply--title">
-              <h3 class="reply__user--name">Mary Jane</h3>
+              <h3 class="reply__user--name">{{tweetReply.User.name}}</h3>
               <span class="reply__user--account">
-                <a href=""> 
-                  <span>@mjjane</span>
-                </a>
-                <span>．3小時</span>
+                <router-link
+                  :to="{name:'user' , params:{id:tweetReply.User.id}}"
+                >
+                  <span>{{tweetReply.User.account}}</span>
+                </router-link>
+                <span>．{{tweetReply.createdAt | fromNow}}</span>
               </span>
             </div>
             <p class="tweet__reply--tag">
               <span>回覆</span>
-              <a href="">
+              <router-link
+                :to="{name:'user' , params:{id:tweet.User.id}}"
+              >
                 <span class="tweet__account">
-                  @apple
-                </span> 
-              </a>
+                  {{ tweet.User.account }}
+                </span>
+              </router-link>
             </p>
             <p class="tweet__reply--text">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque ex enim facilis recusandae quae. Architecto suscipit fugiat nihil? Omnis, tempora.orem ipsum, dolor sit amet consectetur adipisicing elit. Cumque ex enim facilis recusandae quae. Architecto suscipit fugiat nihil? Omnis, tempora.orem ipsum, dolor sit amet consectetur adipisicing elit. Cumque ex enim facilis recusandae quae. Architecto suscipit fugiat nihil? Omnis, tempora.t nihil? Omnis, tempora.orem ipsum, dolor sit amet consectetur adipisicing elit. Cu
+              {{tweetReply.comment}}
             </p>
           </div>
         </li>
@@ -79,9 +102,124 @@
     </div>
   </div>
 </template>
-
+<script>
+import ReplyModal from "./../components/ReplyModal.vue";
+import tweetsAPI from "./../apis/tweets";
+import { Toast } from "./../utils/helpers";
+import { fromNowFilter } from './../utils/mixin'
+import { timeTransForm } from './../utils/mixin'
+import { emptyImageFilter } from './../utils/mixin'
+export default {
+  name: "Tweet",
+  components: {
+    ReplyModal,
+  },
+  mixins:[fromNowFilter , timeTransForm , emptyImageFilter],
+  data() {
+    return {
+      tweet: {},
+      tweetReplies: [],
+      isReplying: false,
+    };
+  },
+  created() {
+    const { id } = this.$route.params;
+    this.fetchTweet(id);
+    this.fetchTweetReplies(id);
+  },
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+    this.fetchTweet(id);
+    this.fetchTweetReplies(id);
+    next();
+  },
+  methods: {
+    async fetchTweet(tweetId) {
+      try {
+        const response = await tweetsAPI.getTweet({ tweetId });
+        if (response.status !== 200) throw new Error(response.statusText);
+        const data = response.data;
+        const {
+          id,
+          description,
+          UserId,
+          createdAt,
+          like_cont,
+          reply_count,
+          User,
+        } = data;
+        this.tweet = {
+          ...this.tweet,
+          id,
+          description,
+          UserId,
+          createdAt,
+          like_cont,
+          reply_count,
+          User,
+        };
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法得到推文資料，請稍後再試!",
+        });
+      }
+    },
+    async fetchTweetReplies(tweetId) {
+      try {
+        const response = await tweetsAPI.reply.getReplies({ tweetId });
+        if (response.status !== 200) throw new Error(response.statusText);
+        const data = response.data;
+        this.tweetReplies = [...data];
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法得到推文回覆，請稍後再試!",
+        });
+      }
+    },
+    async addLike(tweetId) {
+      try {
+        const response = await tweetsAPI.like.addLike({ tweetId });
+        if (response.status !== 200) throw new Error(response.statusText);
+        this.tweet.isLiked = true
+        Toast.fire({
+          icon: "success",
+          title: "成功對推文按讚",
+        });
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法對推文按讚，請稍後再試",
+        });
+      }
+    },
+    async deleteLike(tweetId) {
+      try {
+        const response = await tweetsAPI.like.deleteLike({ tweetId });
+        if (response.status !== 200) throw new Error(response.statusText);
+        this.tweet.isLiked = false
+        Toast.fire({
+          icon: "success",
+          title: "成功取消推文按讚",
+        });
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法取消推文按讚，請稍後再試",
+        });
+      }
+    },
+  },
+};
+</script>
 <style lang="scss" scoped>
 .tweet__container {
+  position: relative;
   flex: 1;
   .tweet__navbar {
     display: flex;
@@ -144,16 +282,18 @@
     }
     .tweet__time {
       font-size: 15px;
+      font-weight: bold;
+      color:$account;
       margin: 0.5rem 15px;
     }
     .tweet__counts {
       font-size: 19px;
       height: 68px;
       padding: 20px;
-      margin: 0 15px;
       border-top: 1px solid $tweet-border;
       border-bottom: 1px solid $tweet-border;
       span {
+        font-weight: bold;
         font-size: 19px;
         margin-right: 20px;
         span {
@@ -173,17 +313,17 @@
       }
     }
   }
-  .tweet__replies--container{
-    height: 1000px;
-    .tweet__replies{
-      .tweet__reply{
+  .tweet__replies--container {
+    height: 7000px;
+    .tweet__replies {
+      .tweet__reply {
         height: 105px;
         display: flex;
         border: 1px solid $tweet-border;
-        .reply__avatar--container{
+        .reply__avatar--container {
           position: relative;
           width: 5rem;
-          img{
+          img {
             position: absolute;
             top: 18px;
             left: 50%;
@@ -192,36 +332,36 @@
             width: 50px;
           }
         }
-        .tweet__reply--content{
-          flex:1;
-          .tweet__reply--title{
+        .tweet__reply--content {
+          flex: 1;
+          .tweet__reply--title {
             display: flex;
             align-items: center;
             font-size: 15px;
             margin-top: 15px;
             margin-bottom: 4px;
-            .reply__user--name{
+            .reply__user--name {
               font-weight: 700;
               margin-right: 5px;
             }
-            .reply__user--account{
-              span{
-                color:$account;
+            .reply__user--account {
+              span {
+                color: $account;
                 vertical-align: middle;
               }
             }
           }
-          .tweet__reply--tag{
+          .tweet__reply--tag {
             font-size: 15px;
-            span{
+            span {
               vertical-align: middle;
             }
-            .tweet__account{
-              color:$reply-account;
+            .tweet__account {
+              color: $reply-account;
             }
           }
-          .tweet__reply--text{
-            flex:1;
+          .tweet__reply--text {
+            flex: 1;
             @include overflow-line-clamp(2);
           }
         }

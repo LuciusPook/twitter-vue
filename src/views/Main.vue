@@ -9,15 +9,15 @@
     <div class="main__navbar">首頁</div>
     <div class="createTweet">
       <div class="createTweet__avatar--wrapper">
-        <router-link 
-          :to="{ name: 'user' , params:{id: currentUser.id}}"
-        >
-          <img :src="currentUser.avatar | emptyImage" alt="" class="createTweet__avatar" />
+        <router-link :to="{ name: 'user', params: { id: currentUser.id } }">
+          <img
+            :src="currentUser.avatar | emptyImage"
+            alt=""
+            class="createTweet__avatar"
+          />
         </router-link>
       </div>
-      <div 
-        :class="['form__group' , {edit: isEditing}]"
-      >
+      <div :class="['form__group', { edit: isEditing }]">
         <textarea
           class="newTweet form__control"
           :rows="textareaRows"
@@ -28,35 +28,39 @@
           @blur="handleTextareaBlurred"
           v-model="newTweetText"
         />
-        <button 
-          type="submit"
-          @click="createNewTweet(newTweetText)"
-        >推文</button>
+        <button type="submit" @click="createNewTweet(newTweetText)">
+          推文
+        </button>
       </div>
     </div>
     <div class="main__tweets--container scrollbar">
       <ul class="main__tweets">
-        <li 
-          class="main__tweet"
-          v-for="tweet in tweets"
-          :key="tweet.id"
-        >
+        <li class="main__tweet" v-for="tweet in tweets" :key="tweet.id">
           <div class="tweet__avatar--wrapper">
-            <router-link 
-              :to="{ name: 'user' , params:{ id: tweet.UserId }}"
-            >
-              <img :src="tweet.avatar | emptyImage" alt="" class="tweet__avatar" />
+            <router-link :to="{ name: 'user', params: { id: tweet.UserId } }">
+              <img
+                :src="tweet.avatar | emptyImage"
+                alt=""
+                class="tweet__avatar"
+              />
             </router-link>
           </div>
           <div class="tweet__content">
             <p class="tweet__title">
-              <span class="tweet__tweeter--name">{{tweet.name}}</span>
-              <a href="" class="tweet__tweeter--account">@{{tweet.User.account}}</a>
+              <span class="tweet__tweeter--name">{{ tweet.name }}</span>
+              <a href="" class="tweet__tweeter--account"
+                >@{{ tweet.User.account }}</a
+              >
               <span class="tweet__createdTime">．3小時</span>
             </p>
-            <p class="tweet__text">
-              {{tweet.description}}
-            </p>
+            <router-link
+              class="tweet__text--container"
+              :to="{name:'tweet' , params:{ id:tweet.id }}"
+            >
+              <p class="tweet__text">
+                {{ tweet.description }}
+              </p>
+            </router-link>
             <div class="tweet__content--interaction">
               <span class="tweet__interaction--replies">
                 <img
@@ -65,7 +69,9 @@
                   class="interaction__replies--icon"
                   @click="handleReplyModalToggle(tweet.id)"
                 />
-                <span class="interaction__replies--counts">{{tweet.reply_count}}</span>
+                <span class="interaction__replies--counts">{{
+                  tweet.reply_count
+                }}</span>
               </span>
               <span class="tweet__interaction--likes">
                 <img
@@ -73,179 +79,173 @@
                   src="./../assets/Vector_redLike-icon.svg"
                   alt=""
                   class="likes--icon"
-                  @click="handleRedLikeIconClicked(tweet.id)"
+                  @click="deleteLike(tweet.id)"
                 />
-                <img 
+                <img
                   v-else
-                  src="./../assets/Vector_like-icon.svg" 
+                  src="./../assets/Vector_like-icon.svg"
                   alt=""
                   class="likes--icon"
-                  @click="handleLikeIconClicked(tweet.id)"
-                >
-                <span class="likes--counts">{{tweet.like_count}}</span>
+                  @click="addLike(tweet.id)"
+                />
+                <span class="likes--counts">{{ tweet.like_count }}</span>
               </span>
             </div>
           </div>
         </li>
       </ul>
-    </div> 
+    </div>
   </div>
 </template>
 
   <script>
-  import ReplyModal from './../components/ReplyModal.vue'
-  import tweetsAPI from "./../apis/tweets"
-  import { Toast } from "./../utils/helpers"
-  import { mapState } from "vuex"
-  import { emptyImageFilter } from "./../utils/mixin"
+import ReplyModal from "./../components/ReplyModal.vue";
+import tweetsAPI from "./../apis/tweets";
+import { Toast } from "./../utils/helpers";
+import { mapState } from "vuex";
+import { emptyImageFilter } from "./../utils/mixin";
 
-  export default {
-    name: 'Main',
-    mixins:[emptyImageFilter],
-    components:{
-      ReplyModal,
-    },
-    data(){
-      return {
-        tweets:[],
-        newTweetText:'',
-        clickedTweetId:undefined,
-        isEditing:false,
-        isReplying:false,
-        textareaRows:3
+export default {
+  name: "Main",
+  mixins: [emptyImageFilter],
+  components: {
+    ReplyModal,
+  },
+  data() {
+    return {
+      tweets: [],
+      newTweetText: "",
+      clickedTweetId: undefined,
+      isEditing: false,
+      isReplying: false,
+      textareaRows: 3,
+    };
+  },
+  created() {
+    this.fetchTweets();
+  },
+  computed: {
+    ...mapState(["currentUser"]),
+  },
+  methods: {
+    async createNewTweet(newTweetText) {
+      try {
+        const response = await tweetsAPI.addTweet({
+          description: newTweetText,
+        });
+        this.newTweetText = "";
+        if (response.status !== 200) throw new Error(response.status);
+        this.handleTextareaBlurred();
+        Toast.fire({
+          icon: "success",
+          title: "成功新增推文",
+        });
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法新增推文，請稍後再試!",
+        });
       }
     },
-    created(){
-      this.fetchTweets()
+    handleReplyModalToggle(tweetId) {
+      this.isReplying = !this.isReplying;
+      this.clickedTweetId = tweetId;
     },
-    computed:{
-      ...mapState(['currentUser'])
-    },
-    methods:{
-      async createNewTweet(newTweetText){
-        try{
-          const response = await tweetsAPI.addTweet({description:newTweetText})
-          this.newTweetText=''
-          if(response.status !== 200) throw new Error(response.status) 
-          this.handleTextareaBlurred()
-          Toast.fire({
-            icon: 'success',
-            title: '成功新增推文'
-          })
-        }catch(error){
-          console.log('error' , error)
-          Toast.fire({
-            icon: 'error',
-            title: '無法新增推文，請稍後再試!'
-          })
-        }
-      },
-      handleReplyModalToggle(tweetId){
-        this.isReplying = !this.isReplying
-        this.clickedTweetId = tweetId
-      },
-      afterSubmitReply(payload){
-        console.log(payload)
-        if(payload.status === 200){
-          this.tweets.map( tweet => {
-            if(tweet.id === payload.tweetId){
-              tweet.reply_count++
-            }
-          })
-          Toast.fire({
-            icon:'success',
-            title:'成功回覆推文'
-        })
-        }else{
-          Toast.fire({
-            icon:'error',
-            title:'無法回覆推文，請稍後再試!'
-          })
-        }
-      },
-      handleRedLikeIconClicked(tweetId){
-        this.deleteLike(tweetId)
-        this.tweets.map(tweet => {
-          if(tweet.id === tweetId){
-            tweet.isLiked = !tweet.isLiked
-            tweet.like_count-- 
+    afterSubmitReply(payload) {
+      console.log(payload);
+      if (payload.status === 200) {
+        this.tweets.map((tweet) => {
+          if (tweet.id === payload.tweetId) {
+            tweet.reply_count++;
           }
-        })
-      },
-      handleLikeIconClicked(tweetId){
-        this.addLike(tweetId)
-        this.tweets.map(tweet => {
-          if(tweet.id === tweetId){
-            tweet.isLiked = !tweet.isLiked
-            tweet.like_count++
-          }
-        })
-      },
-      async addLike(tweetId){
-        try{
-          const response = await tweetsAPI.like.addLike({tweetId})
-          console.log(response)
-          if(response.status !== 200) throw new Error(response.statusText)
-          Toast.fire({
-            icon: 'success',
-            title: '成功對推文按讚'
-          })
-        }catch(error){
-          console.log('error' , error)
-          Toast.fire({
-            icon: 'error',
-            title: '無法對推文按讚，請稍後再試'
-          })
-        }
-      },
-      async deleteLike(tweetId){
-        try{
-          const response= await tweetsAPI.like.deleteLike({tweetId})
-          console.log(response)
-          if(response.status !== 200) throw new Error(response.statusText)
-          Toast.fire({
-            icon: 'success',
-            title: '成功取消推文按讚'
-          })
-        }catch(error){
-          console.log('error' , error)
-          Toast.fire({
-            icon: 'error',
-            title: '無法取消推文按讚，請稍後再試'
-          })
-        }
-      },
-      handleTextareaFocused(){
-        this.textareaRows = 15
-        this.isEditing = true
-      },
-      handleTextareaBlurred(){
-        this.textareaRows = 3
-        this.isEditing = false
-      },
-      async fetchTweets(){
-        try{
-          const { data } = await tweetsAPI.getTweets()
-          if(!data) throw new Error()
-          this.tweets = [...data]
-        }catch(error){
-          console.log('error' , error)
-          Toast({
-            icon: 'error',
-            title: '無法取得推文，請稍後再試!'
-          })
-        }
+        });
+        Toast.fire({
+          icon: "success",
+          title: "成功回覆推文",
+        });
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: "無法回覆推文，請稍後再試!",
+        });
       }
-    }
-  }
-  </script>
+    },
+    async addLike(tweetId) {
+      try {
+        const response = await tweetsAPI.like.addLike({ tweetId });
+        if (response.status !== 200) throw new Error(response.statusText);
+        this.tweets.map((tweet) => {
+          if (tweet.id === tweetId) {
+            tweet.isLiked = !tweet.isLiked;
+            tweet.like_count++;
+          }
+        });
+        Toast.fire({
+          icon: "success",
+          title: "成功對推文按讚",
+        });
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法對推文按讚，請稍後再試",
+        });
+      }
+    },
+    async deleteLike(tweetId) {
+      try {
+        const response = await tweetsAPI.like.deleteLike({ tweetId });
+        if (response.status !== 200) throw new Error(response.statusText);
+        this.tweets.map((tweet) => {
+          if (tweet.id === tweetId) {
+            tweet.isLiked = !tweet.isLiked;
+            tweet.like_count--;
+          }
+        });
+        Toast.fire({
+          icon: "success",
+          title: "成功取消推文按讚",
+        });
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法取消推文按讚，請稍後再試",
+        });
+      }
+    },
+    handleTextareaFocused() {
+      this.textareaRows = 15;
+      this.isEditing = true;
+    },
+    handleTextareaBlurred() {
+      this.textareaRows = 3;
+      this.isEditing = false;
+    },
+    async fetchTweets() {
+      try {
+        const { data } = await tweetsAPI.getTweets();
+        if (!data) throw new Error();
+        this.tweets = [...data];
+      } catch (error) {
+        console.log("error", error);
+        Toast({
+          icon: "error",
+          title: "無法取得推文，請稍後再試!",
+        });
+      }
+    },
+  },
+};
+</script>
 
 <style lang="scss" scoped>
 .main {
   position: relative;
   background-color: $tweet-border;
-  flex:1;
-  .main__navbar{
+  flex: 1;
+  .main__navbar {
     height: 55px;
     font-size: 18px;
     font-weight: bold;
@@ -253,15 +253,15 @@
     padding-left: 1rem;
     background-color: $white;
   }
-  .createTweet{
+  .createTweet {
     height: 120px;
     display: flex;
     background-color: $white;
     margin-top: 2px;
-    .createTweet__avatar--wrapper{
+    .createTweet__avatar--wrapper {
       position: relative;
       width: 75px;
-      img{
+      img {
         position: absolute;
         top: 9px;
         left: 50%;
@@ -270,26 +270,26 @@
         width: 50px;
       }
     }
-    .form__group{
+    .form__group {
       position: relative;
       z-index: 2;
-      flex:1;
-      textarea{
-        resize:none;
-        border:none;
+      flex: 1;
+      textarea {
+        resize: none;
+        border: none;
         width: calc(100% - 100px);
         font-size: 16px;
         border-radius: 0 25px 25px 25px;
         padding: 1rem 1rem 2rem 0.5rem;
-        &::placeholder{
+        &::placeholder {
           font-weight: bold;
           font-size: 18px;
         }
-        &:focus{
-          @extend %standard-boxshadow; 
+        &:focus {
+          @extend %standard-boxshadow;
         }
       }
-      button{
+      button {
         position: absolute;
         bottom: 20px;
         right: 20px;
@@ -298,81 +298,84 @@
         font-size: 18px;
         font-weight: bold;
       }
-      &.edit::before{
-      content:'';
-      position:absolute;
-      z-index: -1;
-      top: -1000%;
-      left: -1000%;
-      right: -1000%;
-      bottom: -1022px;
-      background-color: gray;
-      opacity: 0.8;
+      &.edit::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        top: -1000%;
+        left: -1000%;
+        right: -1000%;
+        bottom: -1022px;
+        background-color: gray;
+        opacity: 0.8;
       }
     }
   }
-.main__tweets--container{
-  height: 1022px;
-  .main__tweets {
-    background-color: $white;
-    margin-top: 10px;
-    .main__tweet {
-      display: flex;
-      height: 145px;
-      border: 1px solid $tweet-border;
-      .tweet__avatar--wrapper{
-        position: relative;
-        width: 75px;
-        img{
-          position: absolute;
-          top: 9px;
-          left: 50%;
-          transform: translateX(-50%);
-          height: 50px;
-          width: 50px;
-        }
-      }
-      .tweet__content {
-        width: 100%;
+  .main__tweets--container {
+    height: 1022px;
+    .main__tweets {
+      background-color: $white;
+      margin-top: 10px;
+      .main__tweet {
         display: flex;
-        flex-direction: column;
-        .tweet__title{
-          margin-top: 1rem;
-          span{
-            font-size: 15px;
-            font-weight: 700;
-            ~span{
-              font-weight: 500;
+        height: 145px;
+        border: 1px solid $tweet-border;
+        .tweet__avatar--wrapper {
+          position: relative;
+          width: 75px;
+          img {
+            position: absolute;
+            top: 9px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 50px;
+            width: 50px;
+          }
+        }
+        .tweet__content {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          .tweet__title {
+            margin-top: 1rem;
+            span {
+              font-size: 15px;
+              font-weight: 700;
+              ~ span {
+                font-weight: 500;
+                color: $account;
+              }
+            }
+            a {
               color: $account;
             }
           }
-          a{
-            color: $account;
+          .tweet__text--container{
+            flex:1;
+            margin-top: 10px;
+            .tweet__text {
+              height: 100%;
+              @include overflow-line-clamp(3);
+            }
           }
-        }
-        .tweet__text{
-          margin-top: 10px;
-          flex:1;
-          @include overflow-line-clamp(3);
-        }
-        .tweet__content--interaction {
-          display: flex;
-          align-items: center;
-          margin: 2px 0;
-          height: 40px;
-          > span {
+          .tweet__content--interaction {
             display: flex;
-            margin-right: 3rem;
-            img {
-              height: 1rem;
-              width: 1rem;
-              margin-right: 0.5rem;
+            align-items: center;
+            margin: 2px 0;
+            height: 40px;
+            > span {
+              display: flex;
+              margin-right: 3rem;
+              img {
+                height: 1rem;
+                width: 1rem;
+                margin-right: 0.5rem;
+              }
             }
           }
         }
       }
     }
   }
-}
 }
 </style>
