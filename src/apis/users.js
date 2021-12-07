@@ -1,21 +1,24 @@
 import { apiHelper } from './../utils/helpers'
-const getToken = () => localStorage.getItem('token')
+
 
 
 export default {
   getCurrentUser() {
-    return apiHelper.get(`/get_current_user`)
+    return apiHelper.get('/users/self')
   },
-  getUsers({ userId }) {
-    return apiHelper.get(`/users/${userId}`, { headers: { Authorization: `Bearer ${getToken()}` } })
+  getUsers() {
+    return apiHelper.get('/users')
   },
+  getUser({ userId }) {
+    return apiHelper.get(`/users/${userId}`)
+  },//取得個人資料
   getTopUsers() {
     return apiHelper.get('/users/top')
   },
-  addFollowing({ userId }) {
-    return apiHelper.post(`/following/${userId}`, null)
+  postFollow({ userId }) {
+    return apiHelper.post(`/followships/${userId}`, null)
   },
-  deleteFollowing({ userId }) {
-    return apiHelper.delete(`/following/${userId}`)
+  deleteFollow({ userId }) {
+    return apiHelper.delete(`/followships/${userId}`)
   }
 }
