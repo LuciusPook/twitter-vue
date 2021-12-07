@@ -9,6 +9,10 @@
       :Password="password"
       :CheckPassword="checkPassword"
       @afterSubmit="submitRegister"
+      @accountMsg="accountMsg"
+      @nameMsg="nameMsg"
+      :account-error="accountError"
+      :name-error="nameError"
       :is-processing="isProcessing"
     />
 
@@ -34,6 +38,8 @@ export default {
       email: "",
       password: "",
       checkPassword: "",
+      accountError: false,
+      nameError: false,
       isProcessing: false,
     };
   },
@@ -41,52 +47,53 @@ export default {
     async submitRegister(data) {
       const { account, name, email, password, checkPassword } = data;
 
+      if (!account || !name || !email || !password || !checkPassword) {
+        Toast.fire({
+          icon: "warning",
+          title: "請確認所有欄位",
+        });
+        this.isProcessing = false;
+        return;
+      }
+
+      if (password.length < 8 || password.length > 12) {
+        Toast.fire({
+          icon: "warning",
+          title: "密碼請設定在8-12字數內",
+        });
+
+        this.isProcessing = false;
+        return;
+      }
+
+      if (account.length > 20) {
+        Toast.fire({
+          icon: "warning",
+          title: "帳號限定字數20字數內",
+        });
+        this.isProcessing = false;
+        return;
+      }
+
+      if (name.length > 50) {
+        Toast.fire({
+          icon: "warning",
+          title: "名稱限定字數50個字內",
+        });
+        this.isProcessing = false;
+        return;
+      }
+
+      if (password !== checkPassword) {
+        Toast.fire({
+          icon: "warning",
+          title: "密碼與確認密碼不符",
+        });
+        this.isProcessing = false;
+        return;
+      }
+
       try {
-        if (password.length < 8 || password.length > 12) {
-          Toast.fire({
-            type: "warning",
-            title: "密碼請設定在8-12字數之間",
-          });
-          this.isProcessing = false;
-          return;
-        }
-
-        if (account.length > 15) {
-          Toast.fire({
-            icon: "warning",
-            title: "帳號限定字數15字數內",
-          });
-          this.isProcessing = false;
-          return;
-        }
-
-        if (name.length > 50) {
-          Toast.fire({
-            icon: "warning",
-            title: "名稱限定字數50個字內",
-          });
-          this.isProcessing = false;
-          return;
-        }
-
-        if (!account || !name || !email || !password || !checkPassword) {
-          Toast.fire({
-            icon: "warning",
-            title: "請確認所有欄位",
-          });
-          this.isProcessing = false;
-          return;
-        }
-
-        if (password !== checkPassword) {
-          Toast.fire({
-            icon: "warning",
-            title: "密碼與確認密碼不符",
-          });
-          this.isProcessing = false;
-          return;
-        }
-
         this.isProcessing = true;
 
         const { data } = await authorizationAPI.signUp({
@@ -116,12 +123,33 @@ export default {
         });
       }
     },
+
+    accountMsg(data) {
+      const { account } = data;
+      if (account.length > 20) {
+        this.accountError = true;
+      } else if (account.length < 21) {
+        this.accountError = false;
+      }
+      return;
+    },
+
+    nameMsg(data) {
+      const { name } = data;
+      if (name.length > 50) {
+        this.nameError = true;
+      } else if (name.length < 51) {
+        this.nameError = false;
+      }
+      return;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-div.container {
+.container {
+  height: 100%;
   text-align: center;
   padding-top: 4rem;
   flex: 1;

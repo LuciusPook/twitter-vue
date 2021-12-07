@@ -3,10 +3,11 @@
     <img src="https://i.ibb.co/WD1YSyW/Logo.jpg" alt="Logo" />
     <h2 class="form-title">登入 Alphitter</h2>
     <AccountForm
-      :Email="email"
+      :Account="account"
       :Password="password"
       @after-submit="handleAfterSubmit"
       :is-processing="isProcessing"
+      :Checked="checked"
     />
     <div class="form-link">
       <router-link to="/register">註冊 Alphitter</router-link>
@@ -25,30 +26,35 @@ export default {
   components: {
     AccountForm,
   },
+
   data() {
     return {
-      email: "",
+      account: "",
       password: "",
       isProcessing: false,
+      checked: false,
     };
   },
+
   methods: {
     async handleAfterSubmit(data) {
-      const { email, password } = data;
+      const { account, password } = data;
+
+      if (!account || !password) {
+        Toast.fire({
+          icon: "warning",
+          title: "請填入帳號和密碼",
+        });
+        this.checked = true;
+        this.password = "";
+        return;
+      }
 
       try {
-        if (!email || !password) {
-          Toast.fire({
-            icon: "warning",
-            title: "請填入帳號和密碼",
-          });
-          return;
-        }
-
         this.isProcessing = true;
 
         const { data } = await authorizationAPI.signIn({
-          email,
+          account,
           password,
         });
 
@@ -60,10 +66,15 @@ export default {
 
         this.$store.commit("setCurrentUser", data.user);
 
+        Toast.fire({
+          icon: "success",
+          title: `${data.user.name}, 歡迎回來`,
+        });
         this.$router.push("/main");
       } catch (error) {
-        this.password = "";
+        this.checked = true;
         this.isProcessing = false;
+        this.password = "";
 
         Toast.fire({
           icon: "warning",
@@ -76,7 +87,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-div.container {
+.container {
   text-align: center;
   padding-top: 4rem;
   flex: 1;

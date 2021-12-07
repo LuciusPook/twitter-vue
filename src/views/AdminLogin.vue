@@ -3,10 +3,11 @@
     <img src="https://i.ibb.co/WD1YSyW/Logo.jpg" alt="Logo" />
     <h2 class="form-title">後台登入</h2>
     <AccountForm
-      :Email="email"
+      :Account="account"
       :Password="password"
       @after-submit="handleAfterSubmit"
       :is-processing="isProcessing"
+      :Checked="checked"
     />
     <div class="form-link">
       <router-link to="/login">前台登入</router-link>
@@ -25,28 +26,31 @@ export default {
   },
   data() {
     return {
-      email: "",
+      account: "",
       password: "",
       isProcessing: false,
+      checked: false,
     };
   },
   methods: {
     async handleAfterSubmit(data) {
-      const { email, password } = data;
+      const { account, password } = data;
+
+      if (!account || !password) {
+        Toast.fire({
+          icon: "warning",
+          title: "請填入帳號和密碼",
+        });
+        this.checked = true;
+        this.password = "";
+        return;
+      }
 
       try {
-        if (!email || !password) {
-          Toast.fire({
-            icon: "warning",
-            title: "請填入帳號和密碼",
-          });
-          return;
-        }
-
         this.isProcessing = true;
 
         const { data } = await authorizationAPI.signIn({
-          email,
+          account,
           password,
         });
 
@@ -58,9 +62,15 @@ export default {
 
         this.$store.commit("setCurrentUser", data.user);
 
+        Toast.fire({
+          icon: "success",
+          title: `${data.user.name}, 歡迎回來`,
+        });
+
         this.$router.push("/admin/tweets");
       } catch (error) {
         this.password = "";
+        this.checked = true;
         this.isProcessing = false;
 
         Toast.fire({
@@ -75,36 +85,32 @@ export default {
 
 
 <style lang="scss" scoped>
-div.container {
+.container {
   text-align: center;
   padding-top: 4rem;
   flex: 1;
-}
+  img {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+  }
+  h2 {
+    margin: 25px 0 8px;
+  }
+  .form-link {
+    margin-left: 29rem;
+    a {
+      font-weight: bold;
+      font-size: 18px;
+      margin: 5px;
+      color: #0099ff;
+      text-decoration: underline;
+      transition: all 0.3s ease-in-out;
+    }
 
-img {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto;
-}
-
-h2 {
-  margin: 25px 0 8px;
-}
-
-a {
-  font-weight: bold;
-  font-size: 18px;
-  margin: 5px;
-  color: #0099ff;
-  text-decoration: underline;
-  transition: all 0.3s ease-in-out;
-}
-
-a:hover {
-  color: #0051ff;
-}
-
-.form-link {
-  margin-left: 29rem;
+    a:hover {
+      color: #0051ff;
+    }
+  }
 }
 </style>
