@@ -22,5 +22,8 @@ export default {
   },
   getTweets() {
     return apiHelper.get('/tweets')
+  },
+  addTweet({ description }){
+    return apiHelper.post('/tweets', { description })
   }
 }

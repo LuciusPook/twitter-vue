@@ -26,8 +26,12 @@
           placeholder="有什麼新鮮事?"
           @focus="handleTextareaFocused"
           @blur="handleTextareaBlurred"
+          v-model="newTweetText"
         />
-        <button type="submit">推文</button>
+        <button 
+          type="submit"
+          @click="createNewTweet(newTweetText)"
+        >推文</button>
       </div>
     </div>
     <div class="main__tweets--container scrollbar">
@@ -104,6 +108,7 @@
     data(){
       return {
         tweets:[],
+        newTweetText:'',
         clickedTweetId:undefined,
         isEditing:false,
         isReplying:false,
@@ -117,6 +122,24 @@
       ...mapState(['currentUser'])
     },
     methods:{
+      async createNewTweet(newTweetText){
+        try{
+          const response = await tweetsAPI.addTweet({description:newTweetText})
+          this.newTweetText=''
+          if(response.status !== 200) throw new Error(response.status) 
+          this.handleTextareaBlurred()
+          Toast.fire({
+            icon: 'success',
+            title: '成功新增推文'
+          })
+        }catch(error){
+          console.log('error' , error)
+          Toast.fire({
+            icon: 'error',
+            title: '無法新增推文，請稍後再試!'
+          })
+        }
+      },
       handleReplyModalToggle(tweetId){
         this.isReplying = !this.isReplying
         this.clickedTweetId = tweetId
