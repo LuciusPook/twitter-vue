@@ -3,6 +3,7 @@
     <ReplyModal
       v-if="isReplying"
       @after-cancel-reply="handleReplyModalToggle"
+      @after-submit-reply="afterSubmitReply"
       :tweetId="clickedTweetId"
     />
     <div class="main__navbar">首頁</div>
@@ -119,6 +120,20 @@
       handleReplyModalToggle(tweetId){
         this.isReplying = !this.isReplying
         this.clickedTweetId = tweetId
+      },
+      afterSubmitReply(payload){
+        console.log(payload)
+        if(payload === 200){
+          Toast.fire({
+            icon:'success',
+            title:'成功回覆推文'
+        })
+        }else{
+          Toast.fire({
+            icon:'error',
+            title:'無法回覆推文，請稍後再試!'
+          })
+        }
       },
       handleRedLikeIconClicked(tweetId){
         this.deleteLike(tweetId)

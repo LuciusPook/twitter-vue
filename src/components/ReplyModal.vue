@@ -47,7 +47,7 @@
 
 <script>
 import tweetAPI from './../apis/tweets'
-import { Toast } from './../utils/helpers'
+// import { Toast } from './../utils/helpers'
 export default {
   name: 'ReplyModal',
   props:{
@@ -69,17 +69,13 @@ export default {
       try{
         const response = await tweetAPI.reply.addReply({tweetId , comment:this.replyText})
         console.log(response)
+        this.$emit('after-submit-reply' , response.status)
+        this.handleCancelReplyModal()
         if(response.status !== 200) throw new Error(response.statusText)
-        Toast.fire({
-          icon:'success',
-          title:'成功回覆推文'
-        })
+        
       }catch(error){
         console.log('error' , error)
-        Toast.fire({
-          icon:'error',
-          title:'無法回覆推文，請稍後再試!'
-        })
+        
       }
     }
   }
