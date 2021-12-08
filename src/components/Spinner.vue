@@ -12,7 +12,7 @@
   width: 100%;
   height: 100%;
   background: #fff;
-  position: fixed;
+  position: relative;
   z-index: 99;
 }
 

@@ -1,7 +1,6 @@
 <template>
   <div id="twitter">
     <Navbar @showCreateModal="showCreateModal" />
-    <!-- <Navbar :current-page="currentPage" /> -->
 
     <router-view />
 
@@ -40,7 +39,7 @@ export default {
     return {
       createNewModal: false,
       checked: false,
-      description: "",
+      newDescription: "",
       currentUserData: {
         id: "",
         name: "",
@@ -55,7 +54,6 @@ export default {
   },
 
   created() {
-    this.fetchUserTweets();
     this.fetchCurrentUserData(this.currentUser.id);
   },
 
@@ -79,7 +77,7 @@ export default {
     },
 
     async fetchCurrentUserData(id) {
-      const { data } = await usersAPI.getUser({ userId: id });
+      const { data } = await usersAPI.getUsers({ userId: id });
       const { account, name, avatar } = data;
       this.currentUserData.account = account;
       this.currentUserData.name = name;
@@ -104,10 +102,10 @@ export default {
         }
 
         const { data } = await tweetsAPI.postTweet({
-          description: newDescription,
+          description: this.newDescription,
         });
 
-        if (data.status === "error") {
+        if (data.status !== "success") {
           throw new Error(data.message);
         }
 
@@ -132,6 +130,7 @@ export default {
         this.closeButton();
         this.description = "";
       } catch (error) {
+        console.log(error);
         Toast.fire({
           icon: "error",
           title: "無法新增推文，請稍後再試看",
@@ -147,5 +146,4 @@ export default {
   max-height: 1200px;
   display: flex;
 }
-
 </style>

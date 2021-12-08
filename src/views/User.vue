@@ -1,5 +1,6 @@
 <template>
   <div class="user">
+    <Spinner v-if="isLoading" />
     <ReplyModal
       v-if="isReplying"
       :tweetId="clickedTweetId"
@@ -12,26 +13,25 @@
       @after-cancel-edit="handleEditInfoToggle"
       @after-edit-submit="afterSubmitEdit"
     />
-    <div class="user__navbar" >
-      <a 
-        v-if="isDisplayFollow === false"      
-        class="user__navbar--prev" 
+    <div class="user__navbar">
+      <a
+        v-if="isDisplayFollow === false"
+        class="user__navbar--prev"
         @click="$router.back()"
       ></a>
-      <a 
+      <a
         v-else
-        class="user__navbar--prev" 
+        class="user__navbar--prev"
         @click="handleUserFollowshipClicked"
       ></a>
       <div class="user__navbar--info">
-        <h2 class="user__navbar--userName">{{user.name}}</h2>
-        <p class="user__navbar--totalTweetsCount">{{userTweets.length}}推文</p>
+        <h2 class="user__navbar--userName">{{ user.name }}</h2>
+        <p class="user__navbar--totalTweetsCount">
+          {{ userTweets.length }}推文
+        </p>
       </div>
     </div>
-    <UserFollow
-      v-if="isDisplayFollow === true"
-      :userId="user.id"
-    />
+    <UserFollow v-if="isDisplayFollow === true" :userId="user.id" />
     <template v-else>
       <div class="user__page--container">
         <div class="userCard">
@@ -145,32 +145,37 @@
 </template>
 <script>
 import UserTweets from "./../components/UserTweets.vue";
-import UserEditModal from "./../components/UserEditModal.vue"
+import UserEditModal from "./../components/UserEditModal.vue";
+import UserRepliedTweets from "./../components/UserRepliedTweets.vue";
+import UserLikedTweets from "./../components/UserLikedTweets.vue";
+import UserFollow from "./../components/UserFollow.vue";
+import { emptyImageFilter } from "../utils/mixins";
+import userAPI from "./../apis/users";
+import { Toast } from "./../utils/helpers";
+import { mapState } from "vuex";
+import Spinner from "./../components/Spinner";
 import ReplyModal from './../components/ReplyModal.vue'
-import UserRepliedTweets from "./../components/UserRepliedTweets.vue"
-import UserLikedTweets from "./../components/UserLikedTweets.vue"
-import UserFollow from "./../components/UserFollow.vue"
-import { emptyImageFilter } from "../utils/mixins"
-import userAPI from "./../apis/users"
-import { Toast } from "./../utils/helpers"
-import {mapState} from 'vuex'
+
+
 export default {
   name: "User",
-  components: { 
+  components: {
     UserTweets,
     UserEditModal,
     UserRepliedTweets,
     UserLikedTweets,
     UserFollow,
+    Spinner,
     ReplyModal
   },
-  mixins:[emptyImageFilter],
+
+  mixins: [emptyImageFilter],
   data() {
     return {
       user: {},
-      userTweets:[],
-      userRepliedTweets:[],
-      userLikedTweets:[],
+      userTweets: [],
+      userRepliedTweets: [],
+      userLikedTweets: [],
       isNotificationOn: false,
       isEditing:false,
       isDisplayFollow:false,
@@ -184,10 +189,10 @@ export default {
     this.fetchUser(id)
     this.fetchUserTweets(id)
   },
-  beforeRouteUpdate (to, from, next) {
-    const {id} = to.params
-    this.fetchUser(id)
-    next()
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+    this.fetchUser(id);
+    next();
   },
   computed:{
     ...mapState(['currentUser' , 'isReplying'])
@@ -200,7 +205,7 @@ export default {
         console.log(data)
         if(response.status !== 200) throw new Error(response.statusText)
         const {
-          id, 
+          id,
           account,
           avatar,
           cover,
@@ -213,12 +218,12 @@ export default {
           isFollowed } = data
         this.user = {
           ...this.user,
-          id, 
+          id,
           account,
           avatar,
           cover,
           email,
-          introduction: introduction || '使用者未填寫自我介紹',
+          introduction: introduction || "使用者未填寫自我介紹",
           name,
           role,
           following_count,
@@ -228,72 +233,79 @@ export default {
       }catch(error){
         console.log('error' , error)
         Toast.fire({
-          icon: 'error',
-          title: '無法取得使用者資料，請稍後再試'
-        })
+          icon: "error",
+          title: "無法取得使用者資料，請稍後再試",
+        });
       }
-    },  
-    async fetchUserTweets(userId){
-      try{
-        const response = await userAPI.tweets.getUserTweets({ userId })
-        const data = response.data
-        this.userTweets = [...data]
-        if(response.status !== 200) throw new Error(response.statusText)
-      }catch(error){
-        console('error' , error)
+    },
+
+    async fetchUserTweets(userId) {
+      try {
+        this.isLoading = true;
+
+        const response = await userAPI.tweets.getUserTweets({ userId });
+        const data = response.data;
+        this.userTweets = [...data];
+        if (response.status !== 200) throw new Error(response.statusText);
+
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+
+        console("error", error);
         Toast.fire({
-          icon: 'error',
-          title: '無法取得使用者推文，請稍後再試!'
-        })
+          icon: "error",
+          title: "無法取得使用者推文，請稍後再試!",
+        });
       }
     },
-    async fetchUserRepliedTweets(userId){
-      try{
-        const response = await userAPI.tweets.getUserRepliedTweets({userId})
-        const data = response.data
-        if(response.status !== 200) throw new Error(response.statusText)
-        this.userRepliedTweets = [...data]
-      }catch(error){
-        console('error' , error)
+    async fetchUserRepliedTweets(userId) {
+      try {
+        const response = await userAPI.tweets.getUserRepliedTweets({ userId });
+        const data = response.data;
+        if (response.status !== 200) throw new Error(response.statusText);
+        this.userRepliedTweets = [...data];
+      } catch (error) {
+        console("error", error);
         Toast.fire({
-          icon: 'error',
-          title: '無法取得使用者回覆推文，請稍後再試!'
-        })
+          icon: "error",
+          title: "無法取得使用者回覆推文，請稍後再試!",
+        });
       }
     },
-    async fetchUserLikedTweets(userId){
-      try{
-        const response = await userAPI.tweets.getUserLikedTweets({ userId })
-        const data = response.data
-        if(response.status !== 200) throw new Error(response.statusText)
-        this.userLikedTweets = [...data]
-      }catch(error){
-        console('error' , error)
+    async fetchUserLikedTweets(userId) {
+      try {
+        const response = await userAPI.tweets.getUserLikedTweets({ userId });
+        const data = response.data;
+        if (response.status !== 200) throw new Error(response.statusText);
+        this.userLikedTweets = [...data];
+      } catch (error) {
+        console("error", error);
         Toast.fire({
-          icon: 'error',
-          title: '無法取得使用者按讚推文，請稍後再試!'
-        })
+          icon: "error",
+          title: "無法取得使用者按讚推文，請稍後再試!",
+        });
       }
     },
-    handleEditInfoToggle(){
-      this.isEditing = !this.isEditing
+    handleEditInfoToggle() {
+      this.isEditing = !this.isEditing;
     },
-    switchDisplayMode(mode , userId){
-      this.displayMode = mode
-      switch(mode){
-        case 'tweets':
-          this.fetchUserTweets(userId)
-          break
-        case 'repliedTweets':
-          this.fetchUserRepliedTweets(userId)
-          break
-        case 'likedTweets':
-          this.fetchUserLikedTweets(userId)
-          break
+    switchDisplayMode(mode, userId) {
+      this.displayMode = mode;
+      switch (mode) {
+        case "tweets":
+          this.fetchUserTweets(userId);
+          break;
+        case "repliedTweets":
+          this.fetchUserRepliedTweets(userId);
+          break;
+        case "likedTweets":
+          this.fetchUserLikedTweets(userId);
+          break;
       }
     },
-    handleUserFollowshipClicked(){
-      this.isDisplayFollow = !this.isDisplayFollow
+    handleUserFollowshipClicked() {
+      this.isDisplayFollow = !this.isDisplayFollow;
     },
     async handleFollowBtnClicked(userId){
       try{
@@ -309,9 +321,9 @@ export default {
       }catch(error){
         console('error' , error)
         Toast.fire({
-          icon: 'error',
-          title: '無法追蹤使用者，請稍後再試!'
-        })
+          icon: "error",
+          title: "無法追蹤使用者，請稍後再試!",
+        });
       }
     },
     async handleUnfollowBtnClicked(userId){
@@ -328,9 +340,9 @@ export default {
       }catch(error){
         console('error' , error)
         Toast.fire({
-          icon: 'error',
-          title: '無法取消追蹤使用者，請稍後再試!'
-        })
+          icon: "error",
+          title: "無法取消追蹤使用者，請稍後再試!",
+        });
       }
     },
     handleReplyModalToggle(tweetId){
@@ -384,6 +396,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .user {
+  // height: 100%;
+  overflow: overlay;
   position: relative;
   flex: 1;
   .user__navbar {

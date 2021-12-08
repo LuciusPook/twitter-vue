@@ -1,5 +1,7 @@
 <template>
   <div class="main">
+    <Spinner v-if="isLoading" />
+
     <ReplyModal
       v-if="isReplying"
       @after-submit-reply="afterSubmitReply"
@@ -58,7 +60,7 @@
             </p>
             <router-link
               class="tweet__text--container"
-              :to="{name:'tweet' , params:{ id:tweet.id }}"
+              :to="{ name: 'tweet', params: { id: tweet.id } }"
             >
               <p class="tweet__text">
                 {{ tweet.description }}
@@ -108,13 +110,15 @@ import { Toast } from "./../utils/helpers";
 import { mapState } from "vuex";
 import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from "../utils/mixins";
+import Spinner from "./../components/Spinner";
 
 
 export default {
   name: "Main",
-  mixins: [emptyImageFilter , fromNowFilter],
+  mixins: [emptyImageFilter, fromNowFilter],
   components: {
     ReplyModal,
+    Spinner,
   },
   data() {
     return {
@@ -123,6 +127,7 @@ export default {
       clickedTweetId: undefined,
       isEditing: false,
       textareaRows: 3,
+      isLoading: true,
     };
   },
   created() {
@@ -229,10 +234,16 @@ export default {
     },
     async fetchTweets() {
       try {
+        this.isLoading = true;
+
         const { data } = await tweetsAPI.getTweets();
         if (!data) throw new Error();
         this.tweets = [...data];
+
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
+
         console.log("error", error);
         Toast({
           icon: "error",
@@ -246,6 +257,7 @@ export default {
 
 <style lang="scss" scoped>
 .main {
+  overflow: overlay;
   position: relative;
   background-color: $tweet-border;
   flex: 1;
@@ -356,8 +368,8 @@ export default {
               color: $account;
             }
           }
-          .tweet__text--container{
-            flex:1;
+          .tweet__text--container {
+            flex: 1;
             margin-top: 10px;
             .tweet__text {
               height: 100%;

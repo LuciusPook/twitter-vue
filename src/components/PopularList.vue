@@ -1,5 +1,9 @@
 <template>
-  <div class="popular">
+  <div
+    class="popular"
+    v-show="isAuthenticated"
+    v-if="currentUser.role !== 'admin'"
+  >
     <div class="popular-items">
       <h3>Popular</h3>
       <div class="popular-container">
@@ -7,17 +11,17 @@
           <div class="popular-info">
             <div class="avatar">
               <router-link
-                :to="{ name: 'user-profile', params: { id: user.id } }"
+                :to="{ name: 'user', params: { id: user.id } }"
                 ><img :src="user.avatar | emptyImage" alt="avatar"
               /></router-link>
             </div>
             <div class="user-info">
               <router-link
-                :to="{ name: 'user-profile', params: { id: user.id } }"
+                :to="{ name: 'user', params: { id: user.id } }"
                 >{{ user.name }}</router-link
               >
               <router-link
-                :to="{ name: 'user-profile', params: { id: user.id } }"
+                :to="{ name: 'user', params: { id: user.id } }"
                 class="popular-email"
                 >@{{ user.account }}</router-link
               >
@@ -54,29 +58,20 @@
 import usersAPI from "./../apis/users";
 import { Toast } from "./../utils/helpers";
 import { emptyImageFilter } from "./../utils/mixins";
+import { mapState } from "vuex";
 
 export default {
   mixins: [emptyImageFilter],
 
-  props: {
-    initialIsFollowed: {
-      type: Boolean,
-      required: true,
-    },
-  },
-
   data() {
     return {
       topUsers: [],
-      isFollowed: this.initialIsFollowed,
       isProcessing: false,
     };
   },
 
-  watch: {
-    initialIsFollowed(newValue) {
-      this.isFollowed = newValue;
-    },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
 
   created() {
@@ -87,9 +82,13 @@ export default {
     async fetchTopUsers() {
       try {
         const { data } = await usersAPI.getTopUsers();
+
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+
         this.topUsers = data;
       } catch (error) {
-        console.log(error);
         Toast.fire({
           icon: "error",
           title: "無法取得人氣使用者名單",
@@ -100,9 +99,9 @@ export default {
     async addFollow(id) {
       try {
         this.isProcessing = true;
-        const { data } = await usersAPI.postFollow({ id });
+        const { data } = await usersAPI.followship.addFollowing({ userId: id });
 
-        if (data.status !== "success") {
+        if (data.status === "error") {
           throw new Error(data.message);
         }
 
@@ -132,18 +131,20 @@ export default {
     async deleteFollow(id) {
       try {
         this.isProcessing = true;
-        const { data } = await usersAPI.deleteFollow({ followingId: id });
+        const { data } = await usersAPI.followship.deleteFollowing({
+          userId: id,
+        });
 
-        if (data.status !== "success") {
+        if (data.status === "error") {
           throw new Error(data.message);
         }
 
-        this.topUsers.map((topUser) => {
-          if (topUser.id === id) {
-            topUser.isFollowed = false;
+        this.topUsers.map((user) => {
+          if (user.id === id) {
+            user.isFollowed = false;
             this.isFollowed = false;
           }
-          return topUser;
+          return user;
         });
 
         Toast.fire({

@@ -26,7 +26,7 @@ export default {
   getTweet({tweetId}){
     return apiHelper.get(`/tweets/${tweetId}`)
   },
-  addTweet({ description }){
+  postTweet({ description }){
     return apiHelper.post('/tweets', { description })
   }
 }

@@ -36,7 +36,7 @@
             <button
               type="submit"
               class="tweet-create-btn"
-              @click.stop.prevent="handleSubmit"
+              @click.stop.prevent="handleSubmit()"
             >
               推文
             </button>
@@ -78,6 +78,12 @@ export default {
     };
   },
 
+  watch: {
+    newDescription(newValue) {
+      this.newDescription = newValue;
+    },
+  },
+
   methods: {
     closeButton() {
       this.$emit("close-after-create");
@@ -85,7 +91,6 @@ export default {
 
     handleSubmit() {
       const newDescription = this.description;
-      console.log(newDescription);
       this.$emit("afterSubmit", newDescription);
     },
 

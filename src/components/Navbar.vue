@@ -1,12 +1,12 @@
 <template>
-  <div class="menu" :class="{'d-none' : checked}">
+  <div class="menu" v-show="isAuthenticated">
     <div class="navbar">
-      <router-link to="/main">
+      <a>
         <img src="https://i.ibb.co/WD1YSyW/Logo.jpg" alt="Logo" class="logo" />
-      </router-link>
+      </a>
       <div class="navbar-options">
         <div class="navbar-list">
-          <template v-if="currentUser.role !== 'Admin'">
+          <template v-if="currentUser.role !== 'admin'">
             <div
               class="navbar-item"
               :class="['page-item', { active: currentPage === 'main' }]"
@@ -29,7 +29,9 @@
               class="navbar-item"
               :class="['page-item', { active: currentPage === 'profile' }]"
             >
-              <router-link to="/profile">
+              <router-link
+                :to="{ name: 'user', params: { id: currentUser.id } }"
+              >
                 <img
                   src="./../assets/Vector_user-action.svg"
                   alt="user-info"
@@ -50,7 +52,9 @@
               class="navbar-item"
               :class="['page-item', { active: currentPage === 'setting' }]"
             >
-              <router-link :to="{ name: 'setting' }">
+              <router-link
+                :to="{ name: 'setting', params: { id: currentUser.id } }"
+              >
                 <img
                   src="./../assets/Vector_cogsetting-action.svg"
                   alt="cogsetting"
@@ -65,8 +69,11 @@
               </router-link>
             </div>
           </template>
-          <template v-if="currentUser.role === 'Admin'">
-            <div class="navbar-item" :class="['page-item', active]">
+          <template v-if="currentUser.role === 'admin'">
+            <div
+              class="navbar-item"
+              :class="['page-item', { active: currentPage === 'tweets' }]"
+            >
               <router-link to="/admin/tweets">
                 <img
                   src="./../assets/Vector_home-icon.svg"
@@ -81,12 +88,15 @@
                 推文清單
               </router-link>
             </div>
-            <div class="navbar-item" :class="['page-item', active]">
+            <div
+              class="navbar-item"
+              :class="['page-item', { active: currentPage === 'users-page' }]"
+            >
               <router-link to="/admin/users">
                 <img
                   src="./../assets/Vector_user-action.svg"
                   alt="users-cards"
-                  v-if="currentPage === 'users'"
+                  v-if="currentPage === 'users-page'"
                 />
                 <img
                   src="./../assets/Vector_user-icon.svg"
@@ -102,7 +112,7 @@
       <button
         class="show-tweet-modal"
         @click="showCreateModal"
-        v-if="currentUser.role !== 'Admin'"
+        v-if="currentUser.role !== 'admin'"
       >
         推文
       </button>
@@ -121,12 +131,22 @@ import { Toast } from "../utils/helpers";
 export default {
   props: {
     currentPage: {
-      type: String,
+      type: [String, Boolean],
       require: true,
     },
   },
   data() {
-    return {};
+    return {
+      // currentPage: [],
+    };
+  },
+
+  watch: {
+    currentPage(newValue) {
+      this.currentPage = {
+        ...newValue,
+      };
+    },
   },
 
   computed: {
