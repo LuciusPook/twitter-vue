@@ -6,15 +6,6 @@ import NotFound from '../views/NotFound.vue'
 import Main from '../views/Main.vue'
 import store from './../store'
 
-// const authorizeIsAdmin = (to, from, next) => {
-//   const currentUser = store.state.currentUser
-//   if (currentUser && !currentUser.isAdmin) {
-//     next('/404')
-//     return
-//   }
-
-//   next()
-// }
 
 Vue.use(VueRouter)
 
@@ -35,12 +26,6 @@ const routes = [
     component: Main,
   },
   {
-    path: '/admin/login',
-    name: 'admin-login',
-    // exact: true,
-    component: () => import('../views/AdminLogin.vue')
-  },
-  {
     path: '/register',
     name: 'register',
     component: Register,
@@ -56,26 +41,26 @@ const routes = [
     component: () => import('../views/Tweet.vue'),
   },
   {
-    path: '/users/self/setting',
+    path: '/users/account',
     name: 'setting',
     component: () => import('../views/UserAccountSetting.vue')
   },
   {
     path: '/admin/login',
     name: 'admin-login',
-    // exact: true,
     component: () => import('../views/AdminLogin.vue')
   },
   {
     path: '/admin/tweets',
     name: 'admin-tweets',
-    // exact: true,
-    component: () => import('../views/AdminTweets.vue')
+    component: () => import('../views/AdminTweets.vue'),
+
   },
   {
     path: '/admin/users',
     name: 'admin-users',
-    component: () => import('../views/AdminUsers.vue')
+    component: () => import('../views/AdminUsers.vue'),
+
   },
   {
     path: '*',

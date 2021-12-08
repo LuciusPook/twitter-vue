@@ -23,19 +23,19 @@
             <div class="users_list-tweet">
               <div class="users_list-tweet-info">
                 <router-link
-                  :to="{ name: 'tweet', params: { id: tweet.id } }"
+                  :to="{ params: { id: tweet.id } }"
                   class="user-name-link"
                 >
                   <div class="user-name">{{ tweet.UserName }}</div>
                 </router-link>
                 <router-link
-                  :to="{ name: 'user-profile', params: { id: tweet.userId } }"
+                  :to="{ params: { id: tweet.userId } }"
                   class="user-info-link"
                 >
                   <div class="user-account">@{{ tweet.UserAccount }}</div>
                   <span></span>
                   <div class="create-time">
-                    {{ tweet.createdAt | fromNow }}
+                    {{ tweet.createdAt | timeTransForm }}
                   </div>
                 </router-link>
               </div>
@@ -47,7 +47,7 @@
             <div class="delete">
               <div
                 class="delete-container cursor-pointer"
-                @click="deleteTweet(tweet.id)"
+                @click.stop.prevent="deleteTweet(tweet.id)"
               >
                 <img
                   src="./../assets/Vector_close02-icon.svg"
@@ -66,14 +66,14 @@
 
 <script>
 // import Navbar from "./../components/Navbar.vue";
-import { fromNowFilter } from "./../utils/mixins";
+import { timeTransForm } from "./../utils/mixins";
 import { emptyImageFilter } from "./../utils/mixins";
 import adminAPI from "./../apis/admin";
 import { Toast } from "./../utils/helpers";
 import Spinner from "./../components/Spinner";
 
 export default {
-  mixins: [fromNowFilter, emptyImageFilter],
+  mixins: [timeTransForm, emptyImageFilter],
 
   components: {
     // Navbar,
@@ -86,6 +86,12 @@ export default {
       admintweets: [],
       isLoading: true,
     };
+  },
+
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+    this.fetchAdminTweets(id);
+    next();
   },
 
   created() {
@@ -110,16 +116,16 @@ export default {
       }
     },
 
-    async deleteTweet(tweetsId) {
+    async deleteTweet(tweetId) {
       try {
-        const { data } = await adminAPI.deleteTweet({ tweetsId });
+        const { data } = await adminAPI.deleteTweet({ tweetId });
 
-        if (data.status !== "success") {
+        if (data.status === "error") {
           throw new Error(data.message);
         }
 
         this.admintweets = this.admintweets.filter(
-          (tweet) => tweet.id !== tweetsId
+          (tweet) => tweet.id !== tweetId
         );
 
         Toast.fire({
@@ -127,7 +133,6 @@ export default {
           title: "成功刪除推文",
         });
       } catch (error) {
-        console.log(error);
         Toast.fire({
           icon: "error",
           title: "無法刪除推文，請稍後再試",
@@ -152,11 +157,17 @@ export default {
   height: 100%;
   flex: 1;
   &-title {
+    width: 100%;
+    position: fixed;
     font-size: 18px;
     font-weight: bold;
     padding: 15px 26px;
     margin-bottom: 6px;
+    background: #fff;
     border-bottom: 1px solid #e6ecf0;
+  }
+  .users-container {
+    padding-top: 55px;
   }
 }
 

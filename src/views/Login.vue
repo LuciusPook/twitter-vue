@@ -62,10 +62,6 @@ export default {
           throw new Error(data.message);
         }
 
-        // if (data.user.role === "admin") {
-        //   throw new Error(data.message);
-        // }
-
         localStorage.setItem("token", data.token);
 
         this.$store.commit("setCurrentUser", data.user);

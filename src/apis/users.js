@@ -1,44 +1,45 @@
 import { apiHelper } from './../utils/helpers'
 
 export default {
-  tweets:{
-    getUserTweets({ userId }){
+  tweets: {
+    getUserTweets({ userId }) {
       return apiHelper.get(`/users/${userId}/tweets`)
     },
-    getUserRepliedTweets({ userId }){
+    getUserRepliedTweets({ userId }) {
       return apiHelper.get(`/users/${userId}/replied_tweets`)
     },
-    getUserLikedTweets({userId}){
+    getUserLikedTweets({ userId }) {
       return apiHelper.get(`/users/${userId}/likes`)
     }
   },
-  followship:{
-    getUserFollowers({ userId }){
+  followship: {
+    getUserFollowers({ userId }) {
       return apiHelper.get(`/users/${userId}/followers`)
     },
-    getUserFollowings({ userId }){
+    getUserFollowings({ userId }) {
       return apiHelper.get(`/users/${userId}/followings`)
     },
     addFollowing({ userId }) {
-      return apiHelper.post('/followships', { id:userId })
+      return apiHelper.post('/followships', { id: userId })
     },
     deleteFollowing({ userId }) {
       return apiHelper.delete(`/followships/${userId}`)
     }
   },
+
   getCurrentUser() {
     return apiHelper.get(`/users/self`)
   },
+
   getUsers({ userId }) {
     return apiHelper.get(`/users/${userId}`)
   },
-  addLike({ restaurantId }) {
-    return apiHelper.post(`/like/${restaurantId}`, null)
+
+  update({ userId, formData }) {
+    return apiHelper.put(`/users/account/${userId}`, formData)
   },
-  deleteLike({ restaurantId }) {
-    return apiHelper.delete(`/like/${restaurantId}`)
-  },
+
   getTopUsers() {
-    return apiHelper.get('/users/top')
+    return apiHelper.get('/users/top/')
   },
 }

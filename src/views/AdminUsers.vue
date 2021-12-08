@@ -49,22 +49,22 @@
                     class="like"
                     alt="like"
                   />
-                  <span class="like-count">{{ user.likesCount }}</span>
+                  <span class="like-count">{{ user.likeCount }}</span>
                 </div>
               </div>
               <div class="follow-info">
-                <router-link to="/users/:id/followings" class="followings-link"
+                <a class="followings-link"
                   ><div class="followings">
                     <span>{{ user.followingsCount }}</span
                     >追蹤中
-                  </div></router-link
-                >
-                <router-link to="/users/:id/followers" class="followers-link"
+                  </div>
+                </a>
+                <a class="followers-link"
                   ><div class="followers">
                     <span>{{ user.followersCount }}</span
                     >追蹤者
-                  </div></router-link
-                >
+                  </div>
+                </a>
               </div>
             </div>
           </div>
@@ -91,10 +91,16 @@ export default {
 
   data() {
     return {
-      currentPage: "users",
+      currentPage: "users-page",
       adminUsers: [],
       isLoading: true,
     };
+  },
+
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+    this.fetchAdminUsers(id);
+    next();
   },
 
   created() {
@@ -138,9 +144,13 @@ export default {
   overflow: auto;
   flex: 1;
   &-title {
+    width: 100%;
+    position: fixed;
     font-size: 18px;
     font-weight: bold;
     border-bottom: 1px solid #e6ecf0;
+    background: #fff;
+    z-index: 1;
     p {
       margin: 15px 27px;
     }
@@ -150,6 +160,7 @@ export default {
 .user_cards {
   display: flex;
   flex-wrap: wrap;
+  padding-top: 55px;
   &-profile {
     width: 245px;
     height: 314px;
@@ -211,7 +222,6 @@ export default {
             width: 24px;
             height: 24px;
             margin-right: 7px;
-            cursor: pointer;
           }
           .like-count,
           .reply-count {

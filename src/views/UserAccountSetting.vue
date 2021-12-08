@@ -1,8 +1,5 @@
 <template>
   <div class="container">
-    <Spinner v-if="isLoading" />
-
-    <!-- <Navbar @showModal="showModal" :currentPage="currentPage" /> -->
     <div class="account-container">
       <div class="account-setting">
         <div class="account-title">
@@ -86,18 +83,11 @@
 
 
 <script>
-// import Navbar from "./../components/Navbar.vue";
 import usersAPI from "./../apis/users";
 import { Toast } from "./../utils/helpers";
 import { mapState } from "vuex";
 
-import Spinner from "./../components/Spinner";
 export default {
-  components: {
-    // Navbar,
-    Spinner,
-  },
-
   data() {
     return {
       currentPage: "setting",
@@ -110,7 +100,6 @@ export default {
       accountError: false,
       nameError: false,
       isProcessing: false,
-      isLoading: false,
     };
   },
 
@@ -127,27 +116,31 @@ export default {
   },
 
   created() {
-    this.fetchUserData(this.currentUser.id);
+    const { id } = this.$route.params;
+    this.fetchUserData(id);
+  },
+
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+    this.fetchUserData(id);
+    next();
   },
 
   methods: {
     async fetchUserData(id) {
       try {
-        this.isProcessing = true;
         const { data } = await usersAPI.getCurrentUser({ id });
         const { account, name, email } = data;
         this.id = id;
         this.account = account;
         this.name = name;
         this.email = email;
-        this.isProcessing = false;
       } catch (error) {
         console.log(error);
         Toast.fire({
           icon: "error",
           title: "無法取得使用者資料，請稍後再試",
         });
-        this.isProcessing = false;
       }
     },
 
@@ -205,6 +198,7 @@ export default {
         if (data.status === "error") {
           throw new Error(data.message);
         }
+        console.log(data.status);
 
         Toast.fire({
           icon: "success",
@@ -214,6 +208,7 @@ export default {
         this.$router.push({ name: "user", params: { id: this.id } });
         this.isProcessing = false;
       } catch (error) {
+        console.log(error);
         this.isProcessing = false;
         Toast.fire({
           icon: "error",
