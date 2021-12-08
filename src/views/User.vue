@@ -2,6 +2,8 @@
   <div class="user">
     <ReplyModal
       v-if="isReplying"
+      :tweetId="clickedTweetId"
+      @after-submit-reply="afterSubmitReply"
     />
     <UserEditModal
       v-if="isEditing"
@@ -121,6 +123,7 @@
             v-if="displayMode ==='likedTweets'"
             :initial-liked-tweets="userLikedTweets"
             :user="user"
+            @after-reply-clicked="handleReplyModalToggle"
           />
           <UserRepliedTweets 
             v-else-if="displayMode ==='repliedTweets'"
@@ -131,7 +134,7 @@
             v-else
             :initial-tweets="userTweets"
             :user="user"
-            @after-reply-clicked="HandleReplyClicked"
+            @after-reply-clicked="handleReplyModalToggle"
           />
         </div>
       </div>
@@ -168,9 +171,9 @@ export default {
       userLikedTweets:[],
       isNotificationOn: false,
       isEditing:false,
-      isReplying:false,
       isDisplayFollow:false,
-      displayMode:'tweets'
+      displayMode:'tweets',
+      clickedTweetId:undefined
     };
   },
   created(){
@@ -184,7 +187,7 @@ export default {
     next()
   },
   computed:{
-    ...mapState(['currentUser'])
+    ...mapState(['currentUser' , 'isReplying'])
   },
   methods: { 
     async fetchUser(userId){
@@ -296,6 +299,10 @@ export default {
         if(response.status !== 200) throw new Error(response.statusText)
         console.log(data)
         this.user.isFollowed = !this.user.isFollowed
+        Toast.fire({
+          icon: 'success',
+          title: '成功追蹤使用者'
+        })
       }catch(error){
         console('error' , error)
         Toast.fire({
@@ -311,6 +318,10 @@ export default {
         if(response.status !== 200) throw new Error(response.statusText)
         console.log(data)
         this.user.isFollowed = !this.user.isFollowed
+        Toast.fire({
+          icon: 'success',
+          title: '成功取消追蹤使用者'
+        })
       }catch(error){
         console('error' , error)
         Toast.fire({
@@ -319,9 +330,30 @@ export default {
         })
       }
     },
-    HandleReplytoggle(){
-      this.isReplying = !this.isReplying
-    }
+    handleReplyModalToggle(tweetId){
+      console.log(tweetId)
+      this.$store.commit("toggleReplyModal")
+      this.clickedTweetId = tweetId;
+    },
+    afterSubmitReply(payload) {
+      console.log(payload);
+      if (payload.status === 200) {
+        this.userTweets.map((tweet) => {
+          if (tweet.id === payload.tweetId) {
+            tweet.reply_count++;
+          }
+        });
+        Toast.fire({
+          icon: "success",
+          title: "成功回覆推文",
+        });
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: "無法回覆推文，請稍後再試!",
+        });
+      }
+    },
   }
 };
 </script>

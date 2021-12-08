@@ -153,7 +153,7 @@ export default {
       }
     },
     handleReplyModalToggle(tweetId) {
-      this.$store.commit('toggleReplyModal')
+      this.$store.commit("toggleReplyModal")
       this.clickedTweetId = tweetId;
     },
     afterSubmitReply(payload) {

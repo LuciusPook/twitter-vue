@@ -8,24 +8,24 @@
     </div>
     <div class="replyModal__tweet">
       <div class="replyModal__avatar--container">
-        <img src="./../assets/Photo_avatar.png" alt="" class="reply__avatar">
+        <img :src="tweet.User.avatar | emptyImage" alt="" class="reply__avatar">
         <span class="connect__line"></span>
       </div>
       <div class="replyModal__tweet--content">
         <div class="replyModal__title">
-          <h3 class="replyModal__title--name">Apple</h3>
-          <a href=""><p class="replyModal__title--account">@apple</p></a>
-          <span class="replyModal__title--time">．3小時</span>
+          <h3 class="replyModal__title--name">{{tweet.User.name}}</h3>
+          <a href=""><p class="replyModal__title--account">@{{tweet.User.account}}</p></a>
+          <span class="replyModal__title--time">．{{tweet.createdAt | fromNow}}</span>
         </div>
         <p class="replyModal__tweet--text">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur amet ea ad cumque ullam natus provident doloremque et hic corrupti eum illo quam a beatae voluptate perferendis facilis, veritatis n amet ea ad cumque ullam natus provident doloremque et hic corrupti eum illo quam a beatae voluptate perferendis facilis, veritatis neque.
+         {{tweet.description}}
         </p>
-        <div class="replyModal__tweet--account">回覆給<span>@apple</span></div>
+        <div class="replyModal__tweet--account">回覆給<span>@{{tweet.User.account}}</span></div>
       </div>
     </div>
     <div class="replyModal__input--container">
       <div class="replyModal__input--avatarContainer">
-        <img src="./../assets/Photo_avatar.png" alt="" class="replyModal__input--avatar">
+        <img :src="currentUser.avatar | emptyImage" alt="" class="replyModal__input--avatar">
       </div>
       <div class="form__group--reply">
         <textarea 
@@ -46,10 +46,14 @@
 </template>
 
 <script>
+import { Toast } from '../utils/helpers'
 import tweetAPI from './../apis/tweets'
-// import { Toast } from './../utils/helpers'
+import { fromNowFilter } from './../utils/mixins'
+import { emptyImageFilter } from './../utils/mixins'
+import { mapState } from 'vuex'
 export default {
   name: 'ReplyModal',
+  mixins:[fromNowFilter , emptyImageFilter],
   props:{
     tweetId:{
       type:Number,
@@ -59,7 +63,14 @@ export default {
   data(){
     return {
       replyText:'',
+      tweet:{}
     }
+  },
+  computed:{
+    ...mapState(['currentUser'])
+  },
+  created(){
+    this.fetchTweet(this.tweetId)
   },
   methods:{
     handleCancelReplyModal(){
@@ -72,11 +83,25 @@ export default {
         const payload = {status:response.status , tweetId}
         this.$emit('after-submit-reply' , payload)
         this.handleCancelReplyModal()
-        if(response.status !== 200) throw new Error(response.statusText)
-        
+        if(response.status !== 200) throw new Error(response.statusText)  
       }catch(error){
         console.log('error' , error)
       }
+    },
+    async fetchTweet(tweetId){
+      try{
+        const response = await tweetAPI.getTweet({ tweetId })
+        const data = response.data
+        if(response.status !== 200) throw new Error(response.statusText)
+        this.tweet = {...data}
+      }catch(error){
+        console.log('error' , error)
+        Toast.fire({
+          icon:'error',
+          title:'無法取得推文資料，請稍後再試!'
+        })
+      }
+
     }
   }
 }
@@ -197,7 +222,7 @@ export default {
           height: 50px;
           width: 50px;
           margin: 0 auto;
-          border-spacing: 50%;
+          border-radius: 50%;
         }
       }
       .form__group--reply{

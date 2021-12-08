@@ -29,7 +29,7 @@
       <span class="tweet__time">{{ tweet.createdAt | timeTransForm }}</span>
       <div class="tweet__counts">
         <span class="tweet__commentCounts"
-          >{{ tweet.like_cont }}<span>回覆</span></span
+          >{{ tweet.like_count }}<span>回覆</span></span
         >
         <span class="tweet__likeCounts"
           >{{ tweet.reply_count }}<span>喜歡次數</span></span
