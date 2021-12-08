@@ -37,7 +37,9 @@
       <ul class="main__tweets">
         <li class="main__tweet" v-for="tweet in tweets" :key="tweet.id">
           <div class="tweet__avatar--wrapper">
-            <router-link :to="{ name: 'user', params: { id: tweet.UserId } }">
+            <router-link 
+              :to="{ name: 'user', params: { id: tweet.UserId } }"
+            >
               <img
                 :src="tweet.avatar | emptyImage"
                 alt=""
@@ -48,9 +50,11 @@
           <div class="tweet__content">
             <p class="tweet__title">
               <span class="tweet__tweeter--name">{{ tweet.name }}</span>
-              <a href="" class="tweet__tweeter--account"
-                >@{{ tweet.User.account }}</a
-              >
+              <router-link 
+                :to="{name:'user' , params:{id:tweet.UserId}}"
+                class="tweet__tweeter--account"
+                >@{{ tweet.User.account }}
+              </router-link>
               <span class="tweet__createdTime">．{{tweet.createdAt | fromNow}}</span>
             </p>
             <router-link

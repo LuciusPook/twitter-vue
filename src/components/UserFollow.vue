@@ -22,7 +22,7 @@
     </ul>
     <div class="user__follow--container scroll">
       <ul
-        v-if="displayMode === 'followers'"
+        v-show="displayMode === 'followers' && userFollowers"
         class="user__followers user__follow"
       >
         <li
@@ -31,18 +31,26 @@
           class="user__follower user__follow"
         >
           <div class="follow__avatar--container">
-            <img
-              :src="userFollower.followerAvatar"
-              alt=""
-              class="follow__avatar"
-            />
+            <router-link
+                :to="{name:'user' , params:{id:userFollower.followerId}}"
+              >
+              <img
+                :src="userFollower.followerAvatar"
+                alt=""
+                class="follow__avatar"
+              />
+            </router-link>
           </div>
           <div class="follow__info">
             <div class="follow__title">
               <h2 class="follow__name">{{ userFollower.followerName }}</h2>
-              <div class="follow__account">
-                @{{ userFollower.followerAccount }}
-              </div>
+              <router-link
+                :to="{name:'user' , params:{id:userFollower.followerId}}"
+              >
+                <div class="follow__account">
+                  @{{ userFollower.followerAccount }}
+                </div>
+              </router-link>
             </div>
             <p class="follow__introduction">
               {{ userFollower.Intro }}
@@ -64,25 +72,36 @@
           </div>
         </li>
       </ul>
-      <ul v-else class="user__followings user__follow">
+      <ul 
+        v-show="displayMode === 'followings' && userFollowings" 
+        class="user__followings user__follow"
+      >
         <li
           v-for="userFollowing in userFollowings"
           :key="userFollowing.followingId"
           class="user__following user__follow"
         >
           <div class="follow__avatar--container">
-            <img
-              :src="userFollowing.followingAvatar"
-              alt=""
-              class="follow__avatar"
-            />
+             <router-link
+                :to="{name:'user' , params:{id:userFollowing.followingId}}"
+              >
+              <img
+                :src="userFollowing.followingAvatar"
+                alt=""
+                class="follow__avatar"
+              />
+            </router-link>
           </div>
           <div class="follow__info">
             <div class="follow__title">
               <h2 class="follow__name">{{ userFollowing.followingName }}</h2>
-              <div class="follow__account">
-                @{{ userFollowing.followingAccount }}
-              </div>
+              <router-link
+                :to="{name:'user' , params:{id:userFollowing.followingId}}"
+              >
+                <div class="follow__account">
+                  @{{ userFollowing.followingAccount }}
+                </div>
+              </router-link>
             </div>
             <p class="follow__introduction">
               {{ userFollowing.followingIntro }}
@@ -210,8 +229,9 @@ export default {
       try{
         const response = await userAPI.followship.getUserFollowers({ userId })
         const data = response.data
+        console.log(data)
         if(response.status !== 200) throw new Error(response.statusText)
-        this.userFollowers = [...data]
+        this.userFollowers = data[0].followerId === null? [] : [...data]
       }catch(error){
         console('error' , error)
         Toast.fire({
@@ -224,8 +244,9 @@ export default {
       try{
         const response = await userAPI.followship.getUserFollowings({ userId })
         const data = response.data
+        console.log(data)
         if(response.status !== 200) throw new Error(response.statusText)
-        this.userFollowings = [...data]
+        this.userFollowings = data[0].followingId === null? []:[...data]
       }catch(error){
         console('error' , error)
         Toast.fire({
@@ -279,6 +300,7 @@ export default {
       color: $navPills;
       text-align: center;
       line-height: 54px;
+      cursor: pointer;
       &.active {
         color: $navPills-active;
         border-bottom: 2px solid $navPills-active;
