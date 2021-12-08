@@ -371,6 +371,7 @@ export default {
                 height: 1rem;
                 width: 1rem;
                 margin-right: 0.5rem;
+                cursor: pointer;
               }
             }
           }

@@ -154,7 +154,7 @@ export default {
           })
         }else{
           this.userFollowings.map( userFollowing => {
-            if(userFollowing.followerId === id){
+            if(userFollowing.followingId === id){
               userFollowing.isFollowed = true
               return userFollowing
             }
@@ -187,7 +187,7 @@ export default {
           })
         }else{
           this.userFollowings.map( userFollowing => {
-            if(userFollowing.followerId === id){
+            if(userFollowing.followingId === id){
               userFollowing.isFollowed = false
               return userFollowing            
             }
@@ -225,7 +225,6 @@ export default {
         const response = await userAPI.followship.getUserFollowings({ userId })
         const data = response.data
         if(response.status !== 200) throw new Error(response.statusText)
-        data.map(userFollowing => userFollowing.isFollowed = true)
         this.userFollowings = [...data]
       }catch(error){
         console('error' , error)

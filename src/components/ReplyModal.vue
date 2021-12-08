@@ -189,7 +189,6 @@ export default {
     }
     .replyModal__input--container{
       display: flex;
-      height: 160px;
       padding-top: 0.5rem;
       background-color: $white;
       .replyModal__input--avatarContainer{

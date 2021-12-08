@@ -91,10 +91,10 @@
               @click.stop.prevent="handleUserFollowshipClicked"
             >
               <span class="userInfo__followings"
-                ><span class="followingsCounts">???個</span>跟隨中</span
+                ><span class="followingsCounts">{{user.following_count}}個</span>跟隨中</span
               >
               <span class="userInfo__followers"
-                ><span class="followersCounts">???位</span>跟隨者</span
+                ><span class="followersCounts">{{user.follower_count}}位</span>跟隨者</span
               >
             </div>
           </div>
@@ -184,6 +184,7 @@ export default {
       try{
         const response = await userAPI.getUsers({userId})
         const data = response.data
+        console.log(data)
         if(response.status !== 200) throw new Error(response.statusText)
         const {
           id, 
@@ -194,6 +195,8 @@ export default {
           introduction,
           name,
           role,
+          following_count,
+          follower_count,
           isFollowed } = data
         this.user = {
           ...this.user,
@@ -205,6 +208,8 @@ export default {
           introduction: introduction || '使用者未填寫自我介紹',
           name,
           role,
+          following_count,
+          follower_count,
           isFollowed
         }
       }catch(error){
