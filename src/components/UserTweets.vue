@@ -1,5 +1,5 @@
  <template>
-  <ul class="user__tweets">
+  <ul class="user__tweets scrollbar">
     <li v-for="tweet in userTweets" :key="tweet.id">
       <div class="avatar__container">
         <router-link
@@ -87,6 +87,7 @@ export default {
 
  <style lang="scss" scoped>
 .user__tweets {
+  height: 100%;
   li {
     display: flex;
     height: 8.5rem;
