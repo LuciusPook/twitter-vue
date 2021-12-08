@@ -4,7 +4,6 @@
 
     <ReplyModal
       v-if="isReplying"
-      @after-cancel-reply="handleReplyModalToggle"
       @after-submit-reply="afterSubmitReply"
       :tweetId="clickedTweetId"
     />
@@ -39,7 +38,9 @@
       <ul class="main__tweets">
         <li class="main__tweet" v-for="tweet in tweets" :key="tweet.id">
           <div class="tweet__avatar--wrapper">
-            <router-link :to="{ name: 'user', params: { id: tweet.UserId } }">
+            <router-link 
+              :to="{ name: 'user', params: { id: tweet.UserId } }"
+            >
               <img
                 :src="tweet.avatar | emptyImage"
                 alt=""
@@ -50,12 +51,12 @@
           <div class="tweet__content">
             <p class="tweet__title">
               <span class="tweet__tweeter--name">{{ tweet.name }}</span>
-              <a href="" class="tweet__tweeter--account"
-                >@{{ tweet.User.account }}</a
-              >
-              <span class="tweet__createdTime"
-                >．{{ tweet.createdAt | fromNow }}</span
-              >
+              <router-link 
+                :to="{name:'user' , params:{id:tweet.UserId}}"
+                class="tweet__tweeter--account"
+                >@{{ tweet.User.account }}
+              </router-link>
+              <span class="tweet__createdTime">．{{tweet.createdAt | fromNow}}</span>
             </p>
             <router-link
               class="tweet__text--container"
@@ -111,6 +112,7 @@ import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from "../utils/mixins";
 import Spinner from "./../components/Spinner";
 
+
 export default {
   name: "Main",
   mixins: [emptyImageFilter, fromNowFilter],
@@ -124,7 +126,6 @@ export default {
       newTweetText: "",
       clickedTweetId: undefined,
       isEditing: false,
-      isReplying: false,
       textareaRows: 3,
       isLoading: true,
     };
@@ -133,7 +134,7 @@ export default {
     this.fetchTweets();
   },
   computed: {
-    ...mapState(["currentUser"]),
+    ...mapState(["currentUser", "isReplying"]),
   },
   methods: {
     async createNewTweet(newTweetText) {
@@ -157,7 +158,7 @@ export default {
       }
     },
     handleReplyModalToggle(tweetId) {
-      this.isReplying = !this.isReplying;
+      this.$store.commit("toggleReplyModal")
       this.clickedTweetId = tweetId;
     },
     afterSubmitReply(payload) {
@@ -385,6 +386,7 @@ export default {
                 height: 1rem;
                 width: 1rem;
                 margin-right: 0.5rem;
+                cursor: pointer;
               }
             }
           }
