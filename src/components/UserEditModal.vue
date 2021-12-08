@@ -3,6 +3,7 @@
   <form
     :class="['user__edit--modal', { edit: isEditing }]"
     @submit.stop.prevent="handleSubmit"
+    enctype="multipart/form-data"
   >
     <div class="edit__modal--title">
       <span
@@ -132,8 +133,8 @@ export default {
       this.$emit("after-cancel-edit");
     },
     handleSubmit(e) {
-      console.log(e);
-      console.log(e.target);
+      console.log('e' , e);
+      console.log('e.target',e.target);
       const form = e.target;
       const formData = new FormData(form);
       const payload = {
@@ -168,7 +169,7 @@ export default {
 <style lang="scss" scoped>
 .user__edit--modal {
   position: absolute;
-  z-index: 2;
+  z-index: 999;
   @extend %standard-boxshadow;
   @extend %position-center;
   width: 600px;

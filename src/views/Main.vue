@@ -139,7 +139,7 @@ export default {
   methods: {
     async createNewTweet(newTweetText) {
       try {
-        const response = await tweetsAPI.addTweet({
+        const response = await tweetsAPI.postTweet({
           description: newTweetText,
         });
         this.newTweetText = "";

@@ -34,23 +34,14 @@ export default {
   getUsers({ userId }) {
     return apiHelper.get(`/users/${userId}`)
   },
-<<<<<<< HEAD
-  editUser({formData , userId}){
+
+  editUserProfile({ formData , userId }){
     return apiHelper.put(`/users/${userId}`, formData)
   },
-  addLike({ restaurantId }) {
-    return apiHelper.post(`/like/${restaurantId}`, null)
+  updateUserAccont({ formData }) {
+    return apiHelper.put(`/users/account`, formData)
   },
-  deleteLike({ restaurantId }) {
-    return apiHelper.delete(`/like/${restaurantId}`)
-=======
-
-  update({ userId, formData }) {
-    return apiHelper.put(`/users/account/${userId}`, formData)
->>>>>>> origin/main
-  },
-
   getTopUsers() {
-    return apiHelper.get('/users/top/')
+    return apiHelper.get('/users/top')
   },
 }

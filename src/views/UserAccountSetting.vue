@@ -109,17 +109,14 @@ export default {
     accountRemaining() {
       return this.account.length;
     },
-
     nameRemaining() {
       return this.name.length;
     },
   },
-
   created() {
     const { id } = this.$route.params;
     this.fetchUserData(id);
   },
-
   beforeRouteUpdate(to, from, next) {
     const { id } = to.params;
     this.fetchUserData(id);
@@ -136,14 +133,13 @@ export default {
         this.name = name;
         this.email = email;
       } catch (error) {
-        console.log(error);
+        console.log('error' , error);
         Toast.fire({
           icon: "error",
           title: "無法取得使用者資料，請稍後再試",
         });
       }
     },
-
     async handleSubmit() {
       try {
         if (this.account.length > 20) {
@@ -154,7 +150,6 @@ export default {
           this.isProcessing = false;
           return;
         }
-
         if (this.name.length > 50) {
           Toast.fire({
             icon: "warning",
@@ -163,7 +158,6 @@ export default {
           this.isProcessing = false;
           return;
         }
-
         if (!this.account || !this.name || !this.email) {
           Toast.fire({
             icon: "warning",
@@ -172,7 +166,6 @@ export default {
           this.isProcessing = false;
           return;
         }
-
         if (this.password !== this.checkPassword) {
           Toast.fire({
             icon: "warning",
@@ -181,10 +174,7 @@ export default {
           this.isProcessing = false;
           return;
         }
-
         this.isProcessing = true;
-
-        const userId = this.id;
         const formData = {
           account: this.account,
           name: this.name,
@@ -192,23 +182,18 @@ export default {
           password: this.password,
           checkPassword: this.checkPassword,
         };
-
-        const { data } = await usersAPI.update({ userId, formData });
-
-        if (data.status === "error") {
-          throw new Error(data.message);
-        }
-        console.log(data.status);
-
+        const response = await usersAPI.updateUserAccont({ formData });
+        console.log(formData)
+        console.log(response)
+        if (response.status !== 200)throw new Error(response.statusText);
         Toast.fire({
           icon: "success",
           title: "儲存完成",
         });
-
         this.$router.push({ name: "user", params: { id: this.id } });
         this.isProcessing = false;
       } catch (error) {
-        console.log(error);
+        console.log('error' , error);
         this.isProcessing = false;
         Toast.fire({
           icon: "error",
@@ -216,7 +201,6 @@ export default {
         });
       }
     },
-
     accountErrorMsg() {
       const account = this.account;
       if (account.length > 20) {
