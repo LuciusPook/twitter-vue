@@ -7,13 +7,13 @@
             src="./../assets/Vector_close-icon.svg"
             class="cancel-icon"
             alt="cancel"
-            @click="closeButton"
+            @click="handleCloseBtnClicked"
           />
         </div>
         <div class="tweet-create-container">
           <div class="profile-image">
             <img
-              :src="this.currentUserData.avatar | emptyImage"
+              :src="this.currentUser.avatar | emptyImage"
               class="user-img"
               alt="avatar"
             />
@@ -58,10 +58,6 @@ export default {
       type: String,
       required: true,
     },
-    currentUserData: {
-      type: Object,
-      default: () => {},
-    },
     checked: {
       type: Boolean,
       required: true,
@@ -74,30 +70,16 @@ export default {
 
   data() {
     return {
-      description: this.newDescription,
+      description:'',
     };
   },
-
-  watch: {
-    newDescription(newValue) {
-      this.newDescription = newValue;
-    },
-  },
-
   methods: {
-    closeButton() {
-      this.$emit("close-after-create");
+    handleCloseBtnClicked() {
+      this.$emit("close-btn-clicked");
     },
-
     handleSubmit() {
-      const newDescription = this.description;
-      this.$emit("afterSubmit", newDescription);
+      this.$emit("afterSubmit", this.description);
     },
-
-    finishCreate() {
-      this.$emit("close-after-create");
-    },
-
     checkedMsg() {
       const data = { description: this.description };
       this.$emit("checkedMsg", data);

@@ -110,9 +110,9 @@
         </div>
       </div>
       <button
+        v-if="currentUser.role !== 'admin'"
         class="show-tweet-modal"
         @click="showCreateModal"
-        v-if="currentUser.role !== 'admin'"
       >
         推文
       </button>
@@ -155,7 +155,7 @@ export default {
 
   methods: {
     showCreateModal() {
-      this.$emit("showCreateModal");
+      this.$emit("show-create-modal");
     },
     logout() {
       Toast.fire({

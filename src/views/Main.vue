@@ -42,7 +42,7 @@
               :to="{ name: 'user', params: { id: tweet.UserId } }"
             >
               <img
-                :src="tweet.avatar | emptyImage"
+                :src="tweet.User.avatar | emptyImage"
                 alt=""
                 class="tweet__avatar"
               />
@@ -139,7 +139,7 @@ export default {
   methods: {
     async createNewTweet(newTweetText) {
       try {
-        const response = await tweetsAPI.addTweet({
+        const response = await tweetsAPI.postTweet({
           description: newTweetText,
         });
         this.newTweetText = "";
@@ -284,6 +284,7 @@ export default {
         transform: translateX(-50%);
         height: 50px;
         width: 50px;
+        border-radius: 50%;
       }
     }
     .form__group {
@@ -346,6 +347,7 @@ export default {
             transform: translateX(-50%);
             height: 50px;
             width: 50px;
+            border-radius: 50%;
           }
         }
         .tweet__content {

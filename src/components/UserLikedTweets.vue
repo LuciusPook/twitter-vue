@@ -21,7 +21,7 @@
             >
               @{{ likedTweet.tweet_user_account }}
             </router-link>
-            ．{{ likedTweet.createdAt | fromNow }}</span
+            ．{{ likedTweet.like_createdAt | fromNow }}</span
           >
         </div>
         <p class="tweet__content--text">
@@ -189,6 +189,7 @@ export default {
             height: 1rem;
             width: 1rem;
             margin-right: 0.5rem;
+            cursor: pointer;
           }
         }
       }

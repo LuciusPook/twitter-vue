@@ -8,8 +8,10 @@
     />
     <UserEditModal
       v-if="isEditing"
+      :initial-user="user"
       :is-editing="isEditing"
       @after-cancel-edit="handleEditInfoToggle"
+      @after-edit-submit="afterSubmitEdit"
     />
     <div class="user__navbar">
       <a
@@ -181,10 +183,10 @@ export default {
       clickedTweetId:undefined
     };
   },
-  created() {
-    const { id } = this.$route.params;
-    this.fetchUser(id);
-    this.fetchUserTweets(id);
+  created(){
+    const { id } = this.$route.params
+    this.fetchUser(id)
+    this.fetchUserTweets(id)
   },
   beforeRouteUpdate(to, from, next) {
     const { id } = to.params;
@@ -199,7 +201,6 @@ export default {
       try{
         const response = await userAPI.getUsers({userId})
         const data = response.data
-        console.log(data)
         if(response.status !== 200) throw new Error(response.statusText)
         const {
           id,
@@ -307,9 +308,7 @@ export default {
     async handleFollowBtnClicked(userId){
       try{
         const response = await userAPI.followship.addFollowing({ userId })
-        const data = response.data  
         if(response.status !== 200) throw new Error(response.statusText)
-        console.log(data)
         this.user.isFollowed = !this.user.isFollowed
         Toast.fire({
           icon: 'success',
@@ -326,9 +325,7 @@ export default {
     async handleUnfollowBtnClicked(userId){
       try{
         const response = await userAPI.followship.deleteFollowing({ userId })
-        const data = response.data
         if(response.status !== 200) throw new Error(response.statusText)
-        console.log(data)
         this.user.isFollowed = !this.user.isFollowed
         Toast.fire({
           icon: 'success',
@@ -343,7 +340,6 @@ export default {
       }
     },
     handleReplyModalToggle(tweetId){
-      console.log(tweetId)
       this.$store.commit("toggleReplyModal")
       this.clickedTweetId = tweetId;
     },
@@ -366,6 +362,31 @@ export default {
         });
       }
     },
+    async afterSubmitEdit(payload){
+      const { newAvatar , newCover , newName , newIntro , formData } = payload
+      console.log('payload', payload)
+      console.log('formData',formData)
+      try{
+        const response = await userAPI.editUserProfile({ formData , userId: this.user.id })
+        console.log(response)
+
+        if(response.status !== 200) throw new Error(response.statusText)
+        this.user.name = newName
+        this.user.introduction = newIntro
+        this.user.cover = newCover
+        this.user.avatar = newAvatar
+        Toast.fire({
+          icon: 'success',
+          title: '成功更新使用者資料'
+        })
+      }catch(error){
+        console.log('error' , error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法更新使用者資料，請稍後再試!'
+        })
+      }
+    }
   }
 };
 </script>

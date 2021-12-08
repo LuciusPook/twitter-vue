@@ -35,11 +35,13 @@ export default {
     return apiHelper.get(`/users/${userId}`)
   },
 
-  update({ userId, formData }) {
-    return apiHelper.put(`/users/account/${userId}`, formData)
+  editUserProfile({ formData , userId }){
+    return apiHelper.put(`/users/${userId}`, formData)
   },
-
+  updateUserAccont({ formData }) {
+    return apiHelper.put(`/users/account`, formData)
+  },
   getTopUsers() {
-    return apiHelper.get('/users/top/')
+    return apiHelper.get('/users/top')
   },
 }
