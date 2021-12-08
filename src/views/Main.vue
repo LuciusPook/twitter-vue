@@ -2,7 +2,6 @@
   <div class="main">
     <ReplyModal
       v-if="isReplying"
-      @after-cancel-reply="handleReplyModalToggle"
       @after-submit-reply="afterSubmitReply"
       :tweetId="clickedTweetId"
     />
@@ -110,6 +109,7 @@ import { mapState } from "vuex";
 import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from "../utils/mixins";
 
+
 export default {
   name: "Main",
   mixins: [emptyImageFilter , fromNowFilter],
@@ -122,7 +122,6 @@ export default {
       newTweetText: "",
       clickedTweetId: undefined,
       isEditing: false,
-      isReplying: false,
       textareaRows: 3,
     };
   },
@@ -130,7 +129,7 @@ export default {
     this.fetchTweets();
   },
   computed: {
-    ...mapState(["currentUser"]),
+    ...mapState(["currentUser", "isReplying"]),
   },
   methods: {
     async createNewTweet(newTweetText) {
@@ -154,7 +153,7 @@ export default {
       }
     },
     handleReplyModalToggle(tweetId) {
-      this.isReplying = !this.isReplying;
+      this.$store.commit('toggleReplyModal')
       this.clickedTweetId = tweetId;
     },
     afterSubmitReply(payload) {

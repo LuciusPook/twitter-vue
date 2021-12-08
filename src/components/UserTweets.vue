@@ -35,6 +35,7 @@
               src="./../assets/Vector_reply-icon.svg"
               alt=""
               class="interaction__replies--icon"
+              @click="this.$emit('after-reply-clicked')"
             />
             <span class="interaction__replies--counts">{{tweet.reply_count}}</span>
           </span>

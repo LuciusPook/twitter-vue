@@ -1,5 +1,8 @@
 <template>
   <div class="user">
+    <ReplyModal
+      v-if="isReplying"
+    />
     <UserEditModal
       v-if="isEditing"
       :is-editing="isEditing"
@@ -128,6 +131,7 @@
             v-else
             :initial-tweets="userTweets"
             :user="user"
+            @after-reply-clicked="HandleReplyClicked"
           />
         </div>
       </div>
@@ -137,6 +141,7 @@
 <script>
 import UserTweets from "./../components/UserTweets.vue";
 import UserEditModal from "./../components/UserEditModal.vue"
+import ReplyModal from './../components/ReplyModal.vue'
 import UserRepliedTweets from "./../components/UserRepliedTweets.vue"
 import UserLikedTweets from "./../components/UserLikedTweets.vue"
 import UserFollow from "./../components/UserFollow.vue"
@@ -151,7 +156,8 @@ export default {
     UserEditModal,
     UserRepliedTweets,
     UserLikedTweets,
-    UserFollow
+    UserFollow,
+    ReplyModal
   },
   mixins:[emptyImageFilter],
   data() {
@@ -162,6 +168,7 @@ export default {
       userLikedTweets:[],
       isNotificationOn: false,
       isEditing:false,
+      isReplying:false,
       isDisplayFollow:false,
       displayMode:'tweets'
     };
@@ -311,8 +318,10 @@ export default {
           title: '無法取消追蹤使用者，請稍後再試!'
         })
       }
+    },
+    HandleReplytoggle(){
+      this.isReplying = !this.isReplying
     }
-
   }
 };
 </script>

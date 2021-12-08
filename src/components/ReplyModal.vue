@@ -63,7 +63,7 @@ export default {
   },
   methods:{
     handleCancelReplyModal(){
-      this.$emit('after-cancel-reply')
+      this.$store.commit('toggleReplyModal')
     },
     async submitReply(tweetId){
       try{

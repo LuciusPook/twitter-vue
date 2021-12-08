@@ -16,7 +16,8 @@ export default new Vuex.Store({
       isAdmin: false
     },
     isAuthenticated: false,
-    token: ''
+    token: '',
+    isReplying:false
   },
   mutations: {
     setCurrentUser(state, currentUser) {
@@ -40,6 +41,9 @@ export default new Vuex.Store({
       state.token = ''
       localStorage.removeItem('token')
     },
+    toggleReplyModal(state){
+      state.isReplying = !state.isReplying
+    }
   },
   actions: {
     // 在 actions 中可以透過參數的方式取得 commit 的方法
