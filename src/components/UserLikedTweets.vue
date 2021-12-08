@@ -21,7 +21,7 @@
             >
               @{{ likedTweet.tweet_user_account }}
             </router-link>
-            ．{{ likedTweet.createdAt | fromNow }}</span
+            ．{{ likedTweet.like_createdAt | fromNow }}</span
           >
         </div>
         <p class="tweet__content--text">
