@@ -32,6 +32,9 @@ export default {
   getUsers({ userId }) {
     return apiHelper.get(`/users/${userId}`)
   },
+  editUser({formData , userId}){
+    return apiHelper.put(`/users/${userId}`, formData)
+  },
   addLike({ restaurantId }) {
     return apiHelper.post(`/like/${restaurantId}`, null)
   },

@@ -7,8 +7,10 @@
     />
     <UserEditModal
       v-if="isEditing"
+      :initial-user="user"
       :is-editing="isEditing"
       @after-cancel-edit="handleEditInfoToggle"
+      @after-edit-submit="afterSubmitEdit"
     />
     <div class="user__navbar" >
       <a 
@@ -178,6 +180,7 @@ export default {
   },
   created(){
     const { id } = this.$route.params
+    console.log(id)
     this.fetchUser(id)
     this.fetchUserTweets(id)
   },
@@ -354,6 +357,28 @@ export default {
         });
       }
     },
+    async afterSubmitEdit(payload){
+      try{
+        const {newAvatar , newCover , newName , newIntro , formData} = payload
+        const response = await userAPI.editUser({ formData , userId: this.user.id })
+        console.log(response)
+        if(response.status !== 200) throw new Error(response.statusText)
+        this.user.name = newName
+        this.user.introduction = newIntro
+        this.user.cover = newCover
+        this.user.avatar = newAvatar
+        Toast.fire({
+          icon: 'success',
+          title: '成功更新使用者資料'
+        })
+      }catch(error){
+        console.log('error' , error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法更新使用者資料，請稍後再試!'
+        })
+      }
+    }
   }
 };
 </script>

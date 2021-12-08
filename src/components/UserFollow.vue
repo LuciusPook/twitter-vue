@@ -35,7 +35,7 @@
                 :to="{name:'user' , params:{id:userFollower.followerId}}"
               >
               <img
-                :src="userFollower.followerAvatar"
+                :src="userFollower.followerAvatar | emptyImage"
                 alt=""
                 class="follow__avatar"
               />
@@ -86,7 +86,7 @@
                 :to="{name:'user' , params:{id:userFollowing.followingId}}"
               >
               <img
-                :src="userFollowing.followingAvatar"
+                :src="userFollowing.followingAvatar | emptyImage"
                 alt=""
                 class="follow__avatar"
               />
@@ -130,8 +130,10 @@
 <script>
 import userAPI from "./../apis/users"
 import { Toast } from "./../utils/helpers"
+import { emptyImageFilter } from './../utils/mixins'
 export default {
   name: "UserFollow",
+  mixins:[emptyImageFilter],
   props:{
     userId:{
       type:Number,
@@ -308,7 +310,7 @@ export default {
     }
   }
   .user__follow--container {
-    height: 1000px;
+    height: calc(1200px - 54px - 55px);
     .user__follow {
       margin-top: 0.5rem;
       .user__follow {
@@ -324,6 +326,7 @@ export default {
             top: 2rem;
             height: 50px;
             width: 50px;
+            border-radius: 50%;
           }
         }
         .follow__info {

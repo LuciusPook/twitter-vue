@@ -1,72 +1,77 @@
 <template>
   <!-- Modal -->
-  <div 
-    :class="['user__edit--modal' , {edit:isEditing}]"
+  <form
+    :class="['user__edit--modal', { edit: isEditing }]"
+    @submit.stop.prevent="handleSubmit"
   >
     <div class="edit__modal--title">
-      <span 
+      <span
+        type="submit"
         class="modal__cancel"
-        @click="handleCancelEditBtnCkicked"
-      >&#215;</span>
+        @click="handleCancelEditBtnClicked"
+        >&#215;</span
+      >
       <h3 class="modal__name">編輯個人資料</h3>
       <button type="submit" class="modal__submit">儲存</button>
     </div>
     <div class="userCard">
       <div class="user__card--bannerWrapper">
-        <img
-          class="user__card--banner"
-          :src="user.cover"
-          alt=""
-        />
+        <img 
+          class="user__card--banner" 
+          :src="user.cover | emptyImage" 
+          alt="">
       </div>
       <div class="avatar__wrapper">
         <img
-          :src="user.avatar"
+          :src="user.avatar | emptyImage"
           alt=""
           class="user__card--avatar"
-        />
+        >
+      </div>
+      <div class="form__group">
         <label for="avatarImage">
-          <img 
-            src="./../assets/Group_edit-avatar.svg" 
-            alt="" 
+          <img
+            src="./../assets/Group_edit-avatar.svg"
+            alt=""
             class="avatar__edit"
-          >
+          />
         </label>
         <input
-            id="avatarImage"
-            type="file"
-            name="avatar-image"
-            accept="image/*"
-            class="form-control-file d-none"
-            @change="handleAvatarFileChange"
+          id="avatarImage"
+          type="file"
+          name="avatar-image"
+          accept="image/*"
+          class="form-control-file d-none"
+          @change="handleAvatarFileChange"
+        />
+      </div>
+      <div class="form__group">
+        <label for="bannerImage">
+          <img
+            src="./../assets/Group_edit-avatar.svg"
+            alt=""
+            class="edit__banner"
           />
+        </label>
+        <img
+          src="./../assets/Vector_cancel-icon.svg"
+          alt=""
+          class="edit__banner--cancel"
+          @click="handleBannerCancelClicked"
+        />
+        <input
+          id="bannerImage"
+          type="file"
+          name="banner-image"
+          accept="image/*"
+          class="form-control-file d-none"
+          @change="handleBannerFileChange"
+        />
       </div>
       <div class="user__card--form">
-        <div class="form-group">
-          <label for="bannerImage">
-            <img
-              src="./../assets/Group_edit-avatar.svg"
-              alt=""
-              class="edit__banner"
-            />
-          </label>
-          <img
-            src="./../assets/Vector_cancel-icon.svg"
-            alt=""
-            class="edit__banner--cancel"
-            @click="handleBannerCancelClicked"
-          />
+        <div class="form__group">
           <input
-            id="bannerImage"
-            type="file"
-            name="banner-image"
-            accept="image/*"
-            class="form-control-file d-none"
-            @change="handleBannerFileChange"
-          />
-        </div>
-        <div class="form-group">
-          <input
+            v-model="userName"
             id="name"
             type="text"
             class="form-control"
@@ -74,81 +79,88 @@
             placeholder="名稱"
             required
           />
-          <span class="wordMax">8/50</span>
+          <span class="wordMax">{{ userName.length }}/50</span>
         </div>
-        <div class="form-group">
+        <div class="form__group">
           <textarea
+            v-model="userIntro"
             id="description"
             class="form-control"
             rows="3"
             name="description"
             placeholder="自我介紹"
           />
-          <span class="wordMax">0/160</span>
+          <span class="wordMax">{{ userIntro.length }}/160</span>
         </div>
       </div>
     </div>
-  </div>
+  </form>
 </template>
 <script>
-import defaultBanner from './../assets/Cover Photo_banner.png'
-import defaultAvatar from './../assets/Photo_avatar.png'
-const dummyUser = {
-  status: "success",
-  message: "",
-  id: 1,
-  account: "123",
-  name: "123",
-  email: "123",
-  password: "$2a$10$cP/f.QWf2RnjZKhQjD6CDuAQzOanuBdf1S48Akrp2el9jPzUzfBNu",
-  role: null,
-  cover: null,
-  avatar: null,
-  introduction: null,
-  createdAt: "2021-12-01T08:01:39.000Z",
-  updatedAt: "2021-12-01T08:01:39.000Z",
-};
+import { emptyImageFilter } from "./../utils/mixins";
 export default {
   name: "UserEditModal",
+  mixins: [emptyImageFilter],
+  props: {
+    initialUser: {
+      type: Object,
+      required: true,
+    },
+    isEditing: {
+      type: Boolean,
+      required: true,
+    },
+  },
   data() {
     return {
-      user:{}
+      user: {},
+      userIntro: "",
+      userName: "",
     };
   },
-  created(){
-    this.fetchUser()
-  },
-  props:{
-    isEditing:{
-      type:Boolean,
-      required:true
+  created() {
+    console.log(this.initialUser);
+    this.user = {
+      ...this.user,
+      ...this.initialUser
     }
+    this.userIntro = this.initialUser.introduction;
+    this.userName = this.initialUser.name;
   },
   methods: {
-    fetchUser(){
-      this.user = {
-        ...this.user,
-        ...dummyUser,
-        cover: dummyUser.cover || defaultBanner,
-        avatar: dummyUser.avatar || defaultAvatar
-      }
-    },
-    handleCancelEditBtnCkicked(){
+    handleCancelEditBtnClicked() {
       this.$emit("after-cancel-edit");
+    },
+    handleSubmit(e) {
+      console.log(e);
+      console.log(e.target);
+      const form = e.target;
+      const formData = new FormData(form);
+      const payload = {
+        formData,
+        newName: this.userName,
+        newIntro: this.userIntro,
+        newUserCover: this.user.cover,
+        newUserAvatar: this.user.avatar,
+      };
+      this.$emit("after-edit-submit", payload);
+      this.handleCancelEditBtnClicked();
     },
     handleBannerCancelClicked(e) {
       console.log(e);
-      this.user.cover = ''
+      this.user.cover = "";
     },
     handleBannerFileChange(e) {
-      const {files} = e.target
-      const imgURL = window.URL.createObjectURL(files[0])
-      this.user.cover = imgURL
+      const { files } = e.target;
+      console.log(files);
+      const imgURL = window.URL.createObjectURL(files[0]);
+      this.user.cover = imgURL;
     },
     handleAvatarFileChange(e) {
-      const {files} = e.target
-      const imgURL = window.URL.createObjectURL(files[0])
-      this.user.avatar = imgURL
+      const { files } = e.target;
+      console.log(files);
+      const imgURL = window.URL.createObjectURL(files[0]);
+      this.user.avatar = imgURL;
     },
   },
 };
@@ -159,13 +171,13 @@ export default {
   z-index: 2;
   @extend %standard-boxshadow;
   @extend %position-center;
-  width: 600px; 
+  width: 600px;
   height: 657px;
   background-color: #fff;
   border-radius: 1rem;
-  &.edit::before{
-    content:'';
-    position:absolute;
+  &.edit::before {
+    content: "";
+    position: absolute;
     z-index: -1;
     top: -1000%;
     left: -1000%;
@@ -190,7 +202,7 @@ export default {
       font-size: 2rem;
       font-weight: bold;
       color: $btn-color;
-      &:hover{
+      &:hover {
         cursor: pointer;
       }
     }
@@ -217,12 +229,11 @@ export default {
     .user__card--bannerWrapper {
       height: 200px;
       width: 100%;
-      // background-color: $dark-gray;
-      img:hover{
+      img:hover {
         opacity: 0.5;
       }
     }
-    .avatar__wrapper{
+    .avatar__wrapper {
       position: absolute;
       height: 140px;
       width: 140px;
@@ -231,26 +242,25 @@ export default {
       left: 1.5rem;
       border: 5px solid $white;
       background-color: $white;
-      .user__card--avatar{
+      .user__card--avatar {
         border-radius: 50%;
-        &:hover{
+        &:hover {
           opacity: 0.5;
         }
       }
       .avatar__edit {
-        position: absolute; 
+        position: absolute;
         @extend %position-center;
         height: 24px;
         width: 24px;
       }
     }
-    .user__card--form {
-      flex: 1;
-      padding: 6rem 1rem 2rem;
+    .form__group {
       label {
         img {
           position: absolute;
-          top: -200px;
+          z-index: 2;
+          top: 100px;
           left: calc(50% - 2rem);
           height: 24px;
           width: 24px;
@@ -258,13 +268,22 @@ export default {
       }
       .edit__banner--cancel {
         position: absolute;
-        top: -200px;
+        z-index: 2;
+        top: 100px;
         left: calc(50% + 2rem);
         height: 24px;
         width: 24px;
       }
-      .form-group {
-        position: relative;
+      .avatar__edit {
+        top: 185px;
+        left: 82px;
+      }
+    }
+    .user__card--form {
+      flex: 1;
+      padding: 6rem 1rem 2rem;
+      position: relative;
+      .form__group{
         input,
         textarea {
           position: relative;
