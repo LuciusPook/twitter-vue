@@ -144,7 +144,7 @@ export default {
 
 <style lang="scss" scoped>
 #twitter {
-  height: 100%;
+  max-height: 1200px;
   display: flex;
 }
 
