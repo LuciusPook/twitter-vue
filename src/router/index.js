@@ -46,11 +46,6 @@ const routes = [
     component: () => import('../views/UserAccountSetting.vue')
   },
   {
-    path: '/users/chat',
-    name: 'chat-room',
-    component: () => import('../views/UserChatRoom.vue')
-  },
-  {
     path: '/admin/login',
     name: 'admin-login',
     component: () => import('../views/AdminLogin.vue')

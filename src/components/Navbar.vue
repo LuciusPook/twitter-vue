@@ -54,24 +54,6 @@
               </router-link>
             </div>
             <div
-              class="sidebar-item"
-              :class="[
-                'navbar-item',
-                'page-item',
-                { active: currentPage === 'chat-room' },
-              ]"
-              @click="switchCurrentDisply('chat-room')"
-            >
-              <router-link
-                :to="{ name: 'chat-room' }"
-                }
-                class="sidebar-link sidebar-info"
-              >
-                <i></i>
-                公開聊天室
-              </router-link>
-            </div>
-            <div
               :class="[
                 'navbar-item',
                 'page-item',
