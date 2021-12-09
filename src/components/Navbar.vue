@@ -8,62 +8,61 @@
         <div class="navbar-list">
           <template v-if="currentUser.role !== 'admin'">
             <div
-              class="navbar-item"
-              :class="['page-item', { active: currentPage === 'main' }]"
+              :class="['navbar-item' , 'page-item', { active: currentPage === 'main' }]"
+              @click="switchCurrentDisply('main')"
             >
-              <router-link to="/main">
+              <router-link 
+                to="/main"
+              >
                 <img
+                  v-if="currentPage === 'main'"
                   src="./../assets/Vector_home-action.svg"
                   alt="main"
-                  v-if="currentPage === 'main'"
                 />
                 <img
+                  v-else
                   src="./../assets/Vector_home-icon.svg"
                   alt="main-unselected"
-                  v-else
                 />
                 首頁
               </router-link>
             </div>
             <div
-              class="navbar-item"
-              :class="['page-item', { active: currentPage === 'profile' }]"
+              :class="['navbar-item' , 'page-item', { active: currentPage === 'profile' }]"
+              @click="switchCurrentDisply('profile')"
             >
               <router-link
                 :to="{ name: 'user', params: { id: currentUser.id } }"
               >
                 <img
+                  v-if="currentPage === 'profile'"
                   src="./../assets/Vector_user-action.svg"
                   alt="user-info"
-                  v-if="
-                    currentPage === 'profile' &&
-                    $route.params.id === currentUser.id
-                  "
                 />
                 <img
+                  v-else
                   src="./../assets/Vector_user-icon.svg"
                   alt="user-info-unselected"
-                  v-else
                 />
                 個人資料
               </router-link>
             </div>
             <div
-              class="navbar-item"
-              :class="['page-item', { active: currentPage === 'setting' }]"
+              :class="['navbar-item' ,'page-item', { active: currentPage === 'setting' }]"
+              @click="switchCurrentDisply('setting')"
             >
               <router-link
-                :to="{ name: 'setting', params: { id: currentUser.id } }"
+                :to="{ name: 'setting' }"
               >
                 <img
+                  v-if="currentPage === 'setting'"
                   src="./../assets/Vector_cogsetting-action.svg"
                   alt="cogsetting"
-                  v-if="currentPage === 'setting'"
                 />
                 <img
+                  v-else
                   src="./../assets/Vector_cogsetting-icon.svg"
                   alt="cogsetting-unselected"
-                  v-else
                 />
                 設定
               </router-link>
@@ -71,37 +70,37 @@
           </template>
           <template v-if="currentUser.role === 'admin'">
             <div
-              class="navbar-item"
-              :class="['page-item', { active: currentPage === 'tweets' }]"
+              :class="['navbar-item' , 'page-item' , { active: currentPage === 'tweets' }]"
+              @click="switchCurrentDisply('tweets')"
             >
               <router-link to="/admin/tweets">
                 <img
+                  v-if="currentPage === 'tweets'"
                   src="./../assets/Vector_home-icon.svg"
                   alt="tweets-list"
-                  v-if="currentPage === 'tweets'"
                 />
                 <img
+                  v-else
                   src="./../assets/Vector_home-action.svg"
                   alt="tweets-list-unselectd"
-                  v-else
                 />
                 推文清單
               </router-link>
             </div>
             <div
-              class="navbar-item"
-              :class="['page-item', { active: currentPage === 'users-page' }]"
+              :class="['navbar-item' , 'page-item', { active: currentPage === 'users-page' }]"
+              @click="switchCurrentDisply('users-page')"
             >
               <router-link to="/admin/users">
                 <img
+                  v-if="currentPage === 'users-page'"
                   src="./../assets/Vector_user-action.svg"
                   alt="users-cards"
-                  v-if="currentPage === 'users-page'"
                 />
                 <img
+                  v-else
                   src="./../assets/Vector_user-icon.svg"
                   alt="users-unselected"
-                  v-else
                 />
                 使用者列表
               </router-link>
@@ -129,26 +128,12 @@ import { mapState } from "vuex";
 import { Toast } from "../utils/helpers";
 
 export default {
-  props: {
-    currentPage: {
-      type: [String, Boolean],
-      require: true,
-    },
-  },
+  name:'Navbar',
   data() {
     return {
-      // currentPage: [],
+      currentPage:''
     };
   },
-
-  watch: {
-    currentPage(newValue) {
-      this.currentPage = {
-        ...newValue,
-      };
-    },
-  },
-
   computed: {
     ...mapState(["currentUser", "isAuthenticated"]),
   },
@@ -165,6 +150,25 @@ export default {
       this.$store.commit("revokeAuthentication");
       this.$router.push("/login");
     },
+    switchCurrentDisply(mode){
+      switch (mode){
+        case 'main':
+          this.currentPage = 'main'
+          break
+        case 'profile':
+          this.currentPage = 'profile'
+          break
+        case 'setting':
+          this.currentPage = 'setting'
+          break
+        case 'tweets':
+          this.currentPage = 'tweets'
+          break
+        case 'users-page':
+          this.currentPage = 'users-page'
+          break
+      }
+    }
   },
 };
 </script>
