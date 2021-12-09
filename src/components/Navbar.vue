@@ -172,7 +172,6 @@ export default {
 <style lang="scss" scoped>
 .menu {
   width: 25%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
