@@ -104,8 +104,12 @@ export default {
           checkPassword,
         });
 
-        if (data.status === "error") {
-          throw new Error(data.message);
+        if (data.status === "Request failed with status code 400") {
+          Toast.fire({
+            icon: "error",
+            title: "信箱已重複註冊",
+          });
+          return;
         }
 
         Toast.fire({
@@ -119,7 +123,7 @@ export default {
         this.isProcessing = false;
         Toast.fire({
           icon: "error",
-          title: `${error.message}`,
+          title: "帳號註冊失敗，請稍後再試",
         });
       }
     },
