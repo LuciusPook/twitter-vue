@@ -1,5 +1,5 @@
 import moment from 'moment'
-import nullAvatar from './../assets/dog_avatar.jpg'
+import nullAvatar from './../assets/default-avatar.png'
 
 export const fromNowFilter = {
   filters: {

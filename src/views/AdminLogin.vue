@@ -7,7 +7,8 @@
       :Password="password"
       @after-submit="handleAfterSubmit"
       :is-processing="isProcessing"
-      :Checked="checked"
+      :checked="checked"
+      :warningMessage="warningMessage"
     />
     <div class="form-link">
       <router-link to="/login">前台登入</router-link>
@@ -30,6 +31,7 @@ export default {
       password: "",
       isProcessing: false,
       checked: false,
+      warningMessage:''
     };
   },
   methods: {
@@ -54,7 +56,12 @@ export default {
           password,
         });
 
-        if (data.status === "error" || data.user.role !== "admin") {
+        if (data.status !== 200) {
+          this.warningMessage = data.message
+          Toast.fire({
+            icon: "error",
+            title: data.message
+          });
           throw new Error(data.message);
         }
 
@@ -72,11 +79,7 @@ export default {
         this.password = "";
         this.checked = true;
         this.isProcessing = false;
-
-        Toast.fire({
-          icon: "warning",
-          title: "請確認您輸入正確的賬號密碼",
-        });
+        console.log('error' , error)
       }
     },
   },

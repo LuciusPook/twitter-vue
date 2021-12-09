@@ -78,7 +78,7 @@
           <img
             src="./../assets/Vector_cogsetting-icon.svg"
             alt=""
-            class="edit__banner--cancel"
+            class="edit__banner--setting"
           />
         </label>
         <input
@@ -347,6 +347,14 @@ export default {
         z-index: 2;
         top: 100px;
         left: calc(50% + 2rem);
+        height: 24px;
+        width: 24px;
+      }
+      .edit__banner--setting {
+        position: absolute;
+        z-index: 2;
+        top: 100px;
+        left: 50%;
         height: 24px;
         width: 24px;
       }

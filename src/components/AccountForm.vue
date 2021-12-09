@@ -5,20 +5,22 @@
         id="account"
         type="text"
         v-model="account"
-        :class="[Checked ? 'form-error' : '']"
+        :class="[{formError:warningMessage === '帳號不存在！'}]"
         placeholder="Account"
         autofocus
       />
-      <span class="invalid-feedback" v-show="Checked">帳號不存在！</span>
+      <span class="invalid-feedback" v-show="warningMessage === '帳號不存在！'">{{warningMessage}}</span>
     </div>
 
     <div class="form-group">
       <input
+        v-model="password"
         id="password"
         type="password"
-        v-model="password"
         placeholder="Password"
+        :class="[{formError:warningMessage === '密碼錯誤！'}]"
       />
+      <span class="invalid-feedback" v-show="warningMessage==='密碼錯誤！'">{{warningMessage}}</span>
     </div>
     <button type="submit" :disabled="isProcessing">
       {{ isProcessing ? "處理中..." : "登入" }}
@@ -41,10 +43,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    Checked: {
+    checked: {
       type: Boolean,
       require: true,
     },
+    warningMessage:{
+      type:String,
+      required:true
+    }
   },
 
   data() {
@@ -94,7 +100,7 @@ input::placeholder {
   font-size: 15px;
 }
 
-.form-error {
+.formError {
   border-bottom-color: #fc5a5a;
 }
 

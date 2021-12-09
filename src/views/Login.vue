@@ -7,7 +7,8 @@
       :Password="password"
       @after-submit="handleAfterSubmit"
       :is-processing="isProcessing"
-      :Checked="checked"
+      :checked="checked"
+      :warningMessage="warningMessage"
     />
     <div class="form-link">
       <router-link to="/register">註冊 Alphitter</router-link>
@@ -33,6 +34,7 @@ export default {
       password: "",
       isProcessing: false,
       checked: false,
+      warningMessage:''
     };
   },
 
@@ -57,8 +59,13 @@ export default {
           account,
           password,
         });
-
-        if (data.status === "error" || data.user.role === "admin") {
+        console.log(data)
+        if (data.status !== 200) {
+          this.warningMessage = data.message
+          Toast.fire({
+            icon: "error",
+            title: data.message
+          });
           throw new Error(data.message);
         }
 
@@ -75,11 +82,7 @@ export default {
         this.checked = true;
         this.isProcessing = false;
         this.password = "";
-
-        Toast.fire({
-          icon: "warning",
-          title: "請確認您輸入正確的賬號密碼",
-        });
+        console.log('error' , error)
       }
     },
   },

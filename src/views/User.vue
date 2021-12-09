@@ -37,7 +37,7 @@
             <div class="user__card--bannerWrapper">
               <img
                 class="user__card--banner"
-                :src="user.cover | emptyImage"
+                :src="user.cover"
                 alt=""
               />
             </div>
@@ -184,6 +184,7 @@ import { Toast } from "./../utils/helpers";
 import { mapState } from "vuex";
 import Spinner from "./../components/Spinner";
 import ReplyModal from "./../components/ReplyModal.vue";
+import defaultBanner from "./../assets/default_banner.png"
 
 export default {
   name: "User",
@@ -250,7 +251,7 @@ export default {
           id,
           account,
           avatar,
-          cover,
+          cover : cover || defaultBanner,
           email,
           introduction: introduction || "使用者未填寫自我介紹",
           name,
@@ -403,6 +404,12 @@ export default {
     async afterSubmitEdit(payload) {
       this.isLoading = true
       const { newAvatar, newCover, newName, newIntro, formData } = payload;
+      if(newName.trim().length === 0){
+        Toast.fire({
+          icon: 'warning',
+          title: '名稱不能留白'     
+        })
+      }
       try {
         const response = await userAPI.editUserProfile({
           formData,

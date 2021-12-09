@@ -77,6 +77,12 @@ export default {
       this.$store.commit('toggleReplyModal')
     },
     async submitReply(tweetId){
+      if(this.replyText.trim().length === 0){
+        Toast.fire({
+          icon: 'warning',
+          title: '回覆內文不能留白'     
+        })
+      }
       try{
         const response = await tweetAPI.reply.addReply({tweetId , comment:this.replyText})
         const payload = {status:response.status , tweetId}
