@@ -54,16 +54,6 @@
             class="edit__banner"
           />
         </label>
-        <label 
-          for="bannerImage"
-          @click.stop.prevent="handleBannerCancelClicked"
-        >
-          <img
-            src="./../assets/Vector_cancel-icon.svg"
-            alt=""
-            class="edit__banner--cancel"
-          />
-        </label>
         <input
           id="bannerImage"
           type="file"
@@ -72,6 +62,23 @@
           class="form-control-file d-none"
           @change="handleBannerFileChange"
         />
+        <input 
+          v-model="isCanceled"
+          type="checkbox" 
+          id="bannerCancel" 
+          name="isCanceled" 
+          class="bannerCancel d-none"
+        >
+        <label 
+          for="bannerCancel"
+          @click.stop.prevent="handleBannerCancelClicked"
+        >
+          <img
+            src="./../assets/Vector_cancel-icon.svg"
+            alt=""
+            class="edit__banner--cancel"
+          />
+        </label>
       </div>
       <div class="user__card--form">
         <div class="form__group">
@@ -121,6 +128,7 @@ export default {
       user: {},
       userIntro: "",
       userName: "",
+      isCanceled:false
     };
   },
   created() {
