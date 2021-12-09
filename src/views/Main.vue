@@ -139,12 +139,18 @@ export default {
   methods: {
     async createNewTweet(newTweetText) {
       this.isLoading = true;
+      if(newTweetText.trim().length === 0){
+        Toast.fire({
+          icon: 'warning',
+          title: '內文不能留白'     
+        })
+      } 
       try {
         const response = await tweetsAPI.postTweet({
           description: newTweetText,
         });
-        this.newTweetText = "";
         if (response.status !== 200) throw new Error(response.status);
+        this.newTweetText = "";
         this.handleTextareaBlurred();
         this.fetchTweets();
         Toast.fire({
@@ -384,6 +390,7 @@ export default {
             height: 40px;
             > span {
               display: flex;
+              align-items: center;
               margin-right: 3rem;
               img {
                 height: 1rem;

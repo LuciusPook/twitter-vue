@@ -150,7 +150,21 @@ export default {
       }
     },
     async handleSubmit() {
+      this.isProcessing = true;
       try {
+        if (this.account.trim().length < 1 || 
+            this.name.trim().length < 1 ||
+            this.account.trim().length < 1 ||
+            this.email.trim().length < 1 ||
+            this.password.trim().length < 1 ||
+            this.checkPassword.trim().length < 1) {
+          Toast.fire({
+            icon: "warning",
+            title: "欄位不可留白",
+          });
+          this.isProcessing = false;
+          return;
+        }
         if (this.account.length > 20) {
           Toast.fire({
             icon: "warning",

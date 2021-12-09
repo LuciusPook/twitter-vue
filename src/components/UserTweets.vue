@@ -196,6 +196,7 @@ export default {
         margin: 0.5rem 0;
         > span {
           display: flex;
+          align-items: center;
           margin-right: 3rem;
           img {
             height: 1rem;

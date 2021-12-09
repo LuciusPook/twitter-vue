@@ -70,7 +70,7 @@
           class="tweet__reply"
         >
           <div class="reply__avatar--container">
-            <img :src="tweetReply.User.avatar" alt="" class="reply__avatar" />
+            <img :src="tweetReply.User.avatar | emptyImage" alt="" class="reply__avatar" />
           </div>
           <div class="tweet__reply--content">
             <div class="tweet__reply--title">
