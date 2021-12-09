@@ -68,10 +68,11 @@
           id="bannerCancel" 
           name="isCanceled" 
           class="bannerCancel d-none"
+          value="cancelClicked"
         >
         <label 
           for="bannerCancel"
-          @click.stop.prevent="handleBannerCancelClicked"
+          @click="handleBannerCancelClicked"
         >
           <img
             src="./../assets/Vector_cancel-icon.svg"
@@ -86,29 +87,36 @@
             v-model="userName"
             id="name"
             type="text"
-            class="form-control"
+            :class="['form-control' , {exceeded: exceedNameMax}]"
             name="name"
             placeholder="名稱"
-            required
+            @keydown="nameRestriction"
           />
-          <span class="wordMax">{{ userName.length }}/50</span>
+          <span 
+            :class="['nameWordMax' , {exceeded: exceedNameMax}]"
+          >{{ userName.length}}/50</span>
         </div>
         <div class="form__group">
           <textarea
             v-model="userIntro"
             id="introduction"
-            class="form-control"
+            :class="['form-control' , {exceeded: exceedIntroMax}]"
             rows="3"
             name="introduction"
             placeholder="自我介紹"
+            @keydown="introRestriction"
           />
-          <span class="wordMax">{{ userIntro.length }}/160</span>
+          <span 
+            :class="['IntroWordMax' , {exceeded: exceedIntroMax}]"
+          >{{ userIntro.length}}/160
+          </span>
         </div>
       </div>
     </div>
   </form>
 </template>
 <script>
+import { Toast } from '../utils/helpers';
 import { emptyImageFilter } from "./../utils/mixins";
 export default {
   name: "UserEditModal",
@@ -128,7 +136,9 @@ export default {
       user: {},
       userIntro: "",
       userName: "",
-      isCanceled:false
+      isCanceled:false,
+      exceedNameMax:false,
+      exceedIntroMax:false,
     };
   },
   created() {
@@ -139,11 +149,42 @@ export default {
     this.userIntro = this.initialUser.introduction;
     this.userName = this.initialUser.name;
   },
+  watch:{
+    userName(newValue){
+      if( newValue.length > 50 ){
+        this.exceedNameMax = true
+      }else{
+        this.exceedNameMax = false
+      }
+    },
+    userIntro(newValue){
+      if(newValue.length > 160 ){
+        this.exceedIntroMax = true
+      }else{
+        this.exceedIntroMax = false
+      }
+    }
+  },
   methods: {
     handleCancelEditBtnClicked() {
+      this.isCanceled = false
       this.$emit("after-cancel-edit");
     },
     handleSubmit(e) {
+      if(this.userIntro.length > 160){
+        Toast.fire({
+          icon: 'warning',
+          title: '自我介紹字數超過160上限'
+        })
+        return
+      }
+      if(this.userName.length > 50){
+        Toast.fire({
+          icon: 'warning',
+          title: '名字字數超過50上限'
+        })
+        return
+      }
       const form = e.target;
       const formData = new FormData(form);
       const payload = {
@@ -157,8 +198,6 @@ export default {
       this.handleCancelEditBtnClicked();
     },
     handleBannerCancelClicked() {
-      // const bannerFile = document.querySelector('#bannerImage')
-      // bannerFile.target.file = {}
       this.user.cover = "";
     },
     handleBannerFileChange(e) {
@@ -171,6 +210,27 @@ export default {
       const imgURL = window.URL.createObjectURL(files[0]);
       this.user.avatar = imgURL;
     },
+    introRestriction(e){
+      console.log(e)
+      if(e.target.value.length > 160 && e.keyCode !== 8){
+        e.returnValue = false
+        Toast.fire({
+          icon:'warning',
+          title:'自我介紹字數超過160上限'
+        })
+        return
+      }
+    },
+    nameRestriction(e){
+      if(e.target.value.length > 50 && e.keyCode !== 8){
+        e.returnValue = false
+        Toast.fire({
+          icon:'warning',
+          title:'名字字數超過50上限'
+        })
+        return
+      }
+    }
   },
 };
 </script>
@@ -310,12 +370,28 @@ export default {
             font-size: 15px;
             font-weight: bold;
           }
-          + span {
-            position: absolute;
-            z-index: 3;
-            top: 100%;
-            right: 0px;
-            color: $follow-text;
+          &.exceeded{
+            border-bottom: 2px solid red;
+          }
+        }
+        .nameWordMax{
+          position: absolute;
+          z-index: 3;
+          top: 37%;
+          right: 1rem;
+          color: $follow-text;
+          &.exceeded{
+            color:red;
+          }
+        }
+        .IntroWordMax{
+          position: absolute;
+          z-index: 3;
+          top: 84%;
+          right: 1rem;
+          color: $follow-text;
+          &.exceeded{
+            color:red;
           }
         }
         textarea {

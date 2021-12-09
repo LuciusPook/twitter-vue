@@ -25,7 +25,11 @@
           >
         </div>
         <p class="tweet__content--text">
-          {{ likedTweet.description }}
+          <router-link
+            :to="{name: 'tweet' , params:{id:likedTweet.TweetId}}"
+          >
+            {{ likedTweet.description }}
+          </router-link>
         </p>
         <div class="tweet__content--interaction">
           <span class="tweet__interaction--replies">

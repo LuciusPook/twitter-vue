@@ -9,7 +9,7 @@
         </div>
 
         <!-- card -->
-        <div class="user_cards">
+        <div class="user_cards scroll">
           <div
             class="user_cards-profile"
             v-for="user in adminUsers"
@@ -127,7 +127,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   width: 100%;
-  height: 100%;
+  height: 1200px;
   display: flex;
   flex: 1;
   flex-direction: row;

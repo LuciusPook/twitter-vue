@@ -1,13 +1,12 @@
 <template>
-  <div
-    class="popular"
-    v-show="isAuthenticated"
-    v-if="currentUser.role !== 'admin'"
-  >
+  <div class="popular">
     <div class="popular-items">
       <h3>Popular</h3>
       <div class="popular-container">
-        <div class="popular-list" v-for="user in topUsers" :key="user.id">
+        <div class="popular-list" 
+          v-for="user in topUsers" 
+          :key="user.id"
+        >
           <div class="popular-info">
             <div class="avatar">
               <router-link :to="{ name: 'user', params: { id: user.id } }"
@@ -30,7 +29,7 @@
               type="button"
               class="unfollow-btn"
               :name="user.id"
-              v-if="user.isFollowed"
+              v-if="user.isFollowed && user.id !==currentUser.id"
               :disabled="isProcessing"
               @click.prevent.stop="deleteFollow(user.id)"
             >
@@ -39,7 +38,7 @@
             <button
               type="button"
               class="follow-btn"
-              v-else
+              v-if="!user.isFollowed && user.id !==currentUser.id"
               :disabled="isProcessing"
               @click.prevent.stop="addFollow(user.id)"
             >
@@ -79,6 +78,7 @@ export default {
   methods: {
     async fetchTopUsers() {
       try {
+<<<<<<< HEAD
         const { data } = await usersAPI.getTopUsers();
 
         if (data.status !== "success") {
@@ -87,7 +87,13 @@ export default {
         console.log(data.status)
 
         this.topUsers = data;
+=======
+        const response = await usersAPI.getTopUsers();
+        if (response.status !== 200)  throw new Error(response.statusText);
+        this.topUsers = [...response.data];
+>>>>>>> origin/main
       } catch (error) {
+        console.log('error', error)
         Toast.fire({
           icon: "error",
           title: "無法取得人氣使用者名單",
@@ -109,7 +115,6 @@ export default {
             user.isFollowed = true;
             this.isFollowed = true;
           }
-          return user;
         });
 
         Toast.fire({
@@ -118,6 +123,7 @@ export default {
         });
 
         this.isProcessing = false;
+        this.$store.commit('toggleTopUsersFollowClickStatus')
       } catch (error) {
         this.isProcessing = false;
         Toast.fire({
@@ -130,12 +136,12 @@ export default {
     async deleteFollow(id) {
       try {
         this.isProcessing = true;
-        const { data } = await usersAPI.followship.deleteFollowing({
+        const response = await usersAPI.followship.deleteFollowing({
           userId: id,
         });
 
-        if (data.status === "error") {
-          throw new Error(data.message);
+        if (response.status !== 200) {
+          throw new Error(response.statusText);
         }
 
         this.topUsers.map((user) => {
@@ -143,7 +149,6 @@ export default {
             user.isFollowed = false;
             this.isFollowed = false;
           }
-          return user;
         });
 
         Toast.fire({
@@ -152,6 +157,7 @@ export default {
         });
 
         this.isProcessing = false;
+        this.$store.commit('toggleTopUsersFollowClickStatus')
       } catch (error) {
         console.log(error);
         this.isProcessing = false;

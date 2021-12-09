@@ -1,10 +1,15 @@
 <template>
   <div id="twitter">
-    <Navbar @show-create-modal="toggleCreateTweetModal" />
+    <Navbar 
+      v-if="isAuthenticated"
+      @show-create-modal="toggleCreateTweetModal" 
+    />
 
     <router-view />
 
-    <PopularList />
+    <PopularList 
+      v-if="isAuthenticated && currentUser.role !== 'admin'"
+    />
 
     <NewPostModal
       v-if="isEditingCreateModal"
@@ -94,5 +99,6 @@ export default {
 #twitter {
   max-height: 1200px;
   display: flex;
+  position: relative;
 }
 </style>
