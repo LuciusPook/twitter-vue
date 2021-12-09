@@ -165,30 +165,25 @@ export default {
           password:this.password,
           checkPassword:this.checkPassword,
         });
-        console.log(response)
+        console.log('response', response)
         const data  = response.data
-        console.log(data)
-        // if(data.status !== 'success') throw new Error(data.message)
-        // if (data.message === "信箱或帳號重複！") {
-        //   Toast.fire({
-        //     icon: "error",
-        //     title: "信箱已重複註冊",
-        //   });
-        //   return;
-        // }
-        Toast.fire({
-          icon: "success",
-          title: "帳號註冊成功",
-        });
-        this.$router.push("/login");
+        if(data.status !== 'success'){
+          Toast.fire({
+            icon: "error",
+            title: data.message,
+          });
+          throw new Error(data.message)
+        } else{
+          this.isProcessing = false;
+          this.$router.push("/login");
+          Toast.fire({
+            icon: "success",
+            title: "帳號註冊成功",
+          });
+        }
+      }catch (error) {
         this.isProcessing = false;
-      } catch (error) {
-        this.isProcessing = false;
-        console.log('error' , error);
-        Toast.fire({
-          icon: "error",
-          title: "帳號註冊失敗，請稍後再試",
-        });
+        console.log('Errorrr' , error);
       }
     },
     accountMsg(e) {
