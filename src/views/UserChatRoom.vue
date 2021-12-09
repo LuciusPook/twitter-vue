@@ -26,7 +26,7 @@
           <router-link to="#" class="user-avatar-link">
             <div class="online_user-image">
               <img
-                src="https://i.imgur.com/qRezTy6.pnge"
+                src="./../assets/Photo_avatar.png"
                 class="user-image"
                 alt=""
               />
