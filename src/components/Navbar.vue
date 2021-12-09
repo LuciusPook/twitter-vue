@@ -2,7 +2,12 @@
   <div class="menu">
     <div class="navbar">
       <a>
-        <img src="./../assets/Icon@ac-icon.svg" alt="Logo" class="logo" />
+        <img 
+          src="./../assets/Icon@ac-icon.svg" 
+          alt="Logo" 
+          class="logo" 
+          @click="redirectMainPage(currentUser.role)"
+        />
       </a>
       <div class="navbar-options">
         <div class="navbar-list">
@@ -188,6 +193,13 @@ export default {
           break;
       }
     },
+    redirectMainPage(role){
+      if(role === 'admin'){
+        this.$router.push({ name: 'admin-tweets' })
+      }else{
+        this.$router.push({ name: 'main' })
+      }
+    }
   },
 };
 </script>
@@ -218,6 +230,7 @@ img {
 
 .logo {
   margin-bottom: 35px;
+  cursor: pointer;
 }
 
 a {
