@@ -69,6 +69,7 @@
           name="isCanceled" 
           class="bannerCancel d-none"
           value="cancelClicked"
+          :disabled="isCanceled"
         >
         <label 
           for="bannerCancel"
@@ -138,7 +139,7 @@ export default {
       userName: "",
       isCanceled:false,
       exceedNameMax:false,
-      exceedIntroMax:false
+      exceedIntroMax:false,
     };
   },
   created() {
@@ -197,6 +198,7 @@ export default {
       this.handleCancelEditBtnClicked();
     },
     handleBannerCancelClicked() {
+      this.isCanceled = true
       this.user.cover = "";
     },
     handleBannerFileChange(e) {
