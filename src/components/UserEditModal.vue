@@ -61,6 +61,7 @@
           accept="image/*"
           class="form-control-file d-none"
           @change="handleBannerFileChange"
+          :disabled="isCanceled"
         />
         <input 
           v-model="isCanceled"
@@ -68,7 +69,7 @@
           id="bannerCancel" 
           name="isCanceled" 
           class="bannerCancel d-none"
-          value="cancelClicked"
+          :disabled="isCanceled"
         >
         <label 
           for="bannerCancel"
