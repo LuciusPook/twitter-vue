@@ -211,8 +211,7 @@ export default {
       this.user.avatar = imgURL;
     },
     introRestriction(e){
-      console.log(e)
-      if(e.target.value.length > 160 && e.keyCode !== 8){
+      if(e.target.value.length >= 160 && e.keyCode !== 8){
         e.returnValue = false
         Toast.fire({
           icon:'warning',
@@ -222,7 +221,7 @@ export default {
       }
     },
     nameRestriction(e){
-      if(e.target.value.length > 50 && e.keyCode !== 8){
+      if(e.target.value.length >= 50 && e.keyCode !== 8){
         e.returnValue = false
         Toast.fire({
           icon:'warning',

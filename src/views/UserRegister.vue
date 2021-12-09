@@ -2,20 +2,86 @@
   <div class="container">
     <img src="https://i.ibb.co/WD1YSyW/Logo.jpg" alt="Logo" />
     <h2 class="form-title">建立你的帳號</h2>
-    <SettingForm
-      :Account="account"
-      :Name="name"
-      :Email="email"
-      :Password="password"
-      :CheckPassword="checkPassword"
-      @afterSubmit="submitRegister"
-      @accountMsg="accountMsg"
-      @nameMsg="nameMsg"
-      :account-error="accountError"
-      :name-error="nameError"
-      :is-processing="isProcessing"
-    />
+    <form class="login-form" @submit.prevent.stop="handleSubmit" novalidate>
+      <div class="form-group">
+        <input
+          v-model="account"
+          :class="{ isValid: accountError }"
+          type="text"
+          class="form-input"
+          placeholder="帳號"
+          autocomplete="account"
+          autofocus
+          @keydown="accountMsg"
+        />
+        <div class="warning-group">
+          <span 
+            v-show="accountError" 
+            class="invalid-feedback"
+          >字數超出上限！
+          </span>
+          <span 
+            :class="['text-number' , { isValid: accountError }]"
+          >{{ account.length }}/20</span>
+        </div>
+      </div>
 
+      <div class="form-group">
+        <input
+          v-model="name"
+          :class="{ isValid: nameError }"
+          type="text"
+          class="form-input"
+          placeholder="名稱"
+          autocomplete="username"
+          @keydown="nameMsg"
+        />
+        <div class="warning-group">
+          <span 
+            v-show="nameError"
+            class="invalid-feedback" 
+          >字數超出上限！</span
+          >
+          <span 
+            :class="['text-number' , { isValid: nameError }]"
+          >{{ name.length }}/50</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input
+          v-model="email"
+          type="email"
+          class="form-input"
+          placeholder="Email"
+          autocomplete="email"
+        />
+      </div>
+      <div class="form-group">
+        <input
+          v-model="password"
+          type="password"
+          class="form-input"
+          placeholder="密碼"
+          autocomplete="password"
+        />
+      </div>
+      <div class="form-group">
+        <input
+          v-model="checkPassword"
+          type="password"
+          class="form-input"
+          placeholder="密碼確認"
+          autocomplete="password"
+        />
+      </div>
+      <button 
+        type="submit" 
+        :disabled="isProcessing"
+      >
+        {{ isProcessing ? "處理中..." : "註冊" }}
+      </button>
+    </form>
     <div class="form-link">
       <router-link to="/login">取消</router-link>
     </div>
@@ -23,14 +89,11 @@
 </template>
 
 <script>
-import SettingForm from "./../components/SettingForm";
 import authorizationAPI from "./../apis/authorization";
 import { Toast } from "./../utils/helpers";
 
 export default {
-  components: {
-    SettingForm,
-  },
+  name: "",
   data() {
     return {
       account: "",
@@ -38,16 +101,15 @@ export default {
       email: "",
       password: "",
       checkPassword: "",
-      accountError: false,
-      nameError: false,
-      isProcessing: false,
+      accountError:false,
+      nameError:false,
+      isProcessing:false
     };
   },
   methods: {
-    async submitRegister(data) {
-      const { account, name, email, password, checkPassword } = data;
-
-      if (!account || !name || !email || !password || !checkPassword) {
+    async handleSubmit() {
+      this.isProcessing = true
+      if (!this.account || !this.name || !this.email || !this.password || !this.checkPassword) {
         Toast.fire({
           icon: "warning",
           title: "請確認所有欄位",
@@ -56,7 +118,7 @@ export default {
         return;
       }
 
-      if (password.length < 8 || password.length > 12) {
+      if (this.password.length < 8 || this.password.length > 12) {
         Toast.fire({
           icon: "warning",
           title: "密碼請設定在8-12字數內",
@@ -66,7 +128,7 @@ export default {
         return;
       }
 
-      if (account.length > 20) {
+      if (this.account.length > 20) {
         Toast.fire({
           icon: "warning",
           title: "帳號限定字數20字數內",
@@ -75,7 +137,7 @@ export default {
         return;
       }
 
-      if (name.length > 50) {
+      if (this.name.length > 50) {
         Toast.fire({
           icon: "warning",
           title: "名稱限定字數50個字內",
@@ -84,7 +146,7 @@ export default {
         return;
       }
 
-      if (password !== checkPassword) {
+      if (this.password !== this.checkPassword) {
         Toast.fire({
           icon: "warning",
           title: "密碼與確認密碼不符",
@@ -96,22 +158,24 @@ export default {
       try {
         this.isProcessing = true;
 
-        const { data } = await authorizationAPI.signUp({
-          account,
-          name,
-          email,
-          password,
-          checkPassword,
+        const response = await authorizationAPI.signUp({
+          account:this.account,
+          name:this.name,
+          email:this.email,
+          password:this.password,
+          checkPassword:this.checkPassword,
         });
-
-        if (data.status === "Request failed with status code 400") {
-          Toast.fire({
-            icon: "error",
-            title: "信箱已重複註冊",
-          });
-          return;
-        }
-
+        console.log(response)
+        const data  = response.data
+        console.log(data)
+        // if(data.status !== 'success') throw new Error(data.message)
+        // if (data.message === "信箱或帳號重複！") {
+        //   Toast.fire({
+        //     icon: "error",
+        //     title: "信箱已重複註冊",
+        //   });
+        //   return;
+        // }
         Toast.fire({
           icon: "success",
           title: "帳號註冊成功",
@@ -119,30 +183,36 @@ export default {
         this.$router.push("/login");
         this.isProcessing = false;
       } catch (error) {
-        console.log(error);
         this.isProcessing = false;
+        console.log('error' , error);
         Toast.fire({
           icon: "error",
           title: "帳號註冊失敗，請稍後再試",
         });
       }
     },
-
-    accountMsg(data) {
-      const { account } = data;
-      if (account.length > 20) {
+    accountMsg(e) {
+      if (this.account.length >= 20 && e.keyCode !== 8) {
         this.accountError = true;
-      } else if (account.length < 21) {
+        e.returnValue = false
+        Toast.fire({
+          icon:'warning',
+          title:'帳號字數超過20上限'
+        })
+      }else{
         this.accountError = false;
       }
       return;
     },
-
-    nameMsg(data) {
-      const { name } = data;
-      if (name.length > 50) {
-        this.nameError = true;
-      } else if (name.length < 51) {
+    nameMsg(e) {
+      if (this.name.length >= 50 &&  e.keyCode !== 8) {
+        this.nameError = true
+        e.returnValue = false
+        Toast.fire({
+          icon:'warning',
+          title:'名字字數超過50上限'
+        })
+      }else{
         this.nameError = false;
       }
       return;
@@ -184,5 +254,62 @@ a {
 
 a:hover {
   color: #0051ff;
+}
+
+.form-group {
+  width: 540px;
+  height: 52px;
+  margin: 32px auto;
+  border-radius: 4px 4px 0px 0px;
+}
+
+.form-input {
+  width: 100%;
+  height: 100%;
+  padding-left: 10px;
+  border: none;
+  background-color: #f5f8fa;
+  font-size: 19px;
+  border-bottom: 2px solid #657786;
+}
+
+input:focus {
+  border-bottom: 2px solid #50b5ff;
+}
+
+input::placeholder {
+  position: absolute;
+  padding: 5px 0;
+  font-size: 15px;
+}
+
+.warning-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.text-number {
+  margin-left: auto;
+  font-size: 15px;
+  color: #657786;
+  &.isValid{
+    color:red
+  }
+}
+
+.invalid-feedback {
+  font-size: 15px;
+  color: #fc5a5a;
+}
+
+.isValid {
+  border-bottom-color: #fc5a5a;
+}
+
+button {
+  width: 540px;
+  height: 46px;
+  font-size: 18px;
+  margin-top: 10px;
 }
 </style>
