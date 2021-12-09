@@ -1,15 +1,13 @@
 <template>
   <div id="twitter">
-    <Navbar 
+    <Navbar
       v-if="isAuthenticated"
-      @show-create-modal="toggleCreateTweetModal" 
+      @show-create-modal="toggleCreateTweetModal"
     />
 
     <router-view />
 
-    <PopularList 
-      v-if="isAuthenticated && currentUser.role !== 'admin'"
-    />
+    <PopularList v-if="isAuthenticated && currentUser.role !== 'admin'" />
 
     <NewPostModal
       v-if="isEditingCreateModal"
@@ -41,7 +39,7 @@ export default {
     return {
       isEditingCreateModal: false,
       checked: false,
-    }
+    };
   },
   computed: {
     ...mapState(["currentUser", "isAuthenticated"]),
@@ -50,9 +48,9 @@ export default {
     toggleCreateTweetModal() {
       this.isEditingCreateModal = !this.isEditingCreateModal;
     },
-    async createNewTweet(payload){
-      console.log(payload)
-      try{
+    async createNewTweet(payload) {
+      console.log(payload);
+      try {
         if (payload.length === 0) {
           Toast.fire({
             icon: "warning",
@@ -67,19 +65,19 @@ export default {
           });
           return;
         }
-        const response = await tweetsAPI.postTweet({ description:payload } )
-        if(response.status !== 200 ) throw new Error(response.statusText)
+        const response = await tweetsAPI.postTweet({ description: payload });
+        if (response.status !== 200) throw new Error(response.statusText);
         Toast.fire({
-          icon: 'success',
-          title: '成功新增推文'
-        })
-        this.toggleCreateTweetModal()
-      }catch(error){
-        console.log('error' , error)
+          icon: "success",
+          title: "成功新增推文",
+        });
+        this.toggleCreateTweetModal();
+      } catch (error) {
+        console.log("error", error);
         Toast.fire({
-          icon: 'error',
-          title: '無法新增推文，請稍後再試'
-        })
+          icon: "error",
+          title: "無法新增推文，請稍後再試",
+        });
       }
     },
     checkedMsg(data) {
