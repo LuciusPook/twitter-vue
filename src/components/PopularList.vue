@@ -78,20 +78,9 @@ export default {
   methods: {
     async fetchTopUsers() {
       try {
-<<<<<<< HEAD
-        const { data } = await usersAPI.getTopUsers();
-
-        if (data.status !== "success") {
-          throw new Error(data.message);
-        }
-        console.log(data.status)
-
-        this.topUsers = data;
-=======
         const response = await usersAPI.getTopUsers();
         if (response.status !== 200)  throw new Error(response.statusText);
         this.topUsers = [...response.data];
->>>>>>> origin/main
       } catch (error) {
         console.log('error', error)
         Toast.fire({
