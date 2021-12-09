@@ -401,6 +401,7 @@ export default {
       }
     },
     async afterSubmitEdit(payload) {
+      this.isLoading = true
       const { newAvatar, newCover, newName, newIntro, formData } = payload;
       try {
         const response = await userAPI.editUserProfile({
@@ -413,13 +414,14 @@ export default {
         this.user.introduction = newIntro;
         this.user.cover = newCover;
         this.user.avatar = newAvatar;
-        // this.$store.commit('setCurrentUser' , payload)
         this.fetchUser(this.user.id);
         Toast.fire({
           icon: "success",
           title: "成功更新使用者資料",
         });
+      this.isLoading = false
       } catch (error) {
+        this.isLoading = false
         console.log("error", error);
         Toast.fire({
           icon: "error",
