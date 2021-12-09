@@ -114,22 +114,23 @@ export default {
     },
 
     async deleteTweet(tweetId) {
+      this.isLoading = true
       try {
-        const { data } = await adminAPI.deleteTweet({ tweetId });
-
-        if (data.status === "error") {
-          throw new Error(data.message);
+        const response = await adminAPI.deleteTweet({ tweetId });
+        if (response.status !== 200) {
+          throw new Error(response.statusText);
         }
 
         this.admintweets = this.admintweets.filter(
           (tweet) => tweet.id !== tweetId
         );
-
+        this.isLoading = false
         Toast.fire({
           icon: "success",
           title: "成功刪除推文",
         });
       } catch (error) {
+        this.isLoading = false
         Toast.fire({
           icon: "error",
           title: "無法刪除推文，請稍後再試",

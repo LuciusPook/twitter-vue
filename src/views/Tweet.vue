@@ -244,6 +244,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .tweet__container {
+  height: 1200px;
   position: relative;
   flex: 1;
   .tweet__navbar {
@@ -340,7 +341,7 @@ export default {
     }
   }
   .tweet__replies--container {
-    height: 7000px;
+    height: calc(1200px - 55px - 399px);
     .tweet__replies {
       .tweet__reply {
         height: 105px;

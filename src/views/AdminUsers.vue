@@ -90,7 +90,7 @@ export default {
     return {
       currentPage: "users-page",
       adminUsers: [],
-      isLoading: true,
+      isLoading: false,
     };
   },
 
@@ -106,11 +106,10 @@ export default {
 
   methods: {
     async fetchAdminUsers() {
+      this.isLoading = true;
       try {
-        this.isLoading = true;
         const { data } = await adminAPI.getUsers();
-
-        this.adminUsers = data;
+        this.adminUsers = [...data];
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;

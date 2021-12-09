@@ -9,12 +9,9 @@ const baseURL = herokuURL
 const axiosInstance = axios.create({
   baseURL
 })
-
 axiosInstance.interceptors.request.use(
   config => {
-
     const token = localStorage.getItem('token')
-
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
@@ -22,9 +19,7 @@ axiosInstance.interceptors.request.use(
   },
   err => Promise.reject(err)
 )
-
 export const apiHelper = axiosInstance
-
 export const Toast = Swal.mixin({
   toast: true,
   position: 'top-end',

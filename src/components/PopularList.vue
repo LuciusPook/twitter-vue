@@ -59,22 +59,18 @@ import { mapState } from "vuex";
 
 export default {
   mixins: [emptyImageFilter],
-
   data() {
     return {
       topUsers: [],
       isProcessing: false,
     };
   },
-
   computed: {
     ...mapState(["currentUser", "isAuthenticated"]),
   },
-
   created() {
     this.fetchTopUsers();
   },
-
   methods: {
     async fetchTopUsers() {
       try {
@@ -89,7 +85,6 @@ export default {
         });
       }
     },
-
     async addFollow(id) {
       try {
         this.isProcessing = true;

@@ -9,7 +9,7 @@
         <div class="form-part">
           <form
             class="form-login"
-            @submit.stop.prevent="handleSubmit"
+            @submit.stop.prevent="handleSubmit(currentUser.id)"
             novalidate
           >
             <div class="form-group">
@@ -131,8 +131,8 @@ export default {
 
   methods: {
     async fetchUserData(id) {
+      this.isLoading = true;
       try {
-        this.isLoading = true;
         const { data } = await usersAPI.getCurrentUser({ id });
         const { account, name, email } = data;
         this.id = id;
@@ -149,7 +149,7 @@ export default {
         });
       }
     },
-    async handleSubmit() {
+    async handleSubmit(id) {
       this.isProcessing = true;
       try {
         if (this.account.trim().length < 1 || 
@@ -206,22 +206,25 @@ export default {
           checkPassword: this.checkPassword,
         };
         const response = await usersAPI.updateUserAccont({ formData });
-        console.log(formData);
-        console.log(response);
-        if (response.status !== 200) throw new Error(response.statusText);
+        const data = response.data
+        console.log(response)
+        console.log(data)
+        if (data.status !== 'success'){
+          Toast.fire({
+            icon: "error",
+            title: data.message,
+          });
+          throw new Error(data.message);
+        } 
         Toast.fire({
           icon: "success",
           title: "儲存完成",
         });
-        this.$router.push({ name: "user", params: { id: this.id } });
+        this.$router.push({ name: "user", params: { id } });
         this.isProcessing = false;
       } catch (error) {
         console.log("error", error);
         this.isProcessing = false;
-        Toast.fire({
-          icon: "error",
-          title: "無法儲存資料，請稍後再試",
-        });
       }
     },
     accountErrorMsg() {

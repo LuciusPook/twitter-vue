@@ -59,7 +59,6 @@ export default {
           account,
           password,
         });
-        console.log(data)
         if (data.status !== 200) {
           this.warningMessage = data.message
           Toast.fire({
