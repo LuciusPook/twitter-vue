@@ -1,7 +1,7 @@
 // ./vue.config.js
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production'
-    ? '/simple-twitter-vue-2021/'
+    ? '/twitter-vue/'
     : '/'
 }
 module.exports = {
