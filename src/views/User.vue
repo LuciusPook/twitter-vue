@@ -1,6 +1,5 @@
 <template>
   <div class="user">
-    <Spinner v-if="isLoading" />
     <ReplyModal
       v-if="isReplying"
       :tweetId="clickedTweetId"
@@ -120,7 +119,11 @@
             @click="switchDisplayMode('likedTweets' , user.id)"
           >喜歡的內容</li>
         </ul>
-        <div class="user__tweetsContainer">
+        <Spinner v-if="isLoading"/>   
+        <div 
+          v-else
+          class="user__tweetsContainer"
+        >
           <UserLikedTweets 
             v-if="displayMode ==='likedTweets'"
             :initial-liked-tweets="userLikedTweets"
@@ -236,20 +239,16 @@ export default {
         });
       }
     },
-
     async fetchUserTweets(userId) {
+      this.isLoading = true;
       try {
-        this.isLoading = true;
-
         const response = await userAPI.tweets.getUserTweets({ userId });
         const data = response.data;
         this.userTweets = [...data];
         if (response.status !== 200) throw new Error(response.statusText);
-
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
-
         console("error", error);
         Toast.fire({
           icon: "error",
@@ -263,6 +262,7 @@ export default {
         const data = response.data;
         if (response.status !== 200) throw new Error(response.statusText);
         this.userRepliedTweets = [...data];
+        console.log('here')
       } catch (error) {
         console("error", error);
         Toast.fire({
@@ -344,7 +344,6 @@ export default {
       this.clickedTweetId = tweetId;
     },
     afterSubmitReply(payload) {
-      console.log(payload);
       if (payload.status === 200) {
         this.userTweets.map((tweet) => {
           if (tweet.id === payload.tweetId) {
@@ -364,17 +363,15 @@ export default {
     },
     async afterSubmitEdit(payload){
       const { newAvatar , newCover , newName , newIntro , formData } = payload
-      console.log('payload', payload)
-      console.log('formData',formData)
       try{
         const response = await userAPI.editUserProfile({ formData , userId: this.user.id })
-        console.log(response)
-
+        console.log('response' , response)
         if(response.status !== 200) throw new Error(response.statusText)
         this.user.name = newName
         this.user.introduction = newIntro
         this.user.cover = newCover
         this.user.avatar = newAvatar
+        // this.$store.commit('setCurrentUser' , this.user)
         Toast.fire({
           icon: 'success',
           title: '成功更新使用者資料'
