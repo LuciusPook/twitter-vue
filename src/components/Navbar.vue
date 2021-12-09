@@ -1,5 +1,5 @@
 <template>
-  <div class="menu" v-show="isAuthenticated">
+  <div class="menu">
     <div class="navbar">
       <a>
         <img src="https://i.ibb.co/WD1YSyW/Logo.jpg" alt="Logo" class="logo" />
@@ -68,7 +68,7 @@
               </router-link>
             </div>
           </template>
-          <template v-if="currentUser.role === 'admin'">
+          <template v-else>
             <div
               :class="['navbar-item' , 'page-item' , { active: currentPage === 'tweets' }]"
               @click="switchCurrentDisply('tweets')"
@@ -135,7 +135,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["currentUser", "isAuthenticated"]),
+    ...mapState(["currentUser"]),
   },
 
   methods: {
@@ -176,12 +176,12 @@ export default {
 <style lang="scss" scoped>
 .menu {
   width: 25%;
-  height: 100%;
+  // height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-between;
   .navbar {
-    height: 100%;
+    // height: 100%;
     padding: 14px 0 0 70px;
     border-right: 1px solid #e6ecf0;
   }

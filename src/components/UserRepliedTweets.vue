@@ -33,7 +33,11 @@
           </router-link>
         </p>
         <p class="tweet__content--text">
+        <router-link
+          :to="{name:'tweet' , params:{id:repliedTweet.Tweet.id}}"
+        >
           {{ repliedTweet.comment }}
+        </router-link>
         </p>
       </div>
     </li>

@@ -13,11 +13,13 @@ export default new Vuex.Store({
       account:'',
       avatar:'',
       cover:'',
-      introduction:''
+      introduction:'',
+      role:''
     },
     isAuthenticated: false,
     token: '',
-    isReplying:false
+    isReplying:false,
+    topUserFollowBtnClickedStatus:false
   },
   mutations: {
     setCurrentUser(state, currentUser) {
@@ -43,6 +45,9 @@ export default new Vuex.Store({
     },
     toggleReplyModal(state){
       state.isReplying = !state.isReplying
+    },
+    toggleTopUsersFollowClickStatus(state){
+      state.topUserFollowBtnClickedStatus = !state.topUserFollowBtnClickedStatus
     }
   },
   actions: {
@@ -51,7 +56,7 @@ export default new Vuex.Store({
       try {
         const { data } = await usersAPI.getCurrentUser()
 
-        const { id, name, email, avatar, account, cover, introduction } = data
+        const { id, name, email, avatar, account, cover, introduction , role } = data
 
         commit('setCurrentUser', {
           id,
@@ -60,7 +65,8 @@ export default new Vuex.Store({
           avatar,
           account,
           cover,
-          introduction
+          introduction,
+          role
         })
         return true
       } catch (error) {

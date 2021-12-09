@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container scrollbar">
     <Spinner v-if="isLoading" />
 
     <!-- <Navbar :currentPage="currentPage" /> -->
@@ -146,7 +146,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   width: 100%;
-  height: 100%;
+  height: 1200px;
   display: flex;
   flex-direction: row;
   flex: 1;

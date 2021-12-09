@@ -20,7 +20,11 @@
         正在跟隨
       </li>
     </ul>
-    <div class="user__follow--container scroll">
+    <Spinner v-if="isLoading" />
+    <div
+      v-else
+      class="user__follow--container scroll"
+    >
       <ul
         v-show="displayMode === 'followers' && userFollowers"
         class="user__followers user__follow"
@@ -56,16 +60,18 @@
               {{ userFollower.Intro }}
             </p>
             <button
-              v-if="userFollower.isFollowed"
-              :class="['follow__btn', { active: userFollower.isFollowed }]"
+              v-if="userFollower.isFollowed && userFollower.followerId !== currentUser.id"
+              :class="['follow__btn', { active: userFollower.isFollowed}]"
               @click="handleUnfollowBtnClicked(userFollower.followerId, 'follower')"
+              :disabled="isProcessing"
             >
               正在跟隨
             </button>
             <button
-              v-else
-              :class="['follow__btn', { active: userFollower.isFollowed }]"
+              v-else-if="!userFollower.isFollowed && userFollower.followerId !== currentUser.id"
+              :class="['follow__btn', { active: userFollower.isFollowed}]"
               @click="handleFollowBtnClicked(userFollower.followerId, 'follower')"
+              :disabled="isProcessing"
             >
               跟隨
             </button>
@@ -107,16 +113,19 @@
               {{ userFollowing.followingIntro }}
             </p>
             <button
-              v-if="userFollowing.isFollowed"
-              :class="['follow__btn', { active: userFollowing.isFollowed }]"
+              v-if="userFollowing.isFollowed && userFollowing.followingId !== currentUser.id"
+              :class="['follow__btn', { active: userFollowing.isFollowed}]"
               @click="handleUnfollowBtnClicked(userFollowing.followingId, 'following')"
+              :disabled="isProcessing"
             >
               正在跟隨
             </button>
             <button
-              v-else
-              :class="['follow__btn', { active: userFollowing.isFollowed }]"
+              
+              v-else-if="!userFollowing.isFollowed && userFollowing.followingId !== currentUser.id"
+              :class="['follow__btn', { active: userFollowing.isFollowed}]"
               @click="handleFollowBtnClicked(userFollowing.followingId, 'following')"
+              :disabled="isProcessing"
             >
               跟隨
             </button>
@@ -131,8 +140,13 @@
 import userAPI from "./../apis/users"
 import { Toast } from "./../utils/helpers"
 import { emptyImageFilter } from './../utils/mixins'
+import Spinner from './../components/Spinner.vue'
+import { mapState} from 'vuex'
 export default {
   name: "UserFollow",
+  components:{
+    Spinner
+  },
   mixins:[emptyImageFilter],
   props:{
     userId:{
@@ -145,11 +159,25 @@ export default {
       displayMode:'followers',
       isFollowed: true,
       userFollowers:[],
-      userFollowings:[]
+      userFollowings:[],
+      isLoading:false,
+      isProcessing:false
     }
+  },
+  computed:{
+    ...mapState(['currentUser','topUserFollowBtnClickedStatus'])
   },
   created(){
     this.handleFollowersPillClicked(this.userId)
+  },
+  watch:{
+    topUserFollowBtnClickedStatus(newValue){
+      if(this.displayMode === 'followers' && newValue){
+        this.handleFollowersPillClicked(this.userId)
+      }else if(this.displayMode === 'followings' && newValue){
+        this.handleFollowingsPillClicked(this.userId)
+      }
+    }
   },
   methods:{
     handleFollowersPillClicked(userId){
@@ -161,31 +189,31 @@ export default {
       this.fetchUserFollowings(userId)
     },
     async handleFollowBtnClicked(id , btnType){
+      this.isProcessing = true
       try{
         const response = await userAPI.followship.addFollowing({ userId: id})
         if(response.status !== 200) throw new Error(response.statusText)
-        console.log(response)
-        console.log('id',id,'btnType',btnType , typeof(btnType))
         if(btnType === 'follower'){
           this.userFollowers.map( userFollower => {
             if(userFollower.followerId === id){
-              userFollower.isFollowed = true
-              return userFollower       
+              userFollower.isFollowed = true       
             }
           })
+          this.isProcessing = false
         }else{
           this.userFollowings.map( userFollowing => {
             if(userFollowing.followingId === id){
               userFollowing.isFollowed = true
-              return userFollowing
             }
           })
+          this.isProcessing = false
         } 
         Toast.fire({
           icon:'success',
           title:'成功追蹤使用者'
         })
       }catch(error){
+        this.isLoading = false
         console.log('error' , error)
         Toast.fire({
           icon: 'error',
@@ -194,32 +222,31 @@ export default {
       }
     },
     async handleUnfollowBtnClicked(id , btnType){
+      this.isProcessing = true
       try{
         const response = await userAPI.followship.deleteFollowing({ userId: id})
         if(response.status !== 200) throw new Error(response.statusText)
-        console.log(response)
-        console.log('id',id,'btnType',btnType , typeof(btnType))
         if(btnType === 'follower'){
           this.userFollowers.map( userFollower => {
             if(userFollower.followerId === id){
-              userFollower.isFollowed = false  
-              return userFollower    
+              userFollower.isFollowed = false   
             }          
           })
+          this.isProcessing = false
         }else{
           this.userFollowings.map( userFollowing => {
             if(userFollowing.followingId === id){
-              userFollowing.isFollowed = false
-              return userFollowing            
+              userFollowing.isFollowed = false          
             }
           })
+          this.isProcessing = false
         } 
-        if(response.status !== 200) throw new Error(response.statusText)
         Toast.fire({
           icon:'success',
           title:'成功取消追蹤使用者'
         })
       }catch(error){
+        this.isProcessing = false
         console.log('error' , error)
         Toast.fire({
           icon: 'error',
@@ -228,13 +255,17 @@ export default {
       }
     },
     async fetchUserFollowers(userId){
+      this.isLoading = true
       try{
         const response = await userAPI.followship.getUserFollowers({ userId })
-        const data = response.data
-        console.log(data)
         if(response.status !== 200) throw new Error(response.statusText)
+        const data = response.data
         this.userFollowers = data[0].followerId === null? [] : [...data]
+        this.isLoading = false
+        this.$store.commit('toggleTopUsersFollowClickStatus')
       }catch(error){
+        this.$store.commit('toggleTopUsersFollowClickStatus')
+        this.isLoading = false
         console('error' , error)
         Toast.fire({
           icon: 'error',
@@ -243,13 +274,17 @@ export default {
       }
     },
     async fetchUserFollowings(userId){
+      this.isLoading = false
       try{
         const response = await userAPI.followship.getUserFollowings({ userId })
-        const data = response.data
-        console.log(data)
         if(response.status !== 200) throw new Error(response.statusText)
+        const data = response.data
         this.userFollowings = data[0].followingId === null? []:[...data]
+        this.isLoading = false
+        this.$store.commit('toggleTopUsersFollowClickStatus')
       }catch(error){
+        this.$store.commit('toggleTopUsersFollowClickStatus')
+        this.isLoading = false
         console('error' , error)
         Toast.fire({
           icon: 'error',

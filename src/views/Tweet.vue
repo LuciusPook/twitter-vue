@@ -1,6 +1,10 @@
 <template>
   <div class="tweet__container">
-    <ReplyModal v-if="isReplying" />
+    <ReplyModal
+      v-if="isReplying"
+      @after-submit-reply="afterSubmitReply"
+      :tweetId="clickedTweetId"
+    />
     <div class="tweet__navbar">
       <a class="tweet__navbar--prev" @click="$router.back()"></a>
       <div class="tweet__navbar--info">推文</div>
@@ -8,17 +12,17 @@
     <div class="tweet__card">
       <div class="tweet__title">
         <div class="tweet__avatar--container">
-          <router-link
-            :to="{name:'user' , params:{id:tweet.User.id}}"
-          >
-            <img :src="tweet.User.avatar | emptyImage" alt="" class="tweet__avatar" />
+          <router-link :to="{ name: 'user', params: { id: tweet.User.id } }">
+            <img
+              :src="tweet.User.avatar | emptyImage"
+              alt=""
+              class="tweet__avatar"
+            />
           </router-link>
         </div>
         <div class="tweet__title--info">
           <h3 class="tweet__title--name">{{ tweet.User.name }}</h3>
-          <router-link
-            :to="{name:'user' , params:{id:tweet.User.id}}"
-          >
+          <router-link :to="{ name: 'user', params: { id: tweet.User.id } }">
             <p class="tweet__title--account">@{{ tweet.User.account }}</p>
           </router-link>
         </div>
@@ -29,10 +33,10 @@
       <span class="tweet__time">{{ tweet.createdAt | timeTransForm }}</span>
       <div class="tweet__counts">
         <span class="tweet__commentCounts"
-          >{{ tweet.like_count }}<span>回覆</span></span
+          >{{ tweet.reply_count}}<span>回覆</span></span
         >
         <span class="tweet__likeCounts"
-          >{{ tweet.reply_count }}<span>喜歡次數</span></span
+          >{{ tweet.like_count}}<span>喜歡次數</span></span
         >
       </div>
       <div class="tweet__interactions">
@@ -40,9 +44,10 @@
           src="./../assets/Vector_reply-icon.svg"
           alt=""
           class="tweet__commentBtn"
+          @click="handleReplyModalToggle(tweet.id)"
         />
         <img
-          v-if="tweet.isliked"
+          v-if="tweet.isLiked"
           src="./../assets/Vector_redLike-icon.svg"
           alt=""
           class="tweet__likeBtn"
@@ -65,28 +70,24 @@
           class="tweet__reply"
         >
           <div class="reply__avatar--container">
-            <img
-              src="./../assets/Photo_avatar.png"
-              alt=""
-              class="reply__avatar"
-            />
+            <img :src="tweetReply.User.avatar" alt="" class="reply__avatar" />
           </div>
           <div class="tweet__reply--content">
             <div class="tweet__reply--title">
-              <h3 class="reply__user--name">{{tweetReply.User.name}}</h3>
+              <h3 class="reply__user--name">{{ tweetReply.User.name }}</h3>
               <span class="reply__user--account">
                 <router-link
-                  :to="{name:'user' , params:{id:tweetReply.User.id}}"
+                  :to="{ name: 'user', params: { id: tweetReply.User.id } }"
                 >
-                  <span>{{tweetReply.User.account}}</span>
+                  <span>{{ tweetReply.User.account }}</span>
                 </router-link>
-                <span>．{{tweetReply.createdAt | fromNow}}</span>
+                <span>．{{ tweetReply.createdAt | fromNow }}</span>
               </span>
             </div>
             <p class="tweet__reply--tag">
               <span>回覆</span>
               <router-link
-                :to="{name:'user' , params:{id:tweet.User.id}}"
+                :to="{ name: 'user', params: { id: tweet.User.id } }"
               >
                 <span class="tweet__account">
                   {{ tweet.User.account }}
@@ -94,7 +95,7 @@
               </router-link>
             </p>
             <p class="tweet__reply--text">
-              {{tweetReply.comment}}
+              {{ tweetReply.comment }}
             </p>
           </div>
         </li>
@@ -106,21 +107,24 @@
 import ReplyModal from "./../components/ReplyModal.vue";
 import tweetsAPI from "./../apis/tweets";
 import { Toast } from "./../utils/helpers";
-import { fromNowFilter } from '../utils/mixins'
-import { timeTransForm } from '../utils/mixins'
-import { emptyImageFilter } from '../utils/mixins'
+import { fromNowFilter } from "../utils/mixins";
+import { timeTransForm } from "../utils/mixins";
+import { emptyImageFilter } from "../utils/mixins";
+import { mapState } from 'vuex'
 export default {
   name: "Tweet",
   components: {
     ReplyModal,
   },
-  mixins:[fromNowFilter , timeTransForm , emptyImageFilter],
+  mixins: [fromNowFilter, timeTransForm, emptyImageFilter],
   data() {
     return {
       tweet: {},
       tweetReplies: [],
-      isReplying: false,
     };
+  },
+  computed:{
+    ...mapState(['isReplying'])
   },
   created() {
     const { id } = this.$route.params;
@@ -144,9 +148,10 @@ export default {
           description,
           UserId,
           createdAt,
-          like_cont,
+          like_count,
           reply_count,
           User,
+          isLiked
         } = data;
         this.tweet = {
           ...this.tweet,
@@ -154,9 +159,10 @@ export default {
           description,
           UserId,
           createdAt,
-          like_cont,
+          like_count,
           reply_count,
           User,
+          isLiked
         };
       } catch (error) {
         console.log("error", error);
@@ -184,7 +190,7 @@ export default {
       try {
         const response = await tweetsAPI.like.addLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
-        this.tweet.isLiked = true
+        this.tweet.isLiked = true;
         Toast.fire({
           icon: "success",
           title: "成功對推文按讚",
@@ -201,7 +207,7 @@ export default {
       try {
         const response = await tweetsAPI.like.deleteLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
-        this.tweet.isLiked = false
+        this.tweet.isLiked = false;
         Toast.fire({
           icon: "success",
           title: "成功取消推文按讚",
@@ -214,6 +220,25 @@ export default {
         });
       }
     },
+    handleReplyModalToggle(tweetId) {
+      this.$store.commit("toggleReplyModal");
+      this.clickedTweetId = tweetId;
+    },
+    afterSubmitReply(payload) { 
+      if (payload.status === 200) {
+          this.tweet.reply_count++;
+          this.fetchTweetReplies(this.tweet.id)
+          Toast.fire({
+            icon: "success",
+            title: "成功回覆推文",
+          });
+      }else{
+        Toast.fire({
+          icon: "error",
+          title: "無法回覆推文，請稍後再試!",
+        });
+      }
+    }
   },
 };
 </script>
@@ -283,7 +308,7 @@ export default {
     .tweet__time {
       font-size: 15px;
       font-weight: bold;
-      color:$account;
+      color: $account;
       margin: 0.5rem 15px;
     }
     .tweet__counts {
@@ -310,6 +335,7 @@ export default {
         height: 25px;
         width: 25px;
         margin-right: 155px;
+        cursor: pointer;
       }
     }
   }
@@ -330,6 +356,7 @@ export default {
             transform: translateX(-50%);
             height: 50px;
             width: 50px;
+            border-radius: 50%;
           }
         }
         .tweet__reply--content {

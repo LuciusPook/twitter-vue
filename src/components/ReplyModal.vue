@@ -79,7 +79,6 @@ export default {
     async submitReply(tweetId){
       try{
         const response = await tweetAPI.reply.addReply({tweetId , comment:this.replyText})
-        console.log(response)
         const payload = {status:response.status , tweetId}
         this.$emit('after-submit-reply' , payload)
         this.handleCancelReplyModal()
@@ -101,7 +100,6 @@ export default {
           title:'無法取得推文資料，請稍後再試!'
         })
       }
-
     }
   }
 }
