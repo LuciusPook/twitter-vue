@@ -8,12 +8,14 @@
         <div class="navbar-list">
           <template v-if="currentUser.role !== 'admin'">
             <div
-              :class="['navbar-item' , 'page-item', { active: currentPage === 'main' }]"
+              :class="[
+                'navbar-item',
+                'page-item',
+                { active: currentPage === 'main' },
+              ]"
               @click="switchCurrentDisply('main')"
             >
-              <router-link 
-                to="/main"
-              >
+              <router-link to="/main">
                 <img
                   v-if="currentPage === 'main'"
                   src="./../assets/Vector_home-action.svg"
@@ -28,7 +30,11 @@
               </router-link>
             </div>
             <div
-              :class="['navbar-item' , 'page-item', { active: currentPage === 'profile' }]"
+              :class="[
+                'navbar-item',
+                'page-item',
+                { active: currentPage === 'profile' },
+              ]"
               @click="switchCurrentDisply('profile')"
             >
               <router-link
@@ -48,12 +54,32 @@
               </router-link>
             </div>
             <div
-              :class="['navbar-item' ,'page-item', { active: currentPage === 'setting' }]"
-              @click="switchCurrentDisply('setting')"
+              class="sidebar-item"
+              :class="[
+                'navbar-item',
+                'page-item',
+                { active: currentPage === 'chat-room' },
+              ]"
+              @click="switchCurrentDisply('chat-room')"
             >
               <router-link
-                :to="{ name: 'setting' }"
+                :to="{ name: 'chat-room' }"
+                }
+                class="sidebar-link sidebar-info"
               >
+                <i></i>
+                公開聊天室
+              </router-link>
+            </div>
+            <div
+              :class="[
+                'navbar-item',
+                'page-item',
+                { active: currentPage === 'setting' },
+              ]"
+              @click="switchCurrentDisply('setting')"
+            >
+              <router-link :to="{ name: 'setting' }">
                 <img
                   v-if="currentPage === 'setting'"
                   src="./../assets/Vector_cogsetting-action.svg"
@@ -70,7 +96,11 @@
           </template>
           <template v-if="currentUser.role === 'admin'">
             <div
-              :class="['navbar-item' , 'page-item' , { active: currentPage === 'tweets' }]"
+              :class="[
+                'navbar-item',
+                'page-item',
+                { active: currentPage === 'tweets' },
+              ]"
               @click="switchCurrentDisply('tweets')"
             >
               <router-link to="/admin/tweets">
@@ -88,7 +118,11 @@
               </router-link>
             </div>
             <div
-              :class="['navbar-item' , 'page-item', { active: currentPage === 'users-page' }]"
+              :class="[
+                'navbar-item',
+                'page-item',
+                { active: currentPage === 'users-page' },
+              ]"
               @click="switchCurrentDisply('users-page')"
             >
               <router-link to="/admin/users">
@@ -128,10 +162,10 @@ import { mapState } from "vuex";
 import { Toast } from "../utils/helpers";
 
 export default {
-  name:'Navbar',
+  name: "Navbar",
   data() {
     return {
-      currentPage:''
+      currentPage: "",
     };
   },
   computed: {
@@ -150,25 +184,28 @@ export default {
       this.$store.commit("revokeAuthentication");
       this.$router.push("/login");
     },
-    switchCurrentDisply(mode){
-      switch (mode){
-        case 'main':
-          this.currentPage = 'main'
-          break
-        case 'profile':
-          this.currentPage = 'profile'
-          break
-        case 'setting':
-          this.currentPage = 'setting'
-          break
-        case 'tweets':
-          this.currentPage = 'tweets'
-          break
-        case 'users-page':
-          this.currentPage = 'users-page'
-          break
+    switchCurrentDisply(mode) {
+      switch (mode) {
+        case "main":
+          this.currentPage = "main";
+          break;
+        case "profile":
+          this.currentPage = "profile";
+          break;
+        case "setting":
+          this.currentPage = "setting";
+          break;
+        case "chat-room":
+          this.currentPage = "chat-room";
+          break;
+        case "tweets":
+          this.currentPage = "tweets";
+          break;
+        case "users-page":
+          this.currentPage = "users-page";
+          break;
       }
-    }
+    },
   },
 };
 </script>

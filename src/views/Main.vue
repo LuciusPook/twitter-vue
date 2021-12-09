@@ -2,104 +2,104 @@
   <div class="main">
     <Spinner v-if="isLoading" />
     <template v-else>
-    <ReplyModal
-      v-if="isReplying"
-      @after-submit-reply="afterSubmitReply"
-      :tweetId="clickedTweetId"
-    />
-    <div class="main__navbar">首頁</div>
-    <div class="createTweet">
-      <div class="createTweet__avatar--wrapper">
-        <router-link :to="{ name: 'user', params: { id: currentUser.id } }">
-          <img
-            :src="currentUser.avatar | emptyImage"
-            alt=""
-            class="createTweet__avatar"
+      <ReplyModal
+        v-if="isReplying"
+        @after-submit-reply="afterSubmitReply"
+        :tweetId="clickedTweetId"
+      />
+      <div class="main__navbar">首頁</div>
+      <div class="createTweet">
+        <div class="createTweet__avatar--wrapper">
+          <router-link :to="{ name: 'user', params: { id: currentUser.id } }">
+            <img
+              :src="currentUser.avatar | emptyImage"
+              alt=""
+              class="createTweet__avatar"
+            />
+          </router-link>
+        </div>
+        <div :class="['form__group', { edit: isEditing }]">
+          <textarea
+            class="newTweet form__control"
+            :rows="textareaRows"
+            name="newTweet"
+            id="newTweet"
+            placeholder="有什麼新鮮事?"
+            @focus="handleTextareaFocused"
+            @blur="handleTextareaBlurred"
+            v-model="newTweetText"
           />
-        </router-link>
+          <button type="submit" @click="createNewTweet(newTweetText)">
+            推文
+          </button>
+        </div>
       </div>
-      <div :class="['form__group', { edit: isEditing }]">
-        <textarea
-          class="newTweet form__control"
-          :rows="textareaRows"
-          name="newTweet"
-          id="newTweet"
-          placeholder="有什麼新鮮事?"
-          @focus="handleTextareaFocused"
-          @blur="handleTextareaBlurred"
-          v-model="newTweetText"
-        />
-        <button type="submit" @click="createNewTweet(newTweetText)">
-          推文
-        </button>
-      </div>
-    </div>
-    <div class="main__tweets--container scrollbar">
-      <ul class="main__tweets">
-        <li class="main__tweet" v-for="tweet in tweets" :key="tweet.id">
-          <div class="tweet__avatar--wrapper">
-            <router-link 
-              :to="{ name: 'user', params: { id: tweet.UserId } }"
-            >
-              <img
-                :src="tweet.User.avatar | emptyImage"
-                alt=""
-                class="tweet__avatar"
-              />
-            </router-link>
-          </div>
-          <div class="tweet__content">
-            <p class="tweet__title">
-              <span class="tweet__tweeter--name">{{ tweet.name }}</span>
-              <router-link 
-                :to="{name:'user' , params:{id:tweet.UserId}}"
-                class="tweet__tweeter--account"
-                >@{{ tweet.User.account }}
+      <div class="main__tweets--container scrollbar">
+        <ul class="main__tweets">
+          <li class="main__tweet" v-for="tweet in tweets" :key="tweet.id">
+            <div class="tweet__avatar--wrapper">
+              <router-link :to="{ name: 'user', params: { id: tweet.UserId } }">
+                <img
+                  :src="tweet.User.avatar | emptyImage"
+                  alt=""
+                  class="tweet__avatar"
+                />
               </router-link>
-              <span class="tweet__createdTime">．{{tweet.createdAt | fromNow}}</span>
-            </p>
-            <router-link
-              class="tweet__text--container"
-              :to="{ name: 'tweet', params: { id: tweet.id } }"
-            >
-              <p class="tweet__text">
-                {{ tweet.description }}
-              </p>
-            </router-link>
-            <div class="tweet__content--interaction">
-              <span class="tweet__interaction--replies">
-                <img
-                  src="./../assets/Vector_reply-icon.svg"
-                  alt=""
-                  class="interaction__replies--icon"
-                  @click="handleReplyModalToggle(tweet.id)"
-                />
-                <span class="interaction__replies--counts">{{
-                  tweet.reply_count
-                }}</span>
-              </span>
-              <span class="tweet__interaction--likes">
-                <img
-                  v-if="tweet.isLiked"
-                  src="./../assets/Vector_redLike-icon.svg"
-                  alt=""
-                  class="likes--icon"
-                  @click="deleteLike(tweet.id)"
-                />
-                <img
-                  v-else
-                  src="./../assets/Vector_like-icon.svg"
-                  alt=""
-                  class="likes--icon"
-                  @click="addLike(tweet.id)"
-                />
-                <span class="likes--counts">{{ tweet.like_count }}</span>
-              </span>
             </div>
-          </div>
-        </li>
-      </ul>
-    </div>
+            <div class="tweet__content">
+              <p class="tweet__title">
+                <span class="tweet__tweeter--name">{{ tweet.name }}</span>
+                <router-link
+                  :to="{ name: 'user', params: { id: tweet.UserId } }"
+                  class="tweet__tweeter--account"
+                  >@{{ tweet.User.account }}
+                </router-link>
+                <span class="tweet__createdTime"
+                  >．{{ tweet.createdAt | fromNow }}</span
+                >
+              </p>
+              <router-link
+                class="tweet__text--container"
+                :to="{ name: 'tweet', params: { id: tweet.id } }"
+              >
+                <p class="tweet__text">
+                  {{ tweet.description }}
+                </p>
+              </router-link>
+              <div class="tweet__content--interaction">
+                <span class="tweet__interaction--replies">
+                  <img
+                    src="./../assets/Vector_reply-icon.svg"
+                    alt=""
+                    class="interaction__replies--icon"
+                    @click="handleReplyModalToggle(tweet.id)"
+                  />
+                  <span class="interaction__replies--counts">{{
+                    tweet.reply_count
+                  }}</span>
+                </span>
+                <span class="tweet__interaction--likes">
+                  <img
+                    v-if="tweet.isLiked"
+                    src="./../assets/Vector_redLike-icon.svg"
+                    alt=""
+                    class="likes--icon"
+                    @click="deleteLike(tweet.id)"
+                  />
+                  <img
+                    v-else
+                    src="./../assets/Vector_like-icon.svg"
+                    alt=""
+                    class="likes--icon"
+                    @click="addLike(tweet.id)"
+                  />
+                  <span class="likes--counts">{{ tweet.like_count }}</span>
+                </span>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </template>
   </div>
 </template>
@@ -112,7 +112,6 @@ import { mapState } from "vuex";
 import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from "../utils/mixins";
 import Spinner from "./../components/Spinner";
-
 
 export default {
   name: "Main",
@@ -139,7 +138,7 @@ export default {
   },
   methods: {
     async createNewTweet(newTweetText) {
-      this.isLoading = true
+      this.isLoading = true;
       try {
         const response = await tweetsAPI.postTweet({
           description: newTweetText,
@@ -147,13 +146,13 @@ export default {
         this.newTweetText = "";
         if (response.status !== 200) throw new Error(response.status);
         this.handleTextareaBlurred();
-        this.fetchTweets()
+        this.fetchTweets();
         Toast.fire({
           icon: "success",
           title: "成功新增推文",
         });
       } catch (error) {
-        this.isLoading = false
+        this.isLoading = false;
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -162,7 +161,7 @@ export default {
       }
     },
     handleReplyModalToggle(tweetId) {
-      this.$store.commit("toggleReplyModal")
+      this.$store.commit("toggleReplyModal");
       this.clickedTweetId = tweetId;
     },
     afterSubmitReply(payload) {

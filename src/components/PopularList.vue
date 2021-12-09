@@ -10,16 +10,14 @@
         <div class="popular-list" v-for="user in topUsers" :key="user.id">
           <div class="popular-info">
             <div class="avatar">
-              <router-link
-                :to="{ name: 'user', params: { id: user.id } }"
+              <router-link :to="{ name: 'user', params: { id: user.id } }"
                 ><img :src="user.avatar | emptyImage" alt="avatar"
               /></router-link>
             </div>
             <div class="user-info">
-              <router-link
-                :to="{ name: 'user', params: { id: user.id } }"
-                >{{ user.name }}</router-link
-              >
+              <router-link :to="{ name: 'user', params: { id: user.id } }">{{
+                user.name
+              }}</router-link>
               <router-link
                 :to="{ name: 'user', params: { id: user.id } }"
                 class="popular-email"
@@ -83,9 +81,10 @@ export default {
       try {
         const { data } = await usersAPI.getTopUsers();
 
-        if (data.status === "error") {
+        if (data.status !== "success") {
           throw new Error(data.message);
         }
+        console.log(data.status)
 
         this.topUsers = data;
       } catch (error) {

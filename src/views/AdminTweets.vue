@@ -2,8 +2,6 @@
   <div class="container">
     <Spinner v-if="isLoading" />
 
-    <!-- <Navbar :currentPage="currentPage" /> -->
-
     <div class="admin_tweets">
       <div class="admin_tweets-container">
         <div class="admin_tweets-title">
@@ -65,7 +63,6 @@
 
 
 <script>
-// import Navbar from "./../components/Navbar.vue";
 import { timeTransForm } from "./../utils/mixins";
 import { emptyImageFilter } from "./../utils/mixins";
 import adminAPI from "./../apis/admin";
@@ -73,10 +70,10 @@ import { Toast } from "./../utils/helpers";
 import Spinner from "./../components/Spinner";
 
 export default {
+  name: "tweets",
   mixins: [timeTransForm, emptyImageFilter],
 
   components: {
-    // Navbar,
     Spinner,
   },
 

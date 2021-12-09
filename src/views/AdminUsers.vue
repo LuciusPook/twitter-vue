@@ -2,8 +2,6 @@
   <div class="container">
     <Spinner v-if="isLoading" />
 
-    <!-- <Navbar :currentPage="currentPage" /> -->
-
     <div class="admin_users">
       <div class="admin_users-container">
         <div class="admin_users-title">
@@ -76,16 +74,15 @@
 
 
 <script>
-// import Navbar from "./../components/Navbar.vue";
 import { emptyImageFilter } from "./../utils/mixins";
 import adminAPI from "./../apis/admin";
 import { Toast } from "./../utils/helpers";
 import Spinner from "./../components/Spinner";
 
 export default {
+  name: "users-page",
   mixins: [emptyImageFilter],
   components: {
-    // Navbar,
     Spinner,
   },
 
