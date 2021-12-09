@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <Spinner v-if="isLoading" />
-
+    <template v-else>
     <ReplyModal
       v-if="isReplying"
       @after-submit-reply="afterSubmitReply"
@@ -100,6 +100,7 @@
         </li>
       </ul>
     </div>
+    </template>
   </div>
 </template>
 
@@ -138,6 +139,7 @@ export default {
   },
   methods: {
     async createNewTweet(newTweetText) {
+      this.isLoading = true
       try {
         const response = await tweetsAPI.postTweet({
           description: newTweetText,
@@ -145,11 +147,13 @@ export default {
         this.newTweetText = "";
         if (response.status !== 200) throw new Error(response.status);
         this.handleTextareaBlurred();
+        this.fetchTweets()
         Toast.fire({
           icon: "success",
           title: "成功新增推文",
         });
       } catch (error) {
+        this.isLoading = false
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -235,11 +239,9 @@ export default {
     async fetchTweets() {
       try {
         this.isLoading = true;
-
         const { data } = await tweetsAPI.getTweets();
         if (!data) throw new Error();
         this.tweets = [...data];
-
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;

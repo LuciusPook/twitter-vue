@@ -40,7 +40,7 @@
         <input
           id="avatarImage"
           type="file"
-          name="avatar-image"
+          name="avatar"
           accept="image/*"
           class="form-control-file d-none"
           @change="handleAvatarFileChange"
@@ -54,20 +54,31 @@
             class="edit__banner"
           />
         </label>
-        <img
-          src="./../assets/Vector_cancel-icon.svg"
-          alt=""
-          class="edit__banner--cancel"
-          @click="handleBannerCancelClicked"
-        />
         <input
           id="bannerImage"
           type="file"
-          name="banner-image"
+          name="cover"
           accept="image/*"
           class="form-control-file d-none"
           @change="handleBannerFileChange"
         />
+        <input 
+          v-model="isCanceled"
+          type="checkbox" 
+          id="bannerCancel" 
+          name="isCanceled" 
+          class="bannerCancel d-none"
+        >
+        <label 
+          for="bannerCancel"
+          @click.stop.prevent="handleBannerCancelClicked"
+        >
+          <img
+            src="./../assets/Vector_cancel-icon.svg"
+            alt=""
+            class="edit__banner--cancel"
+          />
+        </label>
       </div>
       <div class="user__card--form">
         <div class="form__group">
@@ -85,10 +96,10 @@
         <div class="form__group">
           <textarea
             v-model="userIntro"
-            id="description"
+            id="introduction"
             class="form-control"
             rows="3"
-            name="description"
+            name="introduction"
             placeholder="自我介紹"
           />
           <span class="wordMax">{{ userIntro.length }}/160</span>
@@ -117,10 +128,10 @@ export default {
       user: {},
       userIntro: "",
       userName: "",
+      isCanceled:false
     };
   },
   created() {
-    console.log(this.initialUser);
     this.user = {
       ...this.user,
       ...this.initialUser
@@ -133,8 +144,6 @@ export default {
       this.$emit("after-cancel-edit");
     },
     handleSubmit(e) {
-      console.log('e' , e);
-      console.log('e.target',e.target);
       const form = e.target;
       const formData = new FormData(form);
       const payload = {
@@ -147,19 +156,18 @@ export default {
       this.$emit("after-edit-submit", payload);
       this.handleCancelEditBtnClicked();
     },
-    handleBannerCancelClicked(e) {
-      console.log(e);
+    handleBannerCancelClicked() {
+      // const bannerFile = document.querySelector('#bannerImage')
+      // bannerFile.target.file = {}
       this.user.cover = "";
     },
     handleBannerFileChange(e) {
       const { files } = e.target;
-      console.log(files);
       const imgURL = window.URL.createObjectURL(files[0]);
       this.user.cover = imgURL;
     },
     handleAvatarFileChange(e) {
       const { files } = e.target;
-      console.log(files);
       const imgURL = window.URL.createObjectURL(files[0]);
       this.user.avatar = imgURL;
     },

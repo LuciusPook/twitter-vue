@@ -41,14 +41,14 @@
           </span>
           <span class="tweet__interaction--likes">
             <img
-              v-if="likedTweet.isLiked"
+              v-if="likedTweet.isLiked && !isLoading"
               src="./../assets/Vector_redLike-icon.svg"
               alt=""
               class="likes--icon"
               @click="deleteLike(likedTweet.TweetId)"
             />
             <img
-              v-else
+              v-else-if="!likedTweet.isLiked&&!isLoading"
               src="./../assets/Vector_like-icon.svg"
               alt=""
               class="likes--icon"
@@ -84,6 +84,7 @@ export default {
   data() {
     return {
       likedTweets: this.initialLikedTweets,
+      isLoading:false
     };
   },
   watch: {
@@ -96,6 +97,7 @@ export default {
       this.$emit("after-reply-clicked", tweetId);
     },
     async addLike(tweetId) {
+      this.isLoading = true
       try {
         const response = await tweetsAPI.like.addLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -109,7 +111,9 @@ export default {
           icon: "success",
           title: "成功對推文按讚",
         });
+        this.isLoading = false
       } catch (error) {
+        this.isLoading = false
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -118,6 +122,8 @@ export default {
       }
     },
     async deleteLike(tweetId) {
+      this.isLoading = true
+
       try {
         const response = await tweetsAPI.like.deleteLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -131,7 +137,9 @@ export default {
           icon: "success",
           title: "成功取消推文按讚",
         });
+        this.isLoading = false
       } catch (error) {
+        this.isLoading = false
         console.log("error", error);
         Toast.fire({
           icon: "error",
