@@ -54,21 +54,21 @@
               </router-link>
             </div>
             <div
-              class="sidebar-item"
               :class="[
                 'navbar-item',
                 'page-item',
                 { active: currentPage === 'chat-room' },
               ]"
-              @click="switchCurrentDisply('chat-room')"
+              @click="switchCurrentDisply('setting')"
             >
-              <router-link
-                :to="{ name: 'chat-room' }"
-                }
-                class="sidebar-link sidebar-info"
-              >
-                <i></i>
-                公開聊天室
+              <router-link :to="{ name: 'chat-room' }">
+                <img src="./../assets/Vector_message-icon.svg" alt="message" />
+                <img
+                  src="./../assets/Vector_message-active.svg"
+                  alt="message-unselected"
+                />
+
+                聊天室
               </router-link>
             </div>
             <div

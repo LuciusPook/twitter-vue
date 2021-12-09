@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
-const herokuURL = 'https://twitter101.herokuapp.com/api'
-// const herokuURL = 'https://simple-twitter-tim.herokuapp.com/api'
+// const herokuURL = 'https://twitter101.herokuapp.com/api'
+const herokuURL = 'https://simple-twitter-tim.herokuapp.com/api'
 const baseURL = herokuURL 
 // const baseURL = herokuURL || 'http://localhost:3000/api'
 // const baseURL = 'http://localhost:3000/api'
