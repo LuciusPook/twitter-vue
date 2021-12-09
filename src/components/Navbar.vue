@@ -2,7 +2,7 @@
   <div class="menu">
     <div class="navbar">
       <a>
-        <img src="https://i.ibb.co/WD1YSyW/Logo.jpg" alt="Logo" class="logo" />
+        <img src="./../assets/Icon@ac-icon.svg" alt="Logo" class="logo" />
       </a>
       <div class="navbar-options">
         <div class="navbar-list">

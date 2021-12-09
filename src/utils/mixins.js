@@ -1,4 +1,5 @@
 import moment from 'moment'
+import nullAvatar from './../assets/dog_avatar.jpg'
 
 export const fromNowFilter = {
   filters: {
@@ -11,7 +12,7 @@ export const fromNowFilter = {
 export const emptyImageFilter = {
   filters: {
     emptyImage(src) {
-      return src || 'https://via.placeholder.com/350x220/DFDFDF?text=No+Image'
+      return src || nullAvatar
     }
   }
 }

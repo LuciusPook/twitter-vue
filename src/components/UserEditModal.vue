@@ -17,17 +17,14 @@
     </div>
     <div class="userCard">
       <div class="user__card--bannerWrapper">
-        <img 
-          class="user__card--banner" 
-          :src="user.cover | emptyImage" 
-          alt="">
+        <img class="user__card--banner" :src="user.cover | emptyImage" alt="" />
       </div>
       <div class="avatar__wrapper">
         <img
           :src="user.avatar | emptyImage"
           alt=""
           class="user__card--avatar"
-        >
+        />
       </div>
       <div class="form__group">
         <label for="avatarImage">
@@ -47,7 +44,7 @@
         />
       </div>
       <div class="form__group">
-        <label for="bannerImage">
+        <label v-show="!isCanceled" for="bannerImage">
           <img
             src="./../assets/Group_edit-avatar.svg"
             alt=""
@@ -62,15 +59,8 @@
           class="form-control-file d-none"
           @change="handleBannerFileChange"
         />
-        <input 
-          v-model="isCanceled"
-          type="checkbox" 
-          id="bannerCancel" 
-          name="isCanceled" 
-          class="bannerCancel d-none"
-          value="cancelClicked"
-        >
-        <label 
+        <label
+          v-show="!isCanceled"
           for="bannerCancel"
           @click="handleBannerCancelClicked"
         >
@@ -80,6 +70,25 @@
             class="edit__banner--cancel"
           />
         </label>
+        <label
+          v-show="isCanceled"
+          for="bannerCancel"
+          @click="handleBannerCancelClicked"
+        >
+          <img
+            src="./../assets/Vector_cogsetting-icon.svg"
+            alt=""
+            class="edit__banner--cancel"
+          />
+        </label>
+        <input
+          v-model="isCanceled"
+          type="checkbox"
+          id="bannerCancel"
+          name="isCanceled"
+          class="bannerCancel d-none"
+          value="coverCanceled"
+        />
       </div>
       <div class="user__card--form">
         <div class="form__group">
@@ -87,28 +96,27 @@
             v-model="userName"
             id="name"
             type="text"
-            :class="['form-control' , {exceeded: exceedNameMax}]"
+            :class="['form-control', { exceeded: exceedNameMax }]"
             name="name"
             placeholder="名稱"
             @keydown="nameRestriction"
           />
-          <span 
-            :class="['nameWordMax' , {exceeded: exceedNameMax}]"
-          >{{ userName.length}}/50</span>
+          <span :class="['nameWordMax', { exceeded: exceedNameMax }]"
+            >{{ userName.length }}/50</span
+          >
         </div>
         <div class="form__group">
           <textarea
             v-model="userIntro"
             id="introduction"
-            :class="['form-control' , {exceeded: exceedIntroMax}]"
+            :class="['form-control', { exceeded: exceedIntroMax }]"
             rows="3"
             name="introduction"
             placeholder="自我介紹"
             @keydown="introRestriction"
           />
-          <span 
-            :class="['IntroWordMax' , {exceeded: exceedIntroMax}]"
-          >{{ userIntro.length}}/160
+          <span :class="['IntroWordMax', { exceeded: exceedIntroMax }]"
+            >{{ userIntro.length }}/160
           </span>
         </div>
       </div>
@@ -116,7 +124,7 @@
   </form>
 </template>
 <script>
-import { Toast } from '../utils/helpers';
+import { Toast } from "../utils/helpers";
 import { emptyImageFilter } from "./../utils/mixins";
 export default {
   name: "UserEditModal",
@@ -136,54 +144,54 @@ export default {
       user: {},
       userIntro: "",
       userName: "",
-      isCanceled:false,
-      exceedNameMax:false,
-      exceedIntroMax:false,
+      isCanceled: "",
+      exceedNameMax: false,
+      exceedIntroMax: false,
     };
   },
   created() {
     this.user = {
       ...this.user,
-      ...this.initialUser
-    }
+      ...this.initialUser,
+    };
     this.userIntro = this.initialUser.introduction;
     this.userName = this.initialUser.name;
   },
-  watch:{
-    userName(newValue){
-      if( newValue.length > 50 ){
-        this.exceedNameMax = true
-      }else{
-        this.exceedNameMax = false
+  watch: {
+    userName(newValue) {
+      if (newValue.length > 50) {
+        this.exceedNameMax = true;
+      } else {
+        this.exceedNameMax = false;
       }
     },
-    userIntro(newValue){
-      if(newValue.length > 160 ){
-        this.exceedIntroMax = true
-      }else{
-        this.exceedIntroMax = false
+    userIntro(newValue) {
+      if (newValue.length > 160) {
+        this.exceedIntroMax = true;
+      } else {
+        this.exceedIntroMax = false;
       }
-    }
+    },
   },
   methods: {
     handleCancelEditBtnClicked() {
-      this.isCanceled = false
+      this.isCanceled = false;
       this.$emit("after-cancel-edit");
     },
     handleSubmit(e) {
-      if(this.userIntro.length > 160){
+      if (this.userIntro.length > 160) {
         Toast.fire({
-          icon: 'warning',
-          title: '自我介紹字數超過160上限'
-        })
-        return
+          icon: "warning",
+          title: "自我介紹字數超過160上限",
+        });
+        return;
       }
-      if(this.userName.length > 50){
+      if (this.userName.length > 50) {
         Toast.fire({
-          icon: 'warning',
-          title: '名字字數超過50上限'
-        })
-        return
+          icon: "warning",
+          title: "名字字數超過50上限",
+        });
+        return;
       }
       const form = e.target;
       const formData = new FormData(form);
@@ -210,27 +218,26 @@ export default {
       const imgURL = window.URL.createObjectURL(files[0]);
       this.user.avatar = imgURL;
     },
-    introRestriction(e){
-      console.log(e)
-      if(e.target.value.length > 160 && e.keyCode !== 8){
-        e.returnValue = false
+    introRestriction(e) {
+      if (e.target.value.length >= 160 && e.keyCode !== 8) {
+        e.returnValue = false;
         Toast.fire({
-          icon:'warning',
-          title:'自我介紹字數超過160上限'
-        })
-        return
+          icon: "warning",
+          title: "自我介紹字數超過160上限",
+        });
+        return;
       }
     },
-    nameRestriction(e){
-      if(e.target.value.length > 50 && e.keyCode !== 8){
-        e.returnValue = false
+    nameRestriction(e) {
+      if (e.target.value.length >= 50 && e.keyCode !== 8) {
+        e.returnValue = false;
         Toast.fire({
-          icon:'warning',
-          title:'名字字數超過50上限'
-        })
-        return
+          icon: "warning",
+          title: "名字字數超過50上限",
+        });
+        return;
       }
-    }
+    },
   },
 };
 </script>
@@ -352,7 +359,7 @@ export default {
       flex: 1;
       padding: 6rem 1rem 2rem;
       position: relative;
-      .form__group{
+      .form__group {
         input,
         textarea {
           position: relative;
@@ -370,28 +377,28 @@ export default {
             font-size: 15px;
             font-weight: bold;
           }
-          &.exceeded{
+          &.exceeded {
             border-bottom: 2px solid red;
           }
         }
-        .nameWordMax{
+        .nameWordMax {
           position: absolute;
           z-index: 3;
           top: 37%;
           right: 1rem;
           color: $follow-text;
-          &.exceeded{
-            color:red;
+          &.exceeded {
+            color: red;
           }
         }
-        .IntroWordMax{
+        .IntroWordMax {
           position: absolute;
           z-index: 3;
           top: 84%;
           right: 1rem;
           color: $follow-text;
-          &.exceeded{
-            color:red;
+          &.exceeded {
+            color: red;
           }
         }
         textarea {
