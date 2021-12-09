@@ -274,7 +274,7 @@ export default {
       }
     },
     async fetchUserFollowings(userId){
-      this.isLoading = false
+      this.isLoading = true
       try{
         const response = await userAPI.followship.getUserFollowings({ userId })
         if(response.status !== 200) throw new Error(response.statusText)
