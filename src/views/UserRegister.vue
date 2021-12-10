@@ -156,8 +156,6 @@ export default {
       }
 
       try {
-        this.isProcessing = true;
-
         const response = await authorizationAPI.signUp({
           account:this.account,
           name:this.name,
@@ -167,23 +165,22 @@ export default {
         });
         console.log('response', response)
         const data  = response.data
-        if(data.status !== 'success'){
+        if(data.status !== 200){
           Toast.fire({
             icon: "error",
             title: data.message,
           });
           throw new Error(data.message)
-        } else{
-          this.isProcessing = false;
-          this.$router.push("/login");
-          Toast.fire({
-            icon: "success",
-            title: "帳號註冊成功",
-          });
-        }
+        } 
+        this.$router.push("/login");
+        Toast.fire({
+          icon: "success",
+          title: "帳號註冊成功",
+        });
+        this.isProcessing = false;  
       }catch (error) {
         this.isProcessing = false;
-        console.log('Errorrr' , error);
+        console.log('Error' , error);
       }
     },
     accountMsg(e) {

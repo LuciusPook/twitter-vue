@@ -106,7 +106,7 @@ export default {
         const response = await tweetsAPI.like.addLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
         this.likedTweets.map((tweet) => {
-          if (tweet.id === tweetId) {
+          if (tweet.TweetId === tweetId) {
             tweet.isLiked = true;
             tweet.like_count++;
           }
@@ -127,12 +127,12 @@ export default {
     },
     async deleteLike(tweetId) {
       this.isLoading = true
-
       try {
         const response = await tweetsAPI.like.deleteLike({ tweetId });
+        console.log(response)
         if (response.status !== 200) throw new Error(response.statusText);
         this.likedTweets.map((tweet) => {
-          if (tweet.id === tweetId) {
+          if (tweet.TweetId === tweetId) {
             tweet.isLiked = false;
             tweet.like_count--;
           }
