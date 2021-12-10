@@ -5,7 +5,7 @@
 On local terminal , please follow instructions as below:
 - STEP 1: Clone project from [Github Page](https://github.com/JackJackHuo/twitter-vue.git) 
 ```
-npm clone https://github.com/JackJackHuo/twitter-vue.git
+npm clone https://github.com/JackJackHuo/twitter-vue.git twitter-without-chatroom
 ```
 - STEP 2: move directory into twitter-vue
 ```
