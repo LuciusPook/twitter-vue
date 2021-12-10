@@ -62,24 +62,6 @@
               :class="[
                 'navbar-item',
                 'page-item',
-                { active: currentPage === 'chat-room' },
-              ]"
-              @click="switchCurrentDisply('setting')"
-            >
-              <router-link :to="{ name: 'chat-room' }">
-                <img src="./../assets/Vector_message-icon.svg" alt="message" />
-                <img
-                  src="./../assets/Vector_message-action.svg"
-                  alt="message-unselected"
-                />
-
-                聊天室
-              </router-link>
-            </div>
-            <div
-              :class="[
-                'navbar-item',
-                'page-item',
                 { active: currentPage === 'setting' },
               ]"
               @click="switchCurrentDisply('setting')"
