@@ -126,10 +126,10 @@ export default {
       content:'';
       position:absolute;
       z-index: -1;
-      top: -1000%;
-      left: -1000%;
-      right: -1000%;
-      bottom: -725px;
+      top: -55px;
+      left: -500px;
+      right: -500px;
+      bottom: -763px;
       background-color: gray;
       opacity: 0.8;
     }

@@ -142,16 +142,17 @@ export default {
   methods: {
     async createNewTweet(newTweetText) {
       this.isLoading = true;
-      if(newTweetText.trim().length === 0){
-        Toast.fire({
-          icon: 'warning',
-          title: '內文不能留白'     
-        })
-      } 
+      // if(newTweetText.trim().length === 0){
+      //   Toast.fire({
+      //     icon: 'warning',
+      //     title: '內文不能留白'     
+      //   })
+      // } 
       try {
         const response = await tweetsAPI.postTweet({
           description: newTweetText,
         });
+        console.log(response)
         if (response.status !== 200) throw new Error(response.status);
         this.newTweetText = "";
         this.handleTextareaBlurred();
@@ -162,10 +163,9 @@ export default {
         });
       } catch (error) {
         this.isLoading = false;
-        console.log("error", error);
         Toast.fire({
           icon: "error",
-          title: "無法新增推文，請稍後再試!",
+          title: error.response.data.message,
         });
       }
     },
@@ -284,9 +284,10 @@ export default {
 
 <style lang="scss" scoped>
 .main {
+  flex: 1;
   overflow: overlay;
   background-color: $tweet-border;
-  flex: 1;
+  height: 1200px;
   .main__navbar {
     height: 55px;
     font-size: 18px;

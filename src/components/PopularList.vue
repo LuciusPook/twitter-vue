@@ -14,13 +14,18 @@
               /></router-link>
             </div>
             <div class="user-info">
-              <router-link :to="{ name: 'user', params: { id: user.id } }">{{
-                user.name
-              }}</router-link>
+              <router-link 
+                :to="{ name: 'user', params: { id: user.id } }"
+                class="popular-name"
+              >
+                {{user.name}}
+              </router-link>
               <router-link
                 :to="{ name: 'user', params: { id: user.id } }"
-                class="popular-email"
-                >@{{ user.account }}</router-link
+                class="popular-account"
+              >
+                @{{ user.account }}
+              </router-link
               >
             </div>
           </div>
@@ -207,7 +212,7 @@ img {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: start;
   justify-content: start;
   margin-left: 10px;
 }
@@ -216,7 +221,7 @@ img {
   font-size: 15px;
 }
 
-.popular-email {
+.popular-account {
   font-size: 15px;
   color: #657786;
 }

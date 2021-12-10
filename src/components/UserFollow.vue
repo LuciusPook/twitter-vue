@@ -175,15 +175,6 @@ export default {
         this.handleFollowingsPillClicked(this.userId)
     }
   },
-  // watch:{
-  //   followBtnClickedStatus(){
-  //     if(this.displayMode === 'followers'){
-  //       this.handleFollowersPillClicked(this.userId)
-  //     }else if(this.displayMode === 'followings'){
-  //       this.handleFollowingsPillClicked(this.userId)
-  //     }
-  //   }
-  // },
   methods:{
     handleFollowersPillClicked(userId){
       this.displayMode = 'followers'

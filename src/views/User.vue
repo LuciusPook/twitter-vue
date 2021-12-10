@@ -12,163 +12,155 @@
       @after-cancel-edit="handleEditInfoToggle"
       @after-edit-submit="afterSubmitEdit"
     />
-      <div class="user__navbar">
-        <a
-          v-if="isDisplayFollow === false"
-          class="user__navbar--prev"
-          @click="$router.back()"
-        ></a>
-        <a
-          v-else
-          class="user__navbar--prev"
-          @click="handleUserFollowshipClicked"
-        ></a>
-        <div class="user__navbar--info">
-          <h2 class="user__navbar--userName">{{ user.name }}</h2>
-          <p class="user__navbar--totalTweetsCount">
-            {{ userTweets.length }}推文
-          </p>
-        </div>
+    <div class="user__navbar">
+      <a
+        v-if="isDisplayFollow === false"
+        class="user__navbar--prev"
+        @click="$router.back()"
+      ></a>
+      <a
+        v-else
+        class="user__navbar--prev"
+        @click="handleUserFollowshipClicked"
+      ></a>
+      <div class="user__navbar--info">
+        <h2 class="user__navbar--userName">{{ user.name }}</h2>
+        <p class="user__navbar--totalTweetsCount">
+          {{ userTweets.length }}推文
+        </p>
       </div>
-      <UserFollow v-if="isDisplayFollow === true" :userId="user.id" />
-      <template v-else>
-        <div class="user__page--container">
-          <div class="userCard">
-            <div class="user__card--bannerWrapper">
-              <img
-                class="user__card--banner"
-                :src="user.cover"
-                alt=""
-              />
-            </div>
-            <img
-              :src="user.avatar | emptyImage"
-              alt=""
-              class="user__card--avatar"
-            />
-            <div class="user__card--info">
-              <div
-                v-if="user.id !== currentUser.id"
-                class="user__interaction--other"
-              >
-                <button class="mail__btn">
-                  <a href="mailto:email@example.com"
-                    ><img
-                      src="./../assets/Vector_mail.svg"
-                      alt=""
-                      class="mail__icon"
-                  /></a>
-                </button>
-                <button
-                  :class="['notification__btn', { active: isNotificationOn }]"
-                >
-                  <img
-                    src="./../assets/Vector_follow-bell.svg"
+    </div>
+    <UserFollow v-if="isDisplayFollow === true" :userId="user.id" />
+    <template v-else>
+      <div class="user__page--container">
+        <div class="userCard">
+          <div class="user__card--bannerWrapper">
+            <img class="user__card--banner" :src="user.cover" alt="" />
+          </div>
+          <img
+            :src="user.avatar | emptyImage"
+            alt=""
+            class="user__card--avatar"
+          />
+          <div class="user__card--info">
+            <div
+              v-if="user.id !== currentUser.id"
+              class="user__interaction--other"
+            >
+              <button class="mail__btn">
+                <a href="mailto:email@example.com"
+                  ><img
+                    src="./../assets/Vector_mail.svg"
                     alt=""
-                    class="notification__icon"
-                  />
-                </button>
-                <button
-                  v-if="user.isFollowed"
-                  type="submit"
-                  :class="['follow__btn', { active: user.isFollowed }]"
-                  @click.stop.prevent="handleUnfollowBtnClicked(user.id)"
-                  :disabled="isProcessing"
-                >
-                  正在跟隨
-                </button>
-                <button
-                  v-else
-                  type="submit"
-                  :class="['follow__btn', { active: user.isFollowed }]"
-                  @click.stop.prevent="handleFollowBtnClicked(user.id)"
-                  :disabled="isProcessing"
-                >
-                  跟隨
-                </button>
-              </div>
+                    class="mail__icon"
+                /></a>
+              </button>
+              <button
+                :class="['notification__btn', { active: isNotificationOn }]"
+              >
+                <img
+                  src="./../assets/Vector_follow-bell.svg"
+                  alt=""
+                  class="notification__icon"
+                />
+              </button>
+              <button
+                v-if="user.isFollowed"
+                type="submit"
+                :class="['follow__btn', { active: user.isFollowed }]"
+                @click.stop.prevent="handleUnfollowBtnClicked(user.id)"
+                :disabled="isProcessing"
+              >
+                正在跟隨
+              </button>
               <button
                 v-else
-                class="user__interaction--self"
-                @click="handleEditInfoToggle"
+                type="submit"
+                :class="['follow__btn', { active: user.isFollowed }]"
+                @click.stop.prevent="handleFollowBtnClicked(user.id)"
+                :disabled="isProcessing"
               >
-                編輯個人資料
+                跟隨
               </button>
-              <div class="userInfo__title">
-                <h2 class="userInfo__title--name">{{ user.name }}</h2>
-                <p class="userInfo__title--account">@{{ user.account }}</p>
-              </div>
-              <p class="userInfo__introduction">
-                {{ user.introduction }}
-              </p>
-              <div
-                class="userInfo__follow"
-                @click.stop.prevent="handleUserFollowshipClicked"
+            </div>
+            <button
+              v-else
+              class="user__interaction--self"
+              @click="handleEditInfoToggle"
+            >
+              編輯個人資料
+            </button>
+            <div class="userInfo__title">
+              <h2 class="userInfo__title--name">{{ user.name }}</h2>
+              <p class="userInfo__title--account">@{{ user.account }}</p>
+            </div>
+            <p class="userInfo__introduction">
+              {{ user.introduction }}
+            </p>
+            <div
+              class="userInfo__follow"
+              @click.stop.prevent="handleUserFollowshipClicked"
+            >
+              <span class="userInfo__followings"
+                ><span class="followingsCounts"
+                  >{{ user.following_count }}個</span
+                >跟隨中</span
               >
-                <span class="userInfo__followings"
-                  ><span class="followingsCounts"
-                    >{{ user.following_count }}個</span
-                  >跟隨中</span
-                >
-                <span class="userInfo__followers"
-                  ><span class="followersCounts"
-                    >{{ user.follower_count }}位</span
-                  >跟隨者</span
-                >
-              </div>
+              <span class="userInfo__followers"
+                ><span class="followersCounts">{{ user.follower_count }}位</span
+                >跟隨者</span
+              >
             </div>
           </div>
-          <ul class="user__navPills">
-            <li
-              :class="['user__tweets', { active: displayMode === 'tweets' }]"
-              @click="switchDisplayMode('tweets', user.id)"
-            >
-              推文
-            </li>
-            <li
-              :class="[
-                'user__tweetsPlusReplies',
-                { active: displayMode === 'repliedTweets' },
-              ]"
-              @click="switchDisplayMode('repliedTweets', user.id)"
-            >
-              推文與回覆
-            </li>
-            <li
-              :class="[
-                'user__likedTweets',
-                { active: displayMode === 'likedTweets' },
-              ]"
-              @click="switchDisplayMode('likedTweets', user.id)"
-            >
-              喜歡的內容
-            </li>
-          </ul>
-          <Spinner v-if="isLoading" />
-
-          <div 
-            v-else
-            class="user__tweetsContainer"
-          >
-            <UserLikedTweets
-              v-if="displayMode === 'likedTweets'"
-              :initial-liked-tweets="userLikedTweets"
-              :user="user"
-              @after-reply-clicked="handleReplyModalToggle"
-            />
-            <UserRepliedTweets
-              v-else-if="displayMode === 'repliedTweets'"
-              :initial-replied="userRepliedTweets"
-              :user="user"
-            />
-            <UserTweets
-              v-else
-              :initial-tweets="userTweets"
-              :user="user"
-              @after-reply-clicked="handleReplyModalToggle"
-            />
-          </div>
         </div>
+        <ul class="user__navPills">
+          <li
+            :class="['user__tweets', { active: displayMode === 'tweets' }]"
+            @click="switchDisplayMode('tweets', user.id)"
+          >
+            推文
+          </li>
+          <li
+            :class="[
+              'user__tweetsPlusReplies',
+              { active: displayMode === 'repliedTweets' },
+            ]"
+            @click="switchDisplayMode('repliedTweets', user.id)"
+          >
+            推文與回覆
+          </li>
+          <li
+            :class="[
+              'user__likedTweets',
+              { active: displayMode === 'likedTweets' },
+            ]"
+            @click="switchDisplayMode('likedTweets', user.id)"
+          >
+            喜歡的內容
+          </li>
+        </ul>
+        <Spinner v-if="isLoading" />
+
+        <div v-else class="user__tweetsContainer">
+          <UserLikedTweets
+            v-if="displayMode === 'likedTweets'"
+            :initial-liked-tweets="userLikedTweets"
+            :user="user"
+            @after-reply-clicked="handleReplyModalToggle"
+          />
+          <UserRepliedTweets
+            v-else-if="displayMode === 'repliedTweets'"
+            :initial-replied="userRepliedTweets"
+            :user="user"
+          />
+          <UserTweets
+            v-else
+            :initial-tweets="userTweets"
+            :user="user"
+            @after-reply-clicked="handleReplyModalToggle"
+          />
+        </div>
+      </div>
     </template>
   </div>
 </template>
@@ -184,7 +176,7 @@ import { Toast } from "./../utils/helpers";
 import { mapState } from "vuex";
 import Spinner from "./../components/Spinner";
 import ReplyModal from "./../components/ReplyModal.vue";
-import defaultBanner from "./../assets/default_banner.png"
+import defaultBanner from "./../assets/default_banner.png";
 
 export default {
   name: "User",
@@ -210,8 +202,8 @@ export default {
       isDisplayFollow: false,
       displayMode: "tweets",
       clickedTweetId: undefined,
-      isLoading:false,
-      isProcessing:false
+      isLoading: false,
+      isProcessing: false,
     };
   },
   created() {
@@ -225,7 +217,12 @@ export default {
     next();
   },
   computed: {
-    ...mapState(["currentUser", "isReplying"]),
+    ...mapState(["currentUser", "isReplying", "followBtnClickedStatus"]),
+  },
+  watch: {
+    followBtnClickedStatus() {
+      this.fetchUser(this.user.id);
+    },
   },
   methods: {
     async fetchUser(userId) {
@@ -251,7 +248,7 @@ export default {
           id,
           account,
           avatar,
-          cover : cover || defaultBanner,
+          cover: cover || defaultBanner,
           email,
           introduction: introduction || "使用者未填寫自我介紹",
           name,
@@ -340,7 +337,7 @@ export default {
       this.isDisplayFollow = !this.isDisplayFollow;
     },
     async handleFollowBtnClicked(userId) {
-      this.isProcessing = true
+      this.isProcessing = true;
       try {
         const response = await userAPI.followship.addFollowing({ userId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -349,9 +346,9 @@ export default {
           icon: "success",
           title: "成功追蹤使用者",
         });
-      this.isProcessing = false
+        this.isProcessing = false;
       } catch (error) {
-        this.isProcessing = false
+        this.isProcessing = false;
         console("error", error);
         Toast.fire({
           icon: "error",
@@ -360,7 +357,7 @@ export default {
       }
     },
     async handleUnfollowBtnClicked(userId) {
-      this.isProcessing = true
+      this.isProcessing = true;
       try {
         const response = await userAPI.followship.deleteFollowing({ userId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -369,9 +366,9 @@ export default {
           icon: "success",
           title: "成功取消追蹤使用者",
         });
-        this.isProcessing = false
+        this.isProcessing = false;
       } catch (error) {
-        this.isProcessing = false
+        this.isProcessing = false;
         console("error", error);
         Toast.fire({
           icon: "error",
@@ -402,13 +399,13 @@ export default {
       }
     },
     async afterSubmitEdit(payload) {
-      this.isLoading = true
+      this.isLoading = true;
       const { newAvatar, newCover, newName, newIntro, formData } = payload;
-      if(newName.trim().length === 0){
+      if (newName.trim().length === 0) {
         Toast.fire({
-          icon: 'warning',
-          title: '名稱不能留白'     
-        })
+          icon: "warning",
+          title: "名稱不能留白",
+        });
       }
       try {
         const response = await userAPI.editUserProfile({
@@ -426,9 +423,9 @@ export default {
           icon: "success",
           title: "成功更新使用者資料",
         });
-      this.isLoading = false
+        this.isLoading = false;
       } catch (error) {
-        this.isLoading = false
+        this.isLoading = false;
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -443,6 +440,7 @@ export default {
 .user {
   overflow: overlay;
   flex: 1;
+  height: 1200px;
   .user__navbar {
     display: flex;
     padding: 0.5rem 0;
