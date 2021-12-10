@@ -5,106 +5,114 @@
       @after-submit-reply="afterSubmitReply"
       :tweetId="clickedTweetId"
     />
-    <div class="tweet__navbar">
-      <a class="tweet__navbar--prev" @click="$router.back()"></a>
-      <div class="tweet__navbar--info">推文</div>
-    </div>
-    <div class="tweet__card">
-      <div class="tweet__title">
-        <div class="tweet__avatar--container">
-          <router-link :to="{ name: 'user', params: { id: tweet.User.id } }">
-            <img
-              :src="tweet.User.avatar | emptyImage"
-              alt=""
-              class="tweet__avatar"
-            />
-          </router-link>
-        </div>
-        <div class="tweet__title--info">
-          <h3 class="tweet__title--name">{{ tweet.User.name }}</h3>
-          <router-link :to="{ name: 'user', params: { id: tweet.User.id } }">
-            <p class="tweet__title--account">@{{ tweet.User.account }}</p>
-          </router-link>
-        </div>
+    <Spinner
+      v-if="isLoading"
+    />
+    <template
+      v-else
+    >
+      <div class="tweet__navbar">
+        <a class="tweet__navbar--prev" @click="$router.back()"></a>
+        <div class="tweet__navbar--info">推文</div>
       </div>
-      <p class="tweet__context">
-        {{ tweet.description }}
-      </p>
-      <span class="tweet__time">{{ tweet.createdAt | timeTransForm }}</span>
-      <div class="tweet__counts">
-        <span class="tweet__commentCounts"
-          >{{ tweet.reply_count}}<span>回覆</span></span
-        >
-        <span class="tweet__likeCounts"
-          >{{ tweet.like_count}}<span>喜歡次數</span></span
-        >
-      </div>
-      <div class="tweet__interactions">
-        <img
-          src="./../assets/Vector_reply-icon.svg"
-          alt=""
-          class="tweet__commentBtn"
-          @click="handleReplyModalToggle(tweet.id)"
-        />
-        <img
-          v-if="tweet.isLiked"
-          src="./../assets/Vector_redLike-icon.svg"
-          alt=""
-          class="tweet__likeBtn"
-          @click="deleteLike(tweet.id)"
-        />
-        <img
-          v-else
-          src="./../assets/Vector_like-icon.svg"
-          alt=""
-          class="tweet__likeBtn"
-          @click="addLike(tweet.id)"
-        />
-      </div>
-    </div>
-    <div class="tweet__replies--container scroll">
-      <ul class="tweet__replies">
-        <li
-          v-for="tweetReply in tweetReplies"
-          :key="tweetReply.id"
-          class="tweet__reply"
-        >
-          <div class="reply__avatar--container">
-            <img :src="tweetReply.User.avatar | emptyImage" alt="" class="reply__avatar" />
+      <div class="tweet__card">
+        <div class="tweet__title">
+          <div class="tweet__avatar--container">
+            <router-link :to="{ name: 'user', params: { id: tweet.User.id } }">
+              <img
+                :src="tweet.User.avatar | emptyImage"
+                alt=""
+                class="tweet__avatar"
+              />
+            </router-link>
           </div>
-          <div class="tweet__reply--content">
-            <div class="tweet__reply--title">
-              <h3 class="reply__user--name">{{ tweetReply.User.name }}</h3>
-              <span class="reply__user--account">
-                <router-link
-                  :to="{ name: 'user', params: { id: tweetReply.User.id } }"
-                >
-                  <span>{{ tweetReply.User.account }}</span>
-                </router-link>
-                <span>．{{ tweetReply.createdAt | fromNow }}</span>
-              </span>
+          <div class="tweet__title--info">
+            <h3 class="tweet__title--name">{{ tweet.User.name }}</h3>
+            <router-link :to="{ name: 'user', params: { id: tweet.User.id } }">
+              <p class="tweet__title--account">@{{ tweet.User.account }}</p>
+            </router-link>
+          </div>
+        </div>
+        <p class="tweet__context">
+          {{ tweet.description }}
+        </p>
+        <span class="tweet__time">{{ tweet.createdAt | timeTransForm }}</span>
+        <div class="tweet__counts">
+          <span class="tweet__commentCounts"
+            >{{ tweet.reply_count}}<span>回覆</span></span
+          >
+          <span class="tweet__likeCounts"
+            >{{ tweet.like_count}}<span>喜歡次數</span></span
+          >
+        </div>
+        <div class="tweet__interactions">
+          <img
+            src="./../assets/Vector_reply-icon.svg"
+            alt=""
+            class="tweet__commentBtn"
+            @click="handleReplyModalToggle(tweet.id)"
+          />
+          <img
+            v-if="tweet.isLiked"
+            src="./../assets/Vector_redLike-icon.svg"
+            alt=""
+            class="tweet__likeBtn"
+            @click="deleteLike(tweet.id)"
+          />
+          <img
+            v-else
+            src="./../assets/Vector_like-icon.svg"
+            alt=""
+            class="tweet__likeBtn"
+            @click="addLike(tweet.id)"
+          />
+        </div>
+      </div>
+      <div class="tweet__replies--container scroll">
+        <ul class="tweet__replies">
+          <li
+            v-for="tweetReply in tweetReplies"
+            :key="tweetReply.id"
+            class="tweet__reply"
+          >
+            <div class="reply__avatar--container">
+              <img :src="tweetReply.User.avatar | emptyImage" alt="" class="reply__avatar" />
             </div>
-            <p class="tweet__reply--tag">
-              <span>回覆</span>
-              <router-link
-                :to="{ name: 'user', params: { id: tweet.User.id } }"
-              >
-                <span class="tweet__account">
-                  {{ tweet.User.account }}
+            <div class="tweet__reply--content">
+              <div class="tweet__reply--title">
+                <h3 class="reply__user--name">{{ tweetReply.User.name }}</h3>
+                <span class="reply__user--account">
+                  <router-link
+                    :to="{ name: 'user', params: { id: tweetReply.User.id } }"
+                  >
+                    <span>{{ tweetReply.User.account }}</span>
+                  </router-link>
+                  <span>．{{ tweetReply.createdAt | fromNow }}</span>
                 </span>
-              </router-link>
-            </p>
-            <p class="tweet__reply--text">
-              {{ tweetReply.comment }}
-            </p>
-          </div>
-        </li>
-      </ul>
-    </div>
+              </div>
+              <p class="tweet__reply--tag">
+                <span>回覆</span>
+                <router-link
+                  :to="{ name: 'user', params: { id: tweet.User.id } }"
+                >
+                  <span class="tweet__account">
+                    {{ tweet.User.account }}
+                  </span>
+                </router-link>
+              </p>
+              <p class="tweet__reply--text">
+                {{ tweetReply.comment }}
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </template>
   </div>
 </template>
 <script>
 import ReplyModal from "./../components/ReplyModal.vue";
+import Spinner from "./../components/Spinner.vue"
 import tweetsAPI from "./../apis/tweets";
 import { Toast } from "./../utils/helpers";
 import { fromNowFilter } from "../utils/mixins";
@@ -115,12 +123,14 @@ export default {
   name: "Tweet",
   components: {
     ReplyModal,
+    Spinner
   },
   mixins: [fromNowFilter, timeTransForm, emptyImageFilter],
   data() {
     return {
       tweet: {},
       tweetReplies: [],
+      isLoading:false
     };
   },
   computed:{
@@ -139,6 +149,7 @@ export default {
   },
   methods: {
     async fetchTweet(tweetId) {
+      this.isLoading = true
       try {
         const response = await tweetsAPI.getTweet({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -164,7 +175,9 @@ export default {
           User,
           isLiked
         };
+      this.isLoading = false
       } catch (error) {
+        this.isLoading = false
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -173,12 +186,15 @@ export default {
       }
     },
     async fetchTweetReplies(tweetId) {
+      this.isLoading = true
       try {
         const response = await tweetsAPI.reply.getReplies({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
         const data = response.data;
         this.tweetReplies = [...data];
+        this.isLoading = false
       } catch (error) {
+        this.isLoading = false
         console.log("error", error);
         Toast.fire({
           icon: "error",

@@ -57,7 +57,7 @@
               </router-link>
             </div>
             <p class="follow__introduction">
-              {{ userFollower.Intro }}
+              {{ userFollower.followerIntro }}
             </p>
             <button
               v-if="userFollower.isFollowed && userFollower.followerId !== currentUser.id"
@@ -90,7 +90,7 @@
           <div class="follow__avatar--container">
              <router-link
                 :to="{name:'user' , params:{id:userFollowing.followingId}}"
-              >
+             >
               <img
                 :src="userFollowing.followingAvatar | emptyImage"
                 alt=""
@@ -165,20 +165,25 @@ export default {
     }
   },
   computed:{
-    ...mapState(['currentUser','topUserFollowBtnClickedStatus'])
+    ...mapState(['currentUser','followBtnClickedStatus'])
   },
   created(){
     this.handleFollowersPillClicked(this.userId)
   },
   watch:{
-    topUserFollowBtnClickedStatus(newValue){
-      if(this.displayMode === 'followers' && newValue){
-        this.handleFollowersPillClicked(this.userId)
-      }else if(this.displayMode === 'followings' && newValue){
+    followBtnClickedStatus(){
         this.handleFollowingsPillClicked(this.userId)
-      }
     }
   },
+  // watch:{
+  //   followBtnClickedStatus(){
+  //     if(this.displayMode === 'followers'){
+  //       this.handleFollowersPillClicked(this.userId)
+  //     }else if(this.displayMode === 'followings'){
+  //       this.handleFollowingsPillClicked(this.userId)
+  //     }
+  //   }
+  // },
   methods:{
     handleFollowersPillClicked(userId){
       this.displayMode = 'followers'
@@ -200,6 +205,7 @@ export default {
             }
           })
           this.isProcessing = false
+          this.$store.commit('toggleFollowClickStatus')
         }else{
           this.userFollowings.map( userFollowing => {
             if(userFollowing.followingId === id){
@@ -240,6 +246,7 @@ export default {
             }
           })
           this.isProcessing = false
+        this.$store.commit('toggleFollowClickStatus')
         } 
         Toast.fire({
           icon:'success',

@@ -12,6 +12,7 @@
     <NewPostModal
       v-if="isEditingCreateModal"
       :checked="checked"
+      :isProcessing="isProcessing"
       @afterSubmit="createNewTweet"
       @close-btn-clicked="toggleCreateTweetModal"
       @checkedMsg="checkedMsg"
@@ -39,6 +40,7 @@ export default {
     return {
       isEditingCreateModal: false,
       checked: false,
+      isProcessing: false
     };
   },
   computed: {
@@ -49,9 +51,10 @@ export default {
       this.isEditingCreateModal = !this.isEditingCreateModal;
     },
     async createNewTweet(payload) {
-      console.log(payload);
+      this.isProcessing = true
       try {
         if (payload.length === 0) {
+
           Toast.fire({
             icon: "warning",
             title: "內文不能留白！",
@@ -72,7 +75,9 @@ export default {
           title: "成功新增推文",
         });
         this.toggleCreateTweetModal();
+        this.isProcessing = false
       } catch (error) {
+        this.isProcessing = false
         console.log("error", error);
         Toast.fire({
           icon: "error",

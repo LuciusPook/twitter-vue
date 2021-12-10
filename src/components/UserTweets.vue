@@ -40,14 +40,14 @@
           </span>
           <span class="tweet__interaction--likes">
             <img
-              v-if="tweet.isLiked && !isLoading"
+              v-if="tweet.isLiked && !isProcessing"
               src="./../assets/Vector_redLike-icon.svg"
               alt=""
               class="likes--icon"
               @click="deleteLike(tweet.id)"
             />
             <img
-              v-else-if="!tweet.isLiked&&!isLoading"
+              v-else-if="!tweet.isLiked&&!isProcessing"
               src="./../assets/Vector_like-icon.svg"
               alt=""
               class="likes--icon"
@@ -83,7 +83,7 @@ export default {
   data() {
     return {
       userTweets: this.initialTweets,
-      isLoading:false
+      isProcessing:false
     };
   },
   computed: {
@@ -99,7 +99,7 @@ export default {
       this.$emit("after-reply-clicked", tweetId);
     },
     async addLike(tweetId) {
-      this.isLoading = true
+      this.isProcessing = true
       try {
         const response = await tweetsAPI.like.addLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -113,9 +113,9 @@ export default {
           icon: "success",
           title: "成功對推文按讚",
         });
-      this.isLoading = false
+      this.isProcessing = false
       } catch (error) {
-        this.isLoading = false
+        this.isProcessing = false
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -124,7 +124,7 @@ export default {
       }
     },
     async deleteLike(tweetId) {
-      this.isLoading = true
+      this.isProcessing = true
       try {
         const response = await tweetsAPI.like.deleteLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -139,9 +139,9 @@ export default {
           icon: "success",
           title: "成功取消推文按讚",
         });
-      this.isLoading = false
+      this.isProcessing = false
       } catch (error) {
-        this.isLoading = false
+        this.isProcessing = false
         console.log("error", error);
         Toast.fire({
           icon: "error",

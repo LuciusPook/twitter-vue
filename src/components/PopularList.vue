@@ -66,10 +66,15 @@ export default {
     };
   },
   computed: {
-    ...mapState(["currentUser", "isAuthenticated"]),
+    ...mapState(["currentUser", "isAuthenticated" , "followBtnClickedStatus"]),
   },
   created() {
     this.fetchTopUsers();
+  },
+  watch:{
+    followBtnClickedStatus(){
+      this.fetchTopUsers()
+    }
   },
   methods: {
     async fetchTopUsers() {
@@ -107,7 +112,7 @@ export default {
         });
 
         this.isProcessing = false;
-        this.$store.commit('toggleTopUsersFollowClickStatus')
+        this.$store.commit('toggleFollowClickStatus')
       } catch (error) {
         this.isProcessing = false;
         Toast.fire({
@@ -141,7 +146,7 @@ export default {
         });
 
         this.isProcessing = false;
-        this.$store.commit('toggleTopUsersFollowClickStatus')
+        this.$store.commit('toggleFollowClickStatus')
       } catch (error) {
         console.log(error);
         this.isProcessing = false;

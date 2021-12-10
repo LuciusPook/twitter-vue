@@ -37,6 +37,7 @@
               type="submit"
               class="tweet-create-btn"
               @click.stop.prevent="handleSubmit()"
+              :disabled="isProcessing"
             >
               推文
             </button>
@@ -62,12 +63,14 @@ export default {
       type: Boolean,
       required: true,
     },
+    isProcessing:{
+      type: Boolean,
+      required: true,
+    }
   },
-
   computed: {
     ...mapState(["currentUser"]),
   },
-
   data() {
     return {
       description:'',

@@ -28,6 +28,7 @@
             @focus="handleTextareaFocused"
             @blur="handleTextareaBlurred"
             v-model="newTweetText"
+            @keydown="newPostRestriction"
           />
           <button type="submit" @click="createNewTweet(newTweetText)">
             推文
@@ -80,14 +81,14 @@
                 </span>
                 <span class="tweet__interaction--likes">
                   <img
-                    v-if="tweet.isLiked"
+                    v-if="tweet.isLiked && !isProcessing"
                     src="./../assets/Vector_redLike-icon.svg"
                     alt=""
                     class="likes--icon"
                     @click="deleteLike(tweet.id)"
                   />
                   <img
-                    v-else
+                    v-else-if="!tweet.isLiked && !isProcessing"
                     src="./../assets/Vector_like-icon.svg"
                     alt=""
                     class="likes--icon"
@@ -128,6 +129,8 @@ export default {
       isEditing: false,
       textareaRows: 3,
       isLoading: true,
+      isProcessing:false,
+      clickedLikedId:undefined
     };
   },
   created() {
@@ -166,6 +169,17 @@ export default {
         });
       }
     },
+    newPostRestriction(e){
+      console.log(e)
+      if(this.newTweetText.length >= 140 && e.keyCode !== 8){
+        e.returnValue = false
+        Toast.fire({
+          icon: 'warning',
+          title: '新增推文字數超過上限140字'
+        })
+        return
+      }
+    },
     handleReplyModalToggle(tweetId) {
       this.$store.commit("toggleReplyModal");
       this.clickedTweetId = tweetId;
@@ -190,6 +204,7 @@ export default {
       }
     },
     async addLike(tweetId) {
+      this.isProcessing = true
       try {
         const response = await tweetsAPI.like.addLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -203,7 +218,9 @@ export default {
           icon: "success",
           title: "成功對推文按讚",
         });
+        this.isProcessing = false
       } catch (error) {
+        this.isProcessing = false
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -212,6 +229,7 @@ export default {
       }
     },
     async deleteLike(tweetId) {
+      this.isProcessing = true
       try {
         const response = await tweetsAPI.like.deleteLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -225,7 +243,9 @@ export default {
           icon: "success",
           title: "成功取消推文按讚",
         });
+        this.isProcessing = false
       } catch (error) {
+        this.isProcessing = false
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -265,7 +285,6 @@ export default {
 <style lang="scss" scoped>
 .main {
   overflow: overlay;
-  position: relative;
   background-color: $tweet-border;
   flex: 1;
   .main__navbar {
@@ -295,9 +314,9 @@ export default {
       }
     }
     .form__group {
+      flex: 1;
       position: relative;
       z-index: 2;
-      flex: 1;
       textarea {
         resize: none;
         border: none;

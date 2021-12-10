@@ -36,11 +36,6 @@ const routes = [
     component: () => import('../views/User.vue'),
   },
   {
-    path: '/users/chat',
-    name: 'chat-room',
-    component: () => import('../views/UserChatRoom.vue')
-  },
-  {
     path: '/tweets/:id',
     name: 'tweet',
     component: () => import('../views/Tweet.vue'),

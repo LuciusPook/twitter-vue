@@ -19,7 +19,7 @@ export default new Vuex.Store({
     isAuthenticated: false,
     token: '',
     isReplying:false,
-    topUserFollowBtnClickedStatus:false
+    followBtnClickedStatus:false
   },
   mutations: {
     setCurrentUser(state, currentUser) {
@@ -46,8 +46,11 @@ export default new Vuex.Store({
     toggleReplyModal(state){
       state.isReplying = !state.isReplying
     },
-    toggleTopUsersFollowClickStatus(state){
-      state.topUserFollowBtnClickedStatus = !state.topUserFollowBtnClickedStatus
+    // toggleTopUsersFollowClickStatus(state){
+    //   state.topUserFollowBtnClickedStatus = !state.topUserFollowBtnClickedStatus
+    // }
+    toggleFollowClickStatus(state){
+      state.followBtnClickedStatus = !state.followBtnClickedStatus
     }
   },
   actions: {

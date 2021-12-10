@@ -37,25 +37,21 @@ export default {
   methods: {
     async handleAfterSubmit(data) {
       const { account, password } = data;
-
-      if (!account || !password) {
-        Toast.fire({
-          icon: "warning",
-          title: "請填入帳號和密碼",
-        });
-        this.checked = true;
-        this.password = "";
-        return;
-      }
-
+      // if (!account || !password) {
+      //   Toast.fire({
+      //     icon: "warning",
+      //     title: "請填入帳號和密碼",
+      //   });
+      //   this.checked = true;
+      //   this.password = "";
+      //   return;
+      // }
       try {
         this.isProcessing = true;
-
         const { data } = await adminAPI.signIn({
           account,
           password,
         });
-
         if (data.status !== 200) {
           this.warningMessage = data.message
           Toast.fire({
@@ -64,9 +60,7 @@ export default {
           });
           throw new Error(data.message);
         }
-
         localStorage.setItem("token", data.token);
-
         this.$store.commit("setCurrentUser", data.user);
 
         Toast.fire({
