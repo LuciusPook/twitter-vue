@@ -17,9 +17,9 @@
           </router-link>
           <div class="online_user-info">
             <router-link to="#" class="user-name-link">
-              <div class="user-name">username</div>
+              <div class="user-name">User1</div>
             </router-link>
-            <div class="user-account">@user.account</div>
+            <div class="user-account">@account</div>
           </div>
         </div>
         <div class="online_user">
@@ -34,9 +34,9 @@
           </router-link>
           <div class="online_user-info">
             <router-link to="#" class="user-name-link">
-              <div class="user-name">username</div>
+              <div class="user-name">User2</div>
             </router-link>
-            <div class="user-account">@user.account</div>
+            <div class="user-account">@account</div>
           </div>
         </div>
       </div>
