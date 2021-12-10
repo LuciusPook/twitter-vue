@@ -34,6 +34,12 @@ npm run build
 ```
 npm run lint
 ```
+***
+
+## **Author**
+- [Jack Huo](https://github.com/JackJackHuo)
+- [Tim](https://github.com/TimZXJ)
+- [Daniel](https://github.com/JackJackHuo)
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
