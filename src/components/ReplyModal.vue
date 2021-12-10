@@ -127,8 +127,8 @@ export default {
       position:absolute;
       z-index: -1;
       top: -55px;
-      left: -500px;
-      right: -500px;
+      left: -1000%;
+      right: -1000%;
       bottom: -763px;
       background-color: gray;
       opacity: 0.8;
