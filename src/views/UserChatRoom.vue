@@ -52,12 +52,12 @@
           </div>
           <div class="chat_room-part-input">
             <div class="input-container">
+              <!-- 希望使用者寫入資料時會隨著字數增加高度，送出再恢復 -->
               <textarea
                 cols="30"
                 class="message-input"
                 rows="10"
                 placeholder="輸入訊息..."
-                @keydown="autoTextAreaHeight"
                 v-model="inputMessage"
               ></textarea>
               <div class="input-button cursor-pointer">
@@ -195,11 +195,12 @@ export default {
   padding: 10px 15px;
   font-size: 15px;
   border: none;
-  background: #f0f0f0;
+  background: #e5e5e5;
 }
 
 .input-button img {
-  width: 35px;
-  height: 35px;
+  width: 24px;
+  height: 24px;
+  margin: 5px;
 }
 </style>

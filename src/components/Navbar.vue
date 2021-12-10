@@ -69,7 +69,7 @@
               <router-link :to="{ name: 'chat-room' }">
                 <img src="./../assets/Vector_message-icon.svg" alt="message" />
                 <img
-                  src="./../assets/Vector_message-active.svg"
+                  src="./../assets/Vector_message-action.svg"
                   alt="message-unselected"
                 />
 

@@ -1,5 +1,16 @@
 <template>
   <div class="message-container">
+    <!-- 顯示上線或離線 -->
+    <template>
+      <div class="online-container">
+        <div class="online-user">
+          <div class="online-user-name">User55555 上線</div>
+        </div>
+        <div class="offline-user">
+          <div class="offline-user-name">User4 離線</div>
+        </div>
+      </div>
+    </template>
     <!-- 做判斷顯示 -->
     <template>
       <div class="self-message">
@@ -37,6 +48,25 @@
 
 
 <style lang="scss" scoped>
+.online-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30px 0;
+  .online-user,
+  .offline-user {
+    margin: 7px;
+    border-radius: 50px;
+    background: #e5e5e5;
+    .online-user-name,
+    .offline-user-name {
+      margin: 7px 14px;
+      font-size: 15px;
+      color: #657786;
+    }
+  }
+}
+
 .self-message {
   &__info {
     display: flex;
@@ -72,7 +102,7 @@
       min-height: 40px;
       width: auto;
       max-width: 300px;
-      background: #f0f0f0;
+      background: #e6ecf0;
       display: flex;
       flex-direction: column;
       justify-content: center;
