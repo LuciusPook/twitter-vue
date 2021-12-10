@@ -5,7 +5,7 @@
 On local terminal , please follow instructions as below:
 - STEP 1: Clone project from [Github Page](https://github.com/JackJackHuo/twitter-vue.git) 
 ```
-npm clone https://github.com/JackJackHuo/twitter-vue.git twitter-without-chatroom
+git clone https://github.com/JackJackHuo/twitter-vue.git -b twitter_without_chatroom
 ```
 - STEP 2: move directory into twitter-vue
 ```
@@ -20,7 +20,7 @@ npm install
 npm run serve
 ```
 - STEP 5: Open project via browers
-Open broswer and key in [loaclhost:8080](loaclhost:8080)
+Open broswer and key in [localhost:8080](localhost:8080)
 
 
 ***
