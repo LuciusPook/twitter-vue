@@ -28,9 +28,9 @@
 > 請參照後端[Github Page](https://github.com/rayray1010/twitter-api-2020) **READ.md**
 ### 前端設定 
 On local terminal , please follow instructions as below:
-- STEP 1: Clone project from [Github Page](https://github.com/JackJackHuo/twitter-vue.git) 
+- STEP 1: Clone project from [Github Page](https://github.com/LuciusPook/twitter-vue.git) 
 ```
-git clone https://github.com/JackJackHuo/twitter-vue.git -b twitter_without_chatroom
+git clone https://github.com/LuciusPook/twitter-vue.git
 ```
 - STEP 2: move directory into twitter-vue
 ```
@@ -59,6 +59,12 @@ npm run build
 ```
 npm run lint
 ```
+***
+
+## **Author**
+- [Jack Huo](https://github.com/JackJackHuo)
+- [Tim](https://github.com/TimZXJ)
+- [Daniel](https://github.com/JackJackHuo)
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
