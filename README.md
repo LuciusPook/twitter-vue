@@ -30,7 +30,7 @@
 On local terminal , please follow instructions as below:
 - STEP 1: Clone project from [Github Page](https://github.com/JackJackHuo/twitter-vue.git) 
 ```
-git clone https://github.com/JackJackHuo/twitter-vue.git -b| twitter_without_chatroom
+git clone https://github.com/JackJackHuo/twitter-vue.git -b twitter_without_chatroom
 ```
 - STEP 2: move directory into twitter-vue
 ```
