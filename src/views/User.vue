@@ -347,6 +347,8 @@ export default {
           title: "成功追蹤使用者",
         });
         this.isProcessing = false;
+        this.$store.commit('toggleFollowClickStatus')
+
       } catch (error) {
         this.isProcessing = false;
         console("error", error);
@@ -367,6 +369,7 @@ export default {
           title: "成功取消追蹤使用者",
         });
         this.isProcessing = false;
+        this.$store.commit('toggleFollowClickStatus')
       } catch (error) {
         this.isProcessing = false;
         console("error", error);
@@ -448,6 +451,7 @@ export default {
     .user__navbar--prev {
       position: relative;
       flex-basis: 5rem;
+      cursor: pointer;
       &::before {
         content: "\279C";
         position: absolute;
