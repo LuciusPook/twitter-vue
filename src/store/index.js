@@ -18,8 +18,10 @@ export default new Vuex.Store({
     },
     isAuthenticated: false,
     token: '',
+    // status control
     isReplying:false,
-    followBtnClickedStatus:false
+    followBtnClickedStatus:false,
+    postSubmitClickedStatus:false
   },
   mutations: {
     setCurrentUser(state, currentUser) {
@@ -51,6 +53,9 @@ export default new Vuex.Store({
     // }
     toggleFollowClickStatus(state){
       state.followBtnClickedStatus = !state.followBtnClickedStatus
+    },
+    togglePostClickedStatus(state){
+      state.postSubmitClickedStatus = !state.postSubmitClickedStatus
     }
   },
   actions: {

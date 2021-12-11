@@ -75,6 +75,7 @@ export default {
           title: "成功新增推文",
         });
         this.toggleCreateTweetModal();
+        this.$store.commit('togglePostClickedStatus')
         this.isProcessing = false
       } catch (error) {
         this.isProcessing = false

@@ -217,12 +217,15 @@ export default {
     next();
   },
   computed: {
-    ...mapState(["currentUser", "isReplying", "followBtnClickedStatus"]),
+    ...mapState(["currentUser", "isReplying", "followBtnClickedStatus", "postSubmitClickedStatus"]),
   },
   watch: {
     followBtnClickedStatus() {
       this.fetchUser(this.user.id);
     },
+    postSubmitClickedStatus() {
+      this.fetchUserTweets(this.user.id);
+    }
   },
   methods: {
     async fetchUser(userId) {
