@@ -21,8 +21,7 @@
 </template>
 
 <script>
-import { io } from 'socket.io-client';
-
+// import { io }  from 'socket.io-client';
 // const dummyData =[
 //   {
 //     id:1,
@@ -56,21 +55,48 @@ export default {
   computed: {
     ...mapState(["currentUser"]),
   },
-  created() {
-    // this.chats = [...dummyData]
-    this.socket = io('https://simple-twitter-tim.herokuapp.com/')
-    this.socket.on('online' , (onlineCount) => {
-      console.log('user connected',onlineCount)
-    })
-    this.socket.on('allMessage' , (allMessage) => {
-      this.chats = [...allMessage]
-      console.log(this.allMessage)
-    })
-    this.socket.on('newMessage' , (newMessage) => {
-      this.chat.push(newMessage) 
-      console.log(this.newMessage)
-    })
+  sockets: {
+    connect() {
+      console.log("socket connected");
+      // this.socketConnect();
+      // this.$socket.emit("login");
+    },
+    // message(data) {
+    //   this.content = data;
+    //   this.contents.push(this.content);
+    // },
+    // loginUser(data) {
+    //   this.loginUser = data;
+    // },
+    // loginStatus(data) {
+    //   this.logged = data;
+    //   this.contents.push({ online: data });
+    // },
+    // // disconnected() {
+    // //   this.$socket.emit("disconnect", this.currentUser.id);
+    // // },
+		// messageNotRead(data) {
+		// 	this.$store.commit("updateReadMessage",data)
+    // },
   },
+  mounted() {
+    this.$socket.open();
+  },
+  // created() {
+  //   this.chats = [...dummyData]
+  //   this.socket = io('https://simple-twitter-tim.herokuapp.com/')
+  //   this.socket.on('online' , (onlineCount) => {
+  //     console.log('user connected',onlineCount)
+  //   })
+  //   this.socket.on('allMessage' , (allMessage) => {
+  //     this.chats = [...allMessage]
+  //     console.log(allMessage)
+  //   })
+  //   this.socket.on('newMessage' , (newMessage) => {
+  //     this.chat.push(newMessage) 
+  //     console.log(newMessage)
+  //   })
+  // },
 };
 </script>
 
