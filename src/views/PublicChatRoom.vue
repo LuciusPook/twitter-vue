@@ -80,7 +80,6 @@
 
 
 <script>
-import { io } from 'socket.io-client';
 import ChatMessage from "../components/ChatMessage.vue";
 // import Spinner from "./../components/Spinner.vue"
 import { mapState } from "vuex";
@@ -95,8 +94,6 @@ export default {
       user:{},
       socket: null,
       inputMessage:'',
-      allMessage:[],
-      newMessage:{},
       isLoading:false
     }
   },
@@ -105,18 +102,6 @@ export default {
   },
   created(){
     this.$store.commit('toggleTopUsersDisplayStatus' , 'public-chatroom')
-    this.socket = io('https://simple-twitter-tim.herokuapp.com/')
-    this.socket.on('online' , (onlineCount) => {
-      console.log('user connected',onlineCount)
-    })
-    this.socket.on('allMessage' , (allMessage) => {
-      this.allMessage = [...allMessage]
-      console.log(this.allMessage)
-    })
-    this.socket.on('newMessage' , (newMessage) => {
-      this.newMessage = newMessage
-      console.log(this.newMessage)
-    })
   },
   methods:{
     handleSendChatBtnClicked(){

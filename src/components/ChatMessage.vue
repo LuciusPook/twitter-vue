@@ -21,56 +21,55 @@
 </template>
 
 <script>
-const dummyData =[
-  {
-    id:1,
-    name:'user1',
-    message:'hellohellohellohellohellohellhellohellohellohellhellohellohellohellhellohellohellohellhellohellohellohellohellohello'
-  },
-  {
-    id:2,
-    name:'user2',
-    message:'hello'
-  },
-  {
-    id:3,
-    name:'user3',
-    message:'hello'
-  },
-  {
-    id:4,
-    name:'user4',
-    message:'hello'
-  }
-]
+import { io } from 'socket.io-client';
+
+// const dummyData =[
+//   {
+//     id:1,
+//     name:'user1',
+//     message:'hellohellohellohellohellohellhellohellohellohellhellohellohellohellhellohellohellohellhellohellohellohellohellohello'
+//   },
+//   {
+//     id:2,
+//     name:'user2',
+//     message:'hello'
+//   },
+//   {
+//     id:3,
+//     name:'user3',
+//     message:'hello'
+//   },
+//   {
+//     id:4,
+//     name:'user4',
+//     message:'hello'
+//   }
+// ]
 import { mapState } from "vuex";
 export default {
   name: "ChatMessage",
-  props: {
-    allMessage: {
-      type: Array,
-      required: false,
-    },
-    newMessage: {
-      type: Object,
-      required: false,
-    },
-  },
   data(){
     return{
-      chats:[]
+      chats:[],
     }
   },
   computed: {
     ...mapState(["currentUser"]),
   },
   created() {
-    this.chats = [...dummyData]
-  },
-  watch:{
-    newMessage(newValue){
-      this.chats.push(newValue)
-    }
+    // this.chats = [...dummyData]
+    this.socket = io('https://simple-twitter-tim.herokuapp.com/')
+    this.socket.on('online' , (onlineCount) => {
+      console.log('user connected',onlineCount)
+    })
+    this.socket.on('allMessage' , (allMessage) => {
+      this.chats = [...allMessage]
+      console.log(this.allMessage)
+    })
+    this.socket.on('newMessage' , (newMessage) => {
+      this.chat.push(newMessage) 
+      console.log(this.newMessage)
+    })
   },
 };
 </script>

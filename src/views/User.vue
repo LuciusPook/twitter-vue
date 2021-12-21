@@ -493,7 +493,7 @@ export default {
         width: 100%;
         img {
           height: 200px;
-          object-fit:cover;
+          object-fit: contain;
         }
       }
       .user__card--avatar {
