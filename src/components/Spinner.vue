@@ -12,8 +12,8 @@
   width: 100%;
   height: 100%;
   background: #fff;
-  position: absolute;
-  left: 0;
+  position: relative;
+  // left: 0;
   z-index: 99;
 }
 

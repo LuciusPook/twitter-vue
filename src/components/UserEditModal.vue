@@ -305,6 +305,9 @@ export default {
     .user__card--bannerWrapper {
       height: 200px;
       width: 100%;
+      img{
+        object-fit:cover;
+      }
       img:hover {
         opacity: 0.5;
       }

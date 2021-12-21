@@ -1,135 +1,139 @@
 <template>
-  <div class="message-container">
-    <!-- 顯示上線或離線 -->
-    <template>
-      <div class="online-container">
-        <div class="online-user">
-          <div class="online-user-name">User55555 上線</div>
+  <ul class="chats__content">
+    <li 
+      v-for="chat in chats" 
+      :key="chat.id"
+      :class="['chat__content',{user__chat:chat.name !== currentUser.name}]">
+      <div class="chat__container">
+        <div
+          v-if="chat.name !== currentUser.name" 
+          class="chat__avatar--container"
+        >
+          <img class="chat__avatar" src="./../assets/Photo_avatar.png" alt="">
         </div>
-        <div class="offline-user">
-          <div class="offline-user-name">User4 離線</div>
+        <div class="chat__content--info">
+          <p class="chat__content--message">{{chat.message}}</p>
+          <span class="chat__content--createdAt">few second ago...</span>
         </div>
-      </div>
-    </template>
-    <!-- 做判斷顯示 -->
-    <template>
-      <div class="self-message">
-        <div class="self-container">
-          <div class="self-message__info">
-            <div class="self-message__info__content">
-              <div class="message-text">how are you?</div>
-            </div>
-            <div class="submit-time">3 days</div>
-          </div>
-        </div>
-      </div>
-    </template>
-    <!-- 做判斷顯示 -->
-    <template>
-      <div class="user_message">
-        <div class="user_content">
-          <div class="profile-image">
-            <img src="./../assets/Photo_avatar.png" class="user-img" alt="" />
-          </div>
-          <div class="user_content-info">
-            <div class="info-container">
-              <div class="message-text">hi,i am top user</div>
-            </div>
-            <div class="submit-time">a few minutes</div>
-          </div>
-        </div>
-      </div>
-    </template>
-  </div>
+      </div> 
+    </li>
+  </ul>
 </template>
 
 <script>
+const dummyData =[
+  {
+    id:1,
+    name:'user1',
+    message:'hellohellohellohellohellohellhellohellohellohellhellohellohellohellhellohellohellohellhellohellohellohellohellohello'
+  },
+  {
+    id:2,
+    name:'user2',
+    message:'hello'
+  },
+  {
+    id:3,
+    name:'user3',
+    message:'hello'
+  },
+  {
+    id:4,
+    name:'user4',
+    message:'hello'
+  }
+]
+import { mapState } from "vuex";
+export default {
+  name: "ChatMessage",
+  props: {
+    allMessage: {
+      type: Array,
+      required: false,
+    },
+    newMessage: {
+      type: Object,
+      required: false,
+    },
+  },
+  data(){
+    return{
+      chats:[]
+    }
+  },
+  computed: {
+    ...mapState(["currentUser"]),
+  },
+  created() {
+    this.chats = [...dummyData]
+  },
+  watch:{
+    newMessage(newValue){
+      this.chats.push(newValue)
+    }
+  },
+};
 </script>
 
-
 <style lang="scss" scoped>
-.online-container {
+.chats__content{
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin: 30px 0;
-  .online-user,
-  .offline-user {
-    margin: 7px;
-    border-radius: 50px;
-    background: #e5e5e5;
-    .online-user-name,
-    .offline-user-name {
-      margin: 7px 14px;
-      font-size: 15px;
-      color: #657786;
-    }
-  }
-}
-
-.self-message {
-  &__info {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    margin-right: 10px;
-    align-items: flex-end;
-    &__content {
-      min-height: 40px;
-      max-width: 300px;
-      background: #ff6000;
-      color: white;
+  justify-content: flex-end;
+  height: 100%;
+  width: 100%;
+  li{
+    width: 100%;
+    margin: 1rem .5rem;
+    .chat__container{
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-end;
-      border-top-left-radius: 30px;
-      border-top-right-radius: 30px;
-      border-bottom-left-radius: 30px;
+      justify-content: flex-end;
+      .chat__avatar--container{
+        position: relative;
+        width: 50px;
+        img{
+          position:absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          top:0;
+          width: 40px;
+          height: 40px;
+        }
+      }
+      .chat__content--info{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        .chat__content--message{
+          max-width: 400px;
+          overflow-wrap: break-word;
+          background-color: #FF6600;
+          color:$white;
+          font-size: 15px;
+          padding: 10px;
+          border-radius: 25px 25px 0px 25px;
+        }
+        .chat__content--createdAt{
+          color:#657786;
+          font-size: 13px;
+
+        }
+      }
+    }
+
+  }
+  li.user__chat{
+    .chat__container{
+      justify-content: flex-start;
+      .chat__content--info{
+        align-items: flex-start;
+        .chat__content--message{
+          background-color: #E6ECF0;
+          color:black;
+          border-radius: 25px 25px 25px 0px ;
+        }
+      }
     }
   }
-}
-
-.user_content {
-  display: flex;
-  flex-direction: row;
-  &-info {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    margin-left: 10px;
-    .info-container {
-      min-height: 40px;
-      width: auto;
-      max-width: 300px;
-      background: #e6ecf0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      border-top-left-radius: 30px;
-      border-top-right-radius: 30px;
-      border-bottom-right-radius: 30px;
-    }
-  }
-}
-
-.message-text {
-  font-size: 15px;
-  line-height: 23px;
-  margin: 13px;
-  word-break: break-all;
-}
-
-.submit-time {
-  font-size: 8px;
-  color: #657786;
-  margin-top: 3px;
-}
-
-.user-img {
-  width: 50px;
-  height: 50px;
-  margin-left: 15px;
-  border-radius: 50%;
 }
 </style>

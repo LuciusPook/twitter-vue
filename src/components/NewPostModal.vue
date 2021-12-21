@@ -13,7 +13,7 @@
         <div class="tweet-create-container">
           <div class="profile-image">
             <img
-              :src="this.currentUser.avatar | emptyImage"
+              :src="currentUser.avatar | emptyImage"
               class="user-img"
               alt="avatar"
             />

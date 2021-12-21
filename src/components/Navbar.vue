@@ -38,15 +38,15 @@
               :class="[
                 'navbar-item',
                 'page-item',
-                { active: currentPage === 'profile' },
+                { active: currentPage === 'user' },
               ]"
-              @click="switchCurrentDisply('profile')"
+              @click="switchCurrentDisply('user')"
             >
               <router-link
                 :to="{ name: 'user', params: { id: currentUser.id } }"
               >
                 <img
-                  v-if="currentPage === 'profile'"
+                  v-if="currentPage === 'user'"
                   src="./../assets/Vector_user-action.svg"
                   alt="user-info"
                 />
@@ -62,18 +62,44 @@
               :class="[
                 'navbar-item',
                 'page-item',
-                { active: currentPage === 'chat-room' },
+                { active: currentPage === 'public-chatroom' },
               ]"
-              @click="switchCurrentDisply('setting')"
+              @click="switchCurrentDisply('public-chatroom')"
             >
-              <router-link :to="{ name: 'chat-room' }">
-                <img src="./../assets/Vector_message-icon.svg" alt="message" />
+              <router-link :to="{ name: 'public-chatroom' }">
+                <img 
+                  v-if="currentPage === 'public-chatroom'"
+                  src="./../assets/Vector_message-action.svg" alt="message" 
+                />
                 <img
-                  src="./../assets/Vector_message-action.svg"
+                  v-else
+                  src="./../assets/Vector_message-icon.svg"
                   alt="message-unselected"
                 />
 
-                聊天室
+                公開聊天室
+              </router-link>
+            </div>
+            <div
+              :class="[
+                'navbar-item',
+                'page-item',
+                { active: currentPage === 'private-chatroom' },
+              ]"
+              @click="switchCurrentDisply('private-chatroom')"
+            >
+              <router-link :to="{ name: 'private-chatroom' }">
+                <img 
+                  v-if="currentPage === 'private-chatroom'"
+                  src="./../assets/Vector_message-action.svg" alt="message" 
+                />
+                <img
+                  v-else
+                  src="./../assets/Vector_message-icon.svg"
+                  alt="message-unselected"
+                />
+
+                私人聊天室
               </router-link>
             </div>
             <div
@@ -104,19 +130,19 @@
               :class="[
                 'navbar-item',
                 'page-item',
-                { active: currentPage === 'tweets' },
+                { active: currentPage === 'admin-tweets' },
               ]"
-              @click="switchCurrentDisply('tweets')"
+              @click="switchCurrentDisply('admin-tweets')"
             >
               <router-link to="/admin/tweets">
                 <img
-                  v-if="currentPage === 'tweets'"
-                  src="./../assets/Vector_home-icon.svg"
+                  v-if="currentPage === 'admin-tweets'"
+                  src="./../assets/Vector_home-action.svg"
                   alt="tweets-list"
                 />
                 <img
                   v-else
-                  src="./../assets/Vector_home-action.svg"
+                  src="./../assets/Vector_home-icon.svg"
                   alt="tweets-list-unselectd"
                 />
                 推文清單
@@ -126,13 +152,13 @@
               :class="[
                 'navbar-item',
                 'page-item',
-                { active: currentPage === 'users-page' },
+                { active: currentPage === 'admin-users' },
               ]"
-              @click="switchCurrentDisply('users-page')"
+              @click="switchCurrentDisply('admin-users')"
             >
               <router-link to="/admin/users">
                 <img
-                  v-if="currentPage === 'users-page'"
+                  v-if="currentPage === 'admin-users'"
                   src="./../assets/Vector_user-action.svg"
                   alt="users-cards"
                 />
@@ -194,17 +220,23 @@ export default {
         case "main":
           this.currentPage = "main";
           break;
-        case "profile":
-          this.currentPage = "profile";
+        case "user":
+          this.currentPage = "user";
           break;
         case "setting":
           this.currentPage = "setting";
           break;
-        case "tweets":
-          this.currentPage = "tweets";
+        case "public-chatroom":
+          this.currentPage = "public-chatroom";
           break;
-        case "users-page":
-          this.currentPage = "users-page";
+        case "private-chatroom":
+          this.currentPage = "private-chatroom";
+          break;
+        case "admin-tweets":
+          this.currentPage = "admin-tweets";
+          break;
+        case "admin-users":
+          this.currentPage = "admin-users";
           break;
       }
     },
@@ -265,11 +297,12 @@ button {
 }
 
 .logout {
+  position: fixed;
+  bottom: 2rem;
   display: flex;
   align-items: center;
   margin: 0;
   padding: 0 0 14px 70px;
-  border-right: 1px solid #e6ecf0;
   font-weight: bold;
 }
 

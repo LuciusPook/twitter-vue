@@ -174,7 +174,7 @@ export default {
   overflow: overlay;
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: flex-start;
   border-left: 1px solid #e6ecf0;
 }
 
@@ -212,8 +212,8 @@ img {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: start;
-  justify-content: start;
+  align-items: flex-start;
+  justify-content: flex-start;
   margin-left: 10px;
 }
 

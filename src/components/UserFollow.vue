@@ -20,118 +20,118 @@
         正在跟隨
       </li>
     </ul>
-    <Spinner v-if="isLoading" />
-    <div
-      v-else
-      class="user__follow--container scroll"
-    >
-      <ul
-        v-show="displayMode === 'followers' && userFollowers"
-        class="user__followers user__follow"
-      >
-        <li
-          v-for="userFollower in userFollowers"
-          :key="userFollower.followerId"
-          class="user__follower user__follow"
+
+    <div class="user__follow--container scroll">
+      <Spinner v-if="isLoading" />
+      <template v-else>
+        <ul
+          v-show="displayMode === 'followers' && userFollowers"
+          class="user__followers user__follow"
         >
-          <div class="follow__avatar--container">
-            <router-link
-                :to="{name:'user' , params:{id:userFollower.followerId}}"
-              >
-              <img
-                :src="userFollower.followerAvatar | emptyImage"
-                alt=""
-                class="follow__avatar"
-              />
-            </router-link>
-          </div>
-          <div class="follow__info">
-            <div class="follow__title">
-              <h2 class="follow__name">{{ userFollower.followerName }}</h2>
+          <li
+            v-for="userFollower in userFollowers"
+            :key="userFollower.followerId"
+            class="user__follower user__follow"
+          >
+            <div class="follow__avatar--container">
               <router-link
-                :to="{name:'user' , params:{id:userFollower.followerId}}"
-              >
-                <div class="follow__account">
-                  @{{ userFollower.followerAccount }}
-                </div>
+                  :to="{name:'user' , params:{id:userFollower.followerId}}"
+                >
+                <img
+                  :src="userFollower.followerAvatar | emptyImage"
+                  alt=""
+                  class="follow__avatar"
+                />
               </router-link>
             </div>
-            <p class="follow__introduction">
-              {{ userFollower.followerIntro }}
-            </p>
-            <button
-              v-if="userFollower.isFollowed && userFollower.followerId !== currentUser.id"
-              :class="['follow__btn', { active: userFollower.isFollowed}]"
-              @click="handleUnfollowBtnClicked(userFollower.followerId, 'follower')"
-              :disabled="isProcessing"
-            >
-              正在跟隨
-            </button>
-            <button
-              v-else-if="!userFollower.isFollowed && userFollower.followerId !== currentUser.id"
-              :class="['follow__btn', { active: userFollower.isFollowed}]"
-              @click="handleFollowBtnClicked(userFollower.followerId, 'follower')"
-              :disabled="isProcessing"
-            >
-              跟隨
-            </button>
-          </div>
-        </li>
-      </ul>
-      <ul 
-        v-show="displayMode === 'followings' && userFollowings" 
-        class="user__followings user__follow"
-      >
-        <li
-          v-for="userFollowing in userFollowings"
-          :key="userFollowing.followingId"
-          class="user__following user__follow"
-        >
-          <div class="follow__avatar--container">
-             <router-link
-                :to="{name:'user' , params:{id:userFollowing.followingId}}"
-             >
-              <img
-                :src="userFollowing.followingAvatar | emptyImage"
-                alt=""
-                class="follow__avatar"
-              />
-            </router-link>
-          </div>
-          <div class="follow__info">
-            <div class="follow__title">
-              <h2 class="follow__name">{{ userFollowing.followingName }}</h2>
-              <router-link
-                :to="{name:'user' , params:{id:userFollowing.followingId}}"
+            <div class="follow__info">
+              <div class="follow__title">
+                <h2 class="follow__name">{{ userFollower.followerName }}</h2>
+                <router-link
+                  :to="{name:'user' , params:{id:userFollower.followerId}}"
+                >
+                  <div class="follow__account">
+                    @{{ userFollower.followerAccount }}
+                  </div>
+                </router-link>
+              </div>
+              <p class="follow__introduction">
+                {{ userFollower.followerIntro }}
+              </p>
+              <button
+                v-if="userFollower.isFollowed && userFollower.followerId !== currentUser.id"
+                :class="['follow__btn', { active: userFollower.isFollowed}]"
+                @click="handleUnfollowBtnClicked(userFollower.followerId, 'follower')"
+                :disabled="isProcessing"
               >
-                <div class="follow__account">
-                  @{{ userFollowing.followingAccount }}
-                </div>
+                正在跟隨
+              </button>
+              <button
+                v-else-if="!userFollower.isFollowed && userFollower.followerId !== currentUser.id"
+                :class="['follow__btn', { active: userFollower.isFollowed}]"
+                @click="handleFollowBtnClicked(userFollower.followerId, 'follower')"
+                :disabled="isProcessing"
+              >
+                跟隨
+              </button>
+            </div>
+          </li>
+        </ul>
+        <ul 
+          v-show="displayMode === 'followings' && userFollowings" 
+          class="user__followings user__follow"
+        >
+          <li
+            v-for="userFollowing in userFollowings"
+            :key="userFollowing.followingId"
+            class="user__following user__follow"
+          >
+            <div class="follow__avatar--container">
+              <router-link
+                  :to="{name:'user' , params:{id:userFollowing.followingId}}"
+              >
+                <img
+                  :src="userFollowing.followingAvatar | emptyImage"
+                  alt=""
+                  class="follow__avatar"
+                />
               </router-link>
             </div>
-            <p class="follow__introduction">
-              {{ userFollowing.followingIntro }}
-            </p>
-            <button
-              v-if="userFollowing.isFollowed && userFollowing.followingId !== currentUser.id"
-              :class="['follow__btn', { active: userFollowing.isFollowed}]"
-              @click="handleUnfollowBtnClicked(userFollowing.followingId, 'following')"
-              :disabled="isProcessing"
-            >
-              正在跟隨
-            </button>
-            <button
-              
-              v-else-if="!userFollowing.isFollowed && userFollowing.followingId !== currentUser.id"
-              :class="['follow__btn', { active: userFollowing.isFollowed}]"
-              @click="handleFollowBtnClicked(userFollowing.followingId, 'following')"
-              :disabled="isProcessing"
-            >
-              跟隨
-            </button>
-          </div>
-        </li>
-      </ul>
+            <div class="follow__info">
+              <div class="follow__title">
+                <h2 class="follow__name">{{ userFollowing.followingName }}</h2>
+                <router-link
+                  :to="{name:'user' , params:{id:userFollowing.followingId}}"
+                >
+                  <div class="follow__account">
+                    @{{ userFollowing.followingAccount }}
+                  </div>
+                </router-link>
+              </div>
+              <p class="follow__introduction">
+                {{ userFollowing.followingIntro }}
+              </p>
+              <button
+                v-if="userFollowing.isFollowed && userFollowing.followingId !== currentUser.id"
+                :class="['follow__btn', { active: userFollowing.isFollowed}]"
+                @click="handleUnfollowBtnClicked(userFollowing.followingId, 'following')"
+                :disabled="isProcessing"
+              >
+                正在跟隨
+              </button>
+              <button
+                
+                v-else-if="!userFollowing.isFollowed && userFollowing.followingId !== currentUser.id"
+                :class="['follow__btn', { active: userFollowing.isFollowed}]"
+                @click="handleFollowBtnClicked(userFollowing.followingId, 'following')"
+                :disabled="isProcessing"
+              >
+                跟隨
+              </button>
+            </div>
+          </li>
+        </ul>
+      </template>
     </div>
   </div>
 </template>

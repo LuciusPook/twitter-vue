@@ -31,24 +31,29 @@ const routes = [
     component: Register,
   },
   {
-    path: '/users/:id',
-    name: 'user',
-    component: () => import('../views/User.vue'),
-  },
-  {
     path: '/users/chat',
-    name: 'chat-room',
-    component: () => import('../views/UserChatRoom.vue')
+    name: 'public-chatroom',
+    component: () => import('../views/PublicChatRoom.vue')
   },
   {
-    path: '/tweets/:id',
-    name: 'tweet',
-    component: () => import('../views/Tweet.vue'),
+    path: '/users/chat/private',
+    name: 'private-chatroom',
+    component: () => import('../views/PrivateChatRoom.vue')
   },
   {
     path: '/users/account',
     name: 'setting',
     component: () => import('../views/UserAccountSetting.vue')
+  },
+  {
+    path: '/users/:id',
+    name: 'user',
+    component: () => import('../views/User.vue'),
+  },
+  {
+    path: '/tweets/:id',
+    name: 'tweet',
+    component: () => import('../views/Tweet.vue'),
   },
   {
     path: '/admin/login',

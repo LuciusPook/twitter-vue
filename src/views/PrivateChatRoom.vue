@@ -3,7 +3,8 @@
     <div class="online_users">
       <div class="online_users-part">
         <div class="user-title">
-          <p>上線用戶(1)</p>
+          <p>訊息</p>
+          <img src="./../assets/Vector_newChat.svg" alt="">
         </div>
         <div class="online_user">
           <router-link to="#" class="user-avatar-link">
@@ -43,24 +44,31 @@
       <div class="chat_room">
         <div class="chat_room-part">
           <div class="chat-title">
-            <p>聊天室</p>
+            <p>私人聊天室</p>
           </div>
           <div class="chat_room-part-container scrollbar">
             <div class="chat-content">
-              <ChatMessage />
+              <ChatMessage 
+                :allMessage="allMessage"
+                :newMessage="newMessage"
+              />
             </div>
           </div>
           <div class="chat_room-part-input">
             <div class="input-container">
               <!-- 希望使用者寫入資料時會隨著字數增加高度，送出再恢復 -->
               <textarea
+                v-model="inputMessage"
                 cols="30"
                 class="message-input"
                 rows="10"
                 placeholder="輸入訊息..."
-                v-model="inputMessage"
+                @keypress.enter="handleSendChatBtnClicked"
               ></textarea>
-              <div class="input-button cursor-pointer">
+              <div 
+                class="input-button cursor-pointer"
+                @click="handleSendChatBtnClicked"
+              >
                 <img src="./../assets/Vector_send-icon.svg" alt="" />
               </div>
             </div>
@@ -71,17 +79,6 @@
   </div>
 </template>
 
-
-<script>
-import ChatMessage from "./../components/ChatMessage.vue";
-export default {
-  components: {
-    ChatMessage,
-  },
-};
-</script>
-
-
 <style lang="scss" scoped>
 .container {
   height: 1200px;
@@ -89,9 +86,8 @@ export default {
   .online_users {
     height: 100%;
     display: flex;
-    flex-direction: row;
     &-part {
-      width: 50%;
+      width: 40%;
       height: 100%;
       overflow: overlay;
       display: flex;
@@ -102,6 +98,9 @@ export default {
 
 .user-title,
 .chat-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 18px;
   font-weight: 700;
   height: 55px;
@@ -110,6 +109,12 @@ export default {
     line-height: 55px;
     margin-left: 15px;
   }
+  img{
+    height: 22px;
+    width: 22px;
+    margin-right: 1rem;
+    cursor: pointer;
+  }
 }
 
 .online_user {
@@ -117,6 +122,7 @@ export default {
   align-items: center;
   height: 70px;
   border-bottom: 1px solid #e6ecf0;
+  cursor: pointer;
   &:hover {
     background: #daf5fa;
   }
@@ -151,11 +157,11 @@ export default {
 }
 
 .chat_room {
-  width: 50%;
+  width: 100%;
   height: 1200px;
   display: flex;
   flex-direction: column;
-  border-left: 1px solid #e6ecf0;
+  border: 1px solid #e6ecf0;
   &-part {
     height: 100%;
     display: flex;

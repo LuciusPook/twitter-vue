@@ -1,73 +1,71 @@
 <template>
   <div class="container">
-    <Spinner v-if="isLoading" />
-
     <div class="admin_users">
-      <div class="admin_users-container">
         <div class="admin_users-title">
           <p>使用者列表</p>
         </div>
-
         <!-- card -->
-        <div class="user_cards scroll">
-          <div
-            class="user_cards-profile"
-            v-for="user in adminUsers"
-            :key="user.id"
-          >
-            <div class="cover-part">
-              <img
-                :src="user.cover | emptyImage"
-                class="cover-img"
-                alt="cover"
-              />
-            </div>
-            <div class="avatar-part">
-              <img
-                :src="user.avatar | emptyImage"
-                class="avatar-img"
-                alt="avatar"
-              />
-            </div>
-            <div class="users_detail">
-              <div class="users_detail-name">{{ user.name }}</div>
-              <div class="users_detail-account">@{{ user.account }}</div>
-              <div class="users_detail-action">
-                <div class="user-reply">
-                  <img
-                    src="./../assets/Vector_reply-icon.svg"
-                    class="reply"
-                    alt="reply"
-                  />
-                  <span class="reply-count">{{ user.tweetsCount }}</span>
+        <div class="user_cards scrollbar">
+          <Spinner v-if="isLoading" />
+          <template v-else>
+            <div
+              class="user_cards-profile"
+              v-for="user in adminUsers"
+              :key="user.id"
+            >
+              <div class="cover-part">
+                <img
+                  :src="user.cover | emptyImage"
+                  class="cover-img"
+                  alt="cover"
+                />
+              </div>
+              <div class="avatar-part">
+                <img
+                  :src="user.avatar | emptyImage"
+                  class="avatar-img"
+                  alt="avatar"
+                />
+              </div>
+              <div class="users_detail">
+                <div class="users_detail-name">{{ user.name }}</div>
+                <div class="users_detail-account">@{{ user.account }}</div>
+                <div class="users_detail-action">
+                  <div class="user-reply">
+                    <img
+                      src="./../assets/Vector_reply-icon.svg"
+                      class="reply"
+                      alt="reply"
+                    />
+                    <span class="reply-count">{{ user.tweetsCount }}</span>
+                  </div>
+                  <div class="user-like">
+                    <img
+                      src="./../assets/Vector_like-icon.svg"
+                      class="like"
+                      alt="like"
+                    />
+                    <span class="like-count">{{ user.likeCount }}</span>
+                  </div>
                 </div>
-                <div class="user-like">
-                  <img
-                    src="./../assets/Vector_like-icon.svg"
-                    class="like"
-                    alt="like"
-                  />
-                  <span class="like-count">{{ user.likeCount }}</span>
+                <div class="follow-info">
+                  <a class="followings-link"
+                    ><div class="followings">
+                      <span>{{ user.followingsCount }}</span
+                      >追蹤中
+                    </div>
+                  </a>
+                  <a class="followers-link"
+                    ><div class="followers">
+                      <span>{{ user.followersCount }}</span
+                      >追蹤者
+                    </div>
+                  </a>
                 </div>
               </div>
-              <div class="follow-info">
-                <a class="followings-link"
-                  ><div class="followings">
-                    <span>{{ user.followingsCount }}</span
-                    >追蹤中
-                  </div>
-                </a>
-                <a class="followers-link"
-                  ><div class="followers">
-                    <span>{{ user.followersCount }}</span
-                    >追蹤者
-                  </div>
-                </a>
-              </div>
             </div>
-          </div>
+          </template>
         </div>
-      </div>
     </div>
   </div>
 </template>
@@ -101,6 +99,7 @@ export default {
   },
 
   created() {
+    this.$store.commit('toggleTopUsersDisplayStatus' , 'admin-users')
     this.fetchAdminUsers();
   },
 
@@ -125,23 +124,15 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 100%;
-  height: 1200px;
-  display: flex;
   flex: 1;
-  flex-direction: row;
-}
-
-.admin_users-container {
-  height: 100%;
+  max-height: 1200px;
 }
 
 .admin_users {
-  overflow: auto;
-  flex: 1;
   &-title {
-    width: 100%;
     position: fixed;
+    width: 100%;
+    height: 55px;
     font-size: 18px;
     font-weight: bold;
     border-bottom: 1px solid #e6ecf0;
@@ -154,15 +145,17 @@ export default {
 }
 
 .user_cards {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit , minmax(245px , 1fr));
+  // grid-auto-flow: row;
+  height: 1145px;
   padding-top: 55px;
   &-profile {
+    position: relative;
     width: 245px;
     height: 314px;
     margin: 15px 0 15px 15px;
     border-radius: 10%;
-    position: relative;
     background: #f6f7f8;
     .cover-part,
     .cover-img {
@@ -173,13 +166,13 @@ export default {
       border-top-right-radius: 10px;
     }
     .avatar-part {
-      width: 100px;
-      height: 100px;
+      position: absolute;
       display: flex;
       justify-content: center;
       align-items: center;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
-      position: absolute;
       left: 72px;
       top: 70px;
       .avatar-img {
@@ -194,8 +187,8 @@ export default {
     .users_detail {
       display: flex;
       flex-direction: column;
-      margin-top: 33px;
       align-items: center;
+      margin-top: 33px;
       &-name {
         font-size: 15px;
         font-weight: 900;
@@ -206,9 +199,9 @@ export default {
       }
       &-action {
         display: flex;
+        justify-content: center;
         width: 100%;
         margin: 15px 0;
-        justify-content: center;
         .user-reply,
         .user-like {
           display: flex;

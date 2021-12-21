@@ -21,7 +21,8 @@ export default new Vuex.Store({
     // status control
     isReplying:false,
     followBtnClickedStatus:false,
-    postSubmitClickedStatus:false
+    postSubmitClickedStatus:false,
+    topUsersDisplayStatus:undefined
   },
   mutations: {
     setCurrentUser(state, currentUser) {
@@ -48,9 +49,11 @@ export default new Vuex.Store({
     toggleReplyModal(state){
       state.isReplying = !state.isReplying
     },
-    // toggleTopUsersFollowClickStatus(state){
-    //   state.topUserFollowBtnClickedStatus = !state.topUserFollowBtnClickedStatus
-    // }
+    toggleTopUsersDisplayStatus(state , status){
+      const pagewithouttopuserlist = ['public-chatroom', 'private-chatroom', 'setting', 'admin-tweets', 'admin-users']
+      state.topUsersDisplayStatus = pagewithouttopuserlist.includes(status)? false : true
+      
+    },
     toggleFollowClickStatus(state){
       state.followBtnClickedStatus = !state.followBtnClickedStatus
     },

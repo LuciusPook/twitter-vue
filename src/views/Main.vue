@@ -1,7 +1,5 @@
 <template>
   <div class="main">
-    <Spinner v-if="isLoading" />
-    <template v-else>
       <ReplyModal
         v-if="isReplying"
         @after-submit-reply="afterSubmitReply"
@@ -36,7 +34,10 @@
         </div>
       </div>
       <div class="main__tweets--container scrollbar">
-        <ul class="main__tweets">
+        <Spinner v-if="isLoading" />
+        <ul 
+          v-else
+          class="main__tweets">
           <li class="main__tweet" v-for="tweet in tweets" :key="tweet.id">
             <div class="tweet__avatar--wrapper">
               <router-link :to="{ name: 'user', params: { id: tweet.UserId } }">
@@ -101,7 +102,6 @@
           </li>
         </ul>
       </div>
-    </template>
   </div>
 </template>
 
@@ -135,6 +135,7 @@ export default {
   },
   created() {
     this.fetchTweets();
+    this.$store.commit('toggleTopUsersDisplayStatus' , 'main')
   },
   computed: {
     ...mapState(["currentUser", "isReplying"]),

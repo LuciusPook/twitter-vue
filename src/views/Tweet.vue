@@ -137,6 +137,7 @@ export default {
     ...mapState(['isReplying'])
   },
   created() {
+    this.$store.commit('toggleTopUsersDisplayStatus' , 'tweets')
     const { id } = this.$route.params;
     this.fetchTweet(id);
     this.fetchTweetReplies(id);

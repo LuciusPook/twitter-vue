@@ -120,6 +120,7 @@ export default {
     },
   },
   created() {
+    this.$store.commit('toggleTopUsersDisplayStatus' , 'setting')
     const { id } = this.$route.params;
     this.fetchUserData(id);
   },

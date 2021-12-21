@@ -1,7 +1,5 @@
 <template>
-  <div class="container scrollbar">
-    <Spinner v-if="isLoading" />
-
+  <div class="container">
     <div class="admin_tweets">
       <div class="admin_tweets-container">
         <div class="admin_tweets-title">
@@ -9,52 +7,55 @@
         </div>
 
         <!-- list -->
-        <div class="users-container">
-          <div class="users_list" v-for="tweet in admintweets" :key="tweet.id">
-            <div class="users_list-image">
-              <img
-                :src="tweet.UserAvatar | emptyImage"
-                class="users-img"
-                alt="avatar"
-              />
-            </div>
-            <div class="users_list-tweet">
-              <div class="users_list-tweet-info">
-                <router-link
-                  :to="{ params: { id: tweet.id } }"
-                  class="user-name-link"
-                >
-                  <div class="user-name">{{ tweet.UserName }}</div>
-                </router-link>
-                <router-link
-                  :to="{ params: { id: tweet.userId } }"
-                  class="user-info-link"
-                >
-                  <div class="user-account">@{{ tweet.UserAccount }}</div>
-                  <span></span>
-                  <div class="create-time">
-                    {{ tweet.createdAt | timeTransForm }}
-                  </div>
-                </router-link>
-              </div>
-
-              <div class="text-content">
-                {{ tweet.description }}
-              </div>
-            </div>
-            <div class="delete">
-              <div
-                class="delete-container cursor-pointer"
-                @click.stop.prevent="deleteTweet(tweet.id)"
-              >
+        <div class="tweets-container scrollbar">
+          <Spinner v-if="isLoading" />
+          <template v-else>
+            <div class="users_list" v-for="tweet in admintweets" :key="tweet.id">
+              <div class="users_list-image">
                 <img
-                  src="./../assets/Vector_close02-icon.svg"
-                  class="delete-icon"
-                  alt=""
+                  :src="tweet.UserAvatar | emptyImage"
+                  class="users-img"
+                  alt="avatar"
                 />
               </div>
+              <div class="users_list-tweet">
+                <div class="users_list-tweet-info">
+                  <router-link
+                    :to="{ params: { id: tweet.id } }"
+                    class="user-name-link"
+                  >
+                    <div class="user-name">{{ tweet.UserName }}</div>
+                  </router-link>
+                  <router-link
+                    :to="{ params: { id: tweet.userId } }"
+                    class="user-info-link"
+                  >
+                    <div class="user-account">@{{ tweet.UserAccount }}</div>
+                    <span></span>
+                    <div class="create-time">
+                      {{ tweet.createdAt | timeTransForm }}
+                    </div>
+                  </router-link>
+                </div>
+
+                <div class="text-content">
+                  {{ tweet.description }}
+                </div>
+              </div>
+              <div class="delete">
+                <div
+                  class="delete-container cursor-pointer"
+                  @click.stop.prevent="deleteTweet(tweet.id)"
+                >
+                  <img
+                    src="./../assets/Vector_close02-icon.svg"
+                    class="delete-icon"
+                    alt=""
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          </template>
         </div>
       </div>
     </div>
@@ -92,6 +93,7 @@ export default {
   },
 
   created() {
+    this.$store.commit('toggleTopUsersDisplayStatus' , 'admin-tweets')
     this.fetchAdminTweets();
   },
   methods: {
@@ -143,36 +145,36 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 100%;
-  height: 1200px;
-  display: flex;
-  flex-direction: row;
   flex: 1;
+  // display: flex;
+  // flex-direction: row;
+  max-height: 1200px;
 }
 
-.admin_tweets {
-  overflow: auto;
-  height: 100%;
-  flex: 1;
+.admin_tweets { 
   &-title {
-    width: 100%;
     position: fixed;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 15px 26px;
+    width: 100%;
+    height: 55px;
     margin-bottom: 6px;
+    padding: 15px 26px;
     background: #fff;
     border-bottom: 1px solid #e6ecf0;
+    font-size: 18px;
+    font-weight: bold;
   }
-  .users-container {
+  .tweets-container {
+    height: 1145px;
+    width: 100%;
     padding-top: 55px;
   }
 }
 
 .users_list {
-  border-bottom: 1px solid #e6ecf0;
   display: flex;
+  width: 100%;
   padding: 12px 15px;
+  border-bottom: 1px solid #e6ecf0;
   &-image {
     width: 50px;
     height: 50px;
@@ -184,10 +186,10 @@ export default {
     }
   }
   &-tweet {
-    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    width: 100%;
     &-info {
       display: flex;
       flex-direction: row;

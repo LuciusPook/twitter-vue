@@ -139,26 +139,29 @@
             喜歡的內容
           </li>
         </ul>
-        <Spinner v-if="isLoading" />
 
-        <div v-else class="user__tweetsContainer">
-          <UserLikedTweets
-            v-if="displayMode === 'likedTweets'"
-            :initial-liked-tweets="userLikedTweets"
-            :user="user"
-            @after-reply-clicked="handleReplyModalToggle"
-          />
-          <UserRepliedTweets
-            v-else-if="displayMode === 'repliedTweets'"
-            :initial-replied="userRepliedTweets"
-            :user="user"
-          />
-          <UserTweets
-            v-else
-            :initial-tweets="userTweets"
-            :user="user"
-            @after-reply-clicked="handleReplyModalToggle"
-          />
+
+        <div class="user__tweetsContainer">
+          <Spinner v-if="isLoading" />
+          <template v-else>
+            <UserLikedTweets
+              v-if="displayMode === 'likedTweets'"
+              :initial-liked-tweets="userLikedTweets"
+              :user="user"
+              @after-reply-clicked="handleReplyModalToggle"
+            />
+            <UserRepliedTweets
+              v-else-if="displayMode === 'repliedTweets'"
+              :initial-replied="userRepliedTweets"
+              :user="user"
+            />
+            <UserTweets
+              v-else
+              :initial-tweets="userTweets"
+              :user="user"
+              @after-reply-clicked="handleReplyModalToggle"
+            />
+          </template>
         </div>
       </div>
     </template>
@@ -207,6 +210,7 @@ export default {
     };
   },
   created() {
+    this.$store.commit('toggleTopUsersDisplayStatus' , 'user')
     const { id } = this.$route.params;
     this.fetchUser(id);
     this.fetchUserTweets(id);
@@ -214,6 +218,7 @@ export default {
   beforeRouteUpdate(to, from, next) {
     const { id } = to.params;
     this.fetchUser(id);
+    this.switchDisplayMode('tweets', id)
     next();
   },
   computed: {
@@ -225,7 +230,7 @@ export default {
     },
     postSubmitClickedStatus() {
       this.fetchUserTweets(this.user.id);
-    }
+    },
   },
   methods: {
     async fetchUser(userId) {
@@ -488,6 +493,7 @@ export default {
         width: 100%;
         img {
           height: 200px;
+          object-fit:cover;
         }
       }
       .user__card--avatar {
@@ -589,7 +595,7 @@ export default {
       height: 3rem;
       width: 100%;
       display: flex;
-      justify-content: start;
+      justify-content: flex-start;
       li {
         width: 20%;
         text-align: center;

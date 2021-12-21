@@ -7,7 +7,7 @@
 
     <router-view />
 
-    <PopularList v-if="isAuthenticated && currentUser.role !== 'admin'" />
+    <PopularList v-if="isAuthenticated && currentUser.role !== 'admin' && topUsersDisplayStatus" />
 
     <NewPostModal
       v-if="isEditingCreateModal"
@@ -44,7 +44,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["currentUser", "isAuthenticated"]),
+    ...mapState(["currentUser", "isAuthenticated","topUsersDisplayStatus"]),
   },
   methods: {
     toggleCreateTweetModal() {
@@ -101,8 +101,10 @@ export default {
 
 <style lang="scss" scoped>
 #twitter {
-  max-height: 1200px;
-  display: flex;
   position: relative;
+  display: flex;
+  max-width: 1440px;
+  max-height: 1200px;
+  margin: 0 auto;
 }
 </style>
