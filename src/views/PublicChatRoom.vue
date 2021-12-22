@@ -47,10 +47,7 @@
           </div>
           <div class="chat_room-part-container scrollbar">
             <div class="chat-content">
-              <ChatMessage 
-                :allMessage="allMessage"
-                :newMessage="newMessage"
-              />
+              <ChatMessage/>
             </div>
           </div>
           <div class="chat_room-part-input">
@@ -92,7 +89,6 @@ export default {
   data(){
     return {
       user:{},
-      socket: null,
       inputMessage:'',
       isLoading:false
     }
@@ -105,7 +101,7 @@ export default {
   },
   methods:{
     handleSendChatBtnClicked(){
-        this.socket.emit('sendMessage', {
+        this.$socket.emit('sendMessage', {
           userId: this.currentUser.id, 
           name: this.currentUser.name, 
           message: this.inputMessage

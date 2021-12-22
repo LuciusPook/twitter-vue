@@ -61,6 +61,14 @@ export default {
       // this.socketConnect();
       // this.$socket.emit("login");
     },
+    allMessage(allMessage){
+      this.chats = [...allMessage]
+      console.log(allMessage)
+    },
+    newMessage(newMessage){
+      this.chats.push(newMessage) 
+      console.log(newMessage)
+    }
     // message(data) {
     //   this.content = data;
     //   this.contents.push(this.content);
