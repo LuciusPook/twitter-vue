@@ -55,25 +55,24 @@ import { emptyImageFilter } from "./../utils/mixins";
 export default {
   mixins: [emptyImageFilter],
   props: {
-    newDescription: {
-      type: String,
-      required: true,
-    },
     checked: {
       type: Boolean,
       required: true,
     },
-    isProcessing:{
+    isProcessing: {
       type: Boolean,
       required: true,
-    }
+    },
   },
-  computed: {
-    ...mapState(["currentUser"]),
-  },
+  computed: mapState({
+    currentUser: (state) => state.currentUserModule.currentUser,
+  }),
+  // {
+  //   ...mapState(["currentUser"]),
+  // },
   data() {
     return {
-      description:'',
+      description: "",
     };
   },
   methods: {

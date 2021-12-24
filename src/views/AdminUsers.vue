@@ -1,71 +1,71 @@
 <template>
   <div class="container">
     <div class="admin_users">
-        <div class="admin_users-title">
-          <p>使用者列表</p>
-        </div>
-        <!-- card -->
-        <div class="user_cards scrollbar">
-          <Spinner v-if="isLoading" />
-          <template v-else>
-            <div
-              class="user_cards-profile"
-              v-for="user in adminUsers"
-              :key="user.id"
-            >
-              <div class="cover-part">
-                <img
-                  :src="user.cover | emptyImage"
-                  class="cover-img"
-                  alt="cover"
-                />
-              </div>
-              <div class="avatar-part">
-                <img
-                  :src="user.avatar | emptyImage"
-                  class="avatar-img"
-                  alt="avatar"
-                />
-              </div>
-              <div class="users_detail">
-                <div class="users_detail-name">{{ user.name }}</div>
-                <div class="users_detail-account">@{{ user.account }}</div>
-                <div class="users_detail-action">
-                  <div class="user-reply">
-                    <img
-                      src="./../assets/Vector_reply-icon.svg"
-                      class="reply"
-                      alt="reply"
-                    />
-                    <span class="reply-count">{{ user.tweetsCount }}</span>
-                  </div>
-                  <div class="user-like">
-                    <img
-                      src="./../assets/Vector_like-icon.svg"
-                      class="like"
-                      alt="like"
-                    />
-                    <span class="like-count">{{ user.likeCount }}</span>
-                  </div>
+      <div class="admin_users-title">
+        <p>使用者列表</p>
+      </div>
+      <!-- card -->
+      <div class="user_cards scrollbar">
+        <Spinner v-if="isLoading" />
+        <template v-else>
+          <div
+            class="user_cards-profile"
+            v-for="user in adminUsers"
+            :key="user.id"
+          >
+            <div class="cover-part">
+              <img
+                :src="user.cover | emptyImage"
+                class="cover-img"
+                alt="cover"
+              />
+            </div>
+            <div class="avatar-part">
+              <img
+                :src="user.avatar | emptyImage"
+                class="avatar-img"
+                alt="avatar"
+              />
+            </div>
+            <div class="users_detail">
+              <div class="users_detail-name">{{ user.name }}</div>
+              <div class="users_detail-account">@{{ user.account }}</div>
+              <div class="users_detail-action">
+                <div class="user-reply">
+                  <img
+                    src="./../assets/Vector_reply-icon.svg"
+                    class="reply"
+                    alt="reply"
+                  />
+                  <span class="reply-count">{{ user.tweetsCount }}</span>
                 </div>
-                <div class="follow-info">
-                  <a class="followings-link"
-                    ><div class="followings">
-                      <span>{{ user.followingsCount }}</span
-                      >追蹤中
-                    </div>
-                  </a>
-                  <a class="followers-link"
-                    ><div class="followers">
-                      <span>{{ user.followersCount }}</span
-                      >追蹤者
-                    </div>
-                  </a>
+                <div class="user-like">
+                  <img
+                    src="./../assets/Vector_like-icon.svg"
+                    class="like"
+                    alt="like"
+                  />
+                  <span class="like-count">{{ user.likeCount }}</span>
                 </div>
+              </div>
+              <div class="follow-info">
+                <a class="followings-link"
+                  ><div class="followings">
+                    <span>{{ user.followingsCount }}</span
+                    >追蹤中
+                  </div>
+                </a>
+                <a class="followers-link"
+                  ><div class="followers">
+                    <span>{{ user.followersCount }}</span
+                    >追蹤者
+                  </div>
+                </a>
               </div>
             </div>
-          </template>
-        </div>
+          </div>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -99,7 +99,10 @@ export default {
   },
 
   created() {
-    this.$store.commit('toggleTopUsersDisplayStatus' , 'admin-users')
+    this.$store.commit(
+      "statusControlModule/toggleTopUsersDisplayStatus",
+      "admin-users"
+    );
     this.fetchAdminUsers();
   },
 
@@ -146,7 +149,7 @@ export default {
 
 .user_cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit , minmax(245px , 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
   // grid-auto-flow: row;
   height: 1145px;
   padding-top: 55px;

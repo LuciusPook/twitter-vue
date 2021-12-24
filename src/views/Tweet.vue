@@ -5,12 +5,8 @@
       @after-submit-reply="afterSubmitReply"
       :tweetId="clickedTweetId"
     />
-    <Spinner
-      v-if="isLoading"
-    />
-    <template
-      v-else
-    >
+    <Spinner v-if="isLoading" />
+    <template v-else>
       <div class="tweet__navbar">
         <a class="tweet__navbar--prev" @click="$router.back()"></a>
         <div class="tweet__navbar--info">推文</div>
@@ -39,10 +35,10 @@
         <span class="tweet__time">{{ tweet.createdAt | timeTransForm }}</span>
         <div class="tweet__counts">
           <span class="tweet__commentCounts"
-            >{{ tweet.reply_count}}<span>回覆</span></span
+            >{{ tweet.reply_count }}<span>回覆</span></span
           >
           <span class="tweet__likeCounts"
-            >{{ tweet.like_count}}<span>喜歡次數</span></span
+            >{{ tweet.like_count }}<span>喜歡次數</span></span
           >
         </div>
         <div class="tweet__interactions">
@@ -76,7 +72,11 @@
             class="tweet__reply"
           >
             <div class="reply__avatar--container">
-              <img :src="tweetReply.User.avatar | emptyImage" alt="" class="reply__avatar" />
+              <img
+                :src="tweetReply.User.avatar | emptyImage"
+                alt=""
+                class="reply__avatar"
+              />
             </div>
             <div class="tweet__reply--content">
               <div class="tweet__reply--title">
@@ -112,32 +112,38 @@
 </template>
 <script>
 import ReplyModal from "./../components/ReplyModal.vue";
-import Spinner from "./../components/Spinner.vue"
+import Spinner from "./../components/Spinner.vue";
 import tweetsAPI from "./../apis/tweets";
 import { Toast } from "./../utils/helpers";
 import { fromNowFilter } from "../utils/mixins";
 import { timeTransForm } from "../utils/mixins";
 import { emptyImageFilter } from "../utils/mixins";
-import { mapState } from 'vuex'
+import { mapState } from "vuex";
 export default {
   name: "Tweet",
   components: {
     ReplyModal,
-    Spinner
+    Spinner,
   },
   mixins: [fromNowFilter, timeTransForm, emptyImageFilter],
   data() {
     return {
       tweet: {},
       tweetReplies: [],
-      isLoading:false
+      isLoading: false,
     };
   },
-  computed:{
-    ...mapState(['isReplying'])
-  },
+  computed: mapState({
+    isReplying: (state) => state.statusControlModule.isReplying,
+  }),
+  // {
+  //   ...mapState(['isReplying'])
+  // },
   created() {
-    this.$store.commit('toggleTopUsersDisplayStatus' , 'tweets')
+    this.$store.commit(
+      "statusControlModule/toggleTopUsersDisplayStatus",
+      "tweets"
+    );
     const { id } = this.$route.params;
     this.fetchTweet(id);
     this.fetchTweetReplies(id);
@@ -150,7 +156,7 @@ export default {
   },
   methods: {
     async fetchTweet(tweetId) {
-      this.isLoading = true
+      this.isLoading = true;
       try {
         const response = await tweetsAPI.getTweet({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -163,7 +169,7 @@ export default {
           like_count,
           reply_count,
           User,
-          isLiked
+          isLiked,
         } = data;
         this.tweet = {
           ...this.tweet,
@@ -174,11 +180,11 @@ export default {
           like_count,
           reply_count,
           User,
-          isLiked
+          isLiked,
         };
-      this.isLoading = false
+        this.isLoading = false;
       } catch (error) {
-        this.isLoading = false
+        this.isLoading = false;
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -187,15 +193,15 @@ export default {
       }
     },
     async fetchTweetReplies(tweetId) {
-      this.isLoading = true
+      this.isLoading = true;
       try {
         const response = await tweetsAPI.reply.getReplies({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
         const data = response.data;
         this.tweetReplies = [...data];
-        this.isLoading = false
+        this.isLoading = false;
       } catch (error) {
-        this.isLoading = false
+        this.isLoading = false;
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -238,24 +244,24 @@ export default {
       }
     },
     handleReplyModalToggle(tweetId) {
-      this.$store.commit("toggleReplyModal");
+      this.$store.commit("statusControlModule/toggleReplyModal");
       this.clickedTweetId = tweetId;
     },
-    afterSubmitReply(payload) { 
+    afterSubmitReply(payload) {
       if (payload.status === 200) {
-          this.tweet.reply_count++;
-          this.fetchTweetReplies(this.tweet.id)
-          Toast.fire({
-            icon: "success",
-            title: "成功回覆推文",
-          });
-      }else{
+        this.tweet.reply_count++;
+        this.fetchTweetReplies(this.tweet.id);
+        Toast.fire({
+          icon: "success",
+          title: "成功回覆推文",
+        });
+      } else {
         Toast.fire({
           icon: "error",
           title: "無法回覆推文，請稍後再試!",
         });
       }
-    }
+    },
   },
 };
 </script>

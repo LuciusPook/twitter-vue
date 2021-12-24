@@ -10,7 +10,6 @@ import VueSocketIO from 'vue-socket.io'
 
 // const connection = io.connect('http://ce59-2001-b011-1005-5e71-545-8c13-cfec-99ff.ngrok.io',{
 //   auth: { token },
-
 //   auth: {token: store.state.token}
 // }
 // )

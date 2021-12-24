@@ -48,10 +48,7 @@
           </div>
           <div class="chat_room-part-container scrollbar">
             <div class="chat-content">
-              <ChatMessage 
-                :allMessage="allMessage"
-                :newMessage="newMessage"
-              />
+              <ChatMessage/>
             </div>
           </div>
           <div class="chat_room-part-input">
@@ -78,7 +75,15 @@
     </div>
   </div>
 </template>
-
+<script>
+import ChatMessage from "./../components/ChatMessage.vue"
+export default {
+  name: 'PrivateChatRoom',
+    components: {
+    ChatMessage,
+  },
+}
+</script>
 <style lang="scss" scoped>
 .container {
   height: 1200px;

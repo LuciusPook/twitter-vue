@@ -199,10 +199,12 @@ export default {
       currentPage: "",
     };
   },
-  computed: {
-    ...mapState(["currentUser"]),
-  },
-
+  computed: mapState({
+    currentUser: state => state.currentUserModule.currentUser
+  }),
+  // {
+  //   ...mapState(["currentUser"]),
+  // },
   methods: {
     showCreateModal() {
       this.$emit("show-create-modal");
@@ -212,7 +214,7 @@ export default {
         icon: "success",
         title: "已登出",
       });
-      this.$store.commit("revokeAuthentication");
+      this.$store.commit("currentUserModule/revokeAuthentication");
       this.$router.push("/login");
     },
     switchCurrentDisply(mode) {
@@ -254,6 +256,7 @@ export default {
 <style lang="scss" scoped>
 .menu {
   width: 25%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

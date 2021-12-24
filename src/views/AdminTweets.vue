@@ -10,7 +10,11 @@
         <div class="tweets-container scrollbar">
           <Spinner v-if="isLoading" />
           <template v-else>
-            <div class="users_list" v-for="tweet in admintweets" :key="tweet.id">
+            <div
+              class="users_list"
+              v-for="tweet in admintweets"
+              :key="tweet.id"
+            >
               <div class="users_list-image">
                 <img
                   :src="tweet.UserAvatar | emptyImage"
@@ -93,7 +97,10 @@ export default {
   },
 
   created() {
-    this.$store.commit('toggleTopUsersDisplayStatus' , 'admin-tweets')
+    this.$store.commit(
+      "statusControlModule/toggleTopUsersDisplayStatus",
+      "admin-tweets"
+    );
     this.fetchAdminTweets();
   },
   methods: {
@@ -116,7 +123,7 @@ export default {
     },
 
     async deleteTweet(tweetId) {
-      this.isLoading = true
+      this.isLoading = true;
       try {
         const response = await adminAPI.deleteTweet({ tweetId });
         if (response.status !== 200) {
@@ -126,13 +133,13 @@ export default {
         this.admintweets = this.admintweets.filter(
           (tweet) => tweet.id !== tweetId
         );
-        this.isLoading = false
+        this.isLoading = false;
         Toast.fire({
           icon: "success",
           title: "成功刪除推文",
         });
       } catch (error) {
-        this.isLoading = false
+        this.isLoading = false;
         Toast.fire({
           icon: "error",
           title: "無法刪除推文，請稍後再試",
@@ -151,7 +158,7 @@ export default {
   max-height: 1200px;
 }
 
-.admin_tweets { 
+.admin_tweets {
   &-title {
     position: fixed;
     width: 100%;

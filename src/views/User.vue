@@ -140,7 +140,6 @@
           </li>
         </ul>
 
-
         <div class="user__tweetsContainer">
           <Spinner v-if="isLoading" />
           <template v-else>
@@ -210,7 +209,9 @@ export default {
     };
   },
   created() {
-    this.$store.commit('toggleTopUsersDisplayStatus' , 'user')
+    this.$store.commit(
+      "statusControlModule/toggleTopUsersDisplayStatus"
+    );
     const { id } = this.$route.params;
     this.fetchUser(id);
     this.fetchUserTweets(id);
@@ -218,12 +219,20 @@ export default {
   beforeRouteUpdate(to, from, next) {
     const { id } = to.params;
     this.fetchUser(id);
-    this.switchDisplayMode('tweets', id)
+    this.switchDisplayMode("tweets", id);
     next();
   },
-  computed: {
-    ...mapState(["currentUser", "isReplying", "followBtnClickedStatus", "postSubmitClickedStatus"]),
-  },
+  computed: mapState({
+    currentUser: (state) => state.currentUserModule.currentUser,
+    isReplying: (state) => state.statusControlModule.isReplying,
+    followBtnClickedStatus: (state) =>
+      state.statusControlModule.followBtnClickedStatus,
+    postSubmitClickedStatus: (state) =>
+      state.statusControlModule.postSubmitClickedStatus,
+  }),
+  // {
+  //   ...mapState(["currentUser", "isReplying", "followBtnClickedStatus", "postSubmitClickedStatus"]),
+  // },
   watch: {
     followBtnClickedStatus() {
       this.fetchUser(this.user.id);
@@ -355,8 +364,7 @@ export default {
           title: "成功追蹤使用者",
         });
         this.isProcessing = false;
-        this.$store.commit('toggleFollowClickStatus')
-
+        this.$store.commit("statusControlModule/toggleFollowClickStatus");
       } catch (error) {
         this.isProcessing = false;
         console("error", error);
@@ -377,7 +385,7 @@ export default {
           title: "成功取消追蹤使用者",
         });
         this.isProcessing = false;
-        this.$store.commit('toggleFollowClickStatus')
+        this.$store.commit("statusControlModule/toggleFollowClickStatus");
       } catch (error) {
         this.isProcessing = false;
         console("error", error);
@@ -388,7 +396,7 @@ export default {
       }
     },
     handleReplyModalToggle(tweetId) {
-      this.$store.commit("toggleReplyModal");
+      this.$store.commit("statusControlModule/toggleReplyModal");
       this.clickedTweetId = tweetId;
     },
     afterSubmitReply(payload) {

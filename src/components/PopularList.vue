@@ -3,10 +3,7 @@
     <div class="popular-items">
       <h3>Popular</h3>
       <div class="popular-container">
-        <div class="popular-list" 
-          v-for="user in topUsers" 
-          :key="user.id"
-        >
+        <div class="popular-list" v-for="user in topUsers" :key="user.id">
           <div class="popular-info">
             <div class="avatar">
               <router-link :to="{ name: 'user', params: { id: user.id } }"
@@ -14,19 +11,18 @@
               /></router-link>
             </div>
             <div class="user-info">
-              <router-link 
+              <router-link
                 :to="{ name: 'user', params: { id: user.id } }"
                 class="popular-name"
               >
-                {{user.name}}
+                {{ user.name }}
               </router-link>
               <router-link
                 :to="{ name: 'user', params: { id: user.id } }"
                 class="popular-account"
               >
                 @{{ user.account }}
-              </router-link
-              >
+              </router-link>
             </div>
           </div>
           <div class="button">
@@ -34,7 +30,7 @@
               type="button"
               class="unfollow-btn"
               :name="user.id"
-              v-if="user.isFollowed && user.id !==currentUser.id"
+              v-if="user.isFollowed && user.id !== currentUser.id"
               :disabled="isProcessing"
               @click.prevent.stop="deleteFollow(user.id)"
             >
@@ -43,7 +39,7 @@
             <button
               type="button"
               class="follow-btn"
-              v-if="!user.isFollowed && user.id !==currentUser.id"
+              v-if="!user.isFollowed && user.id !== currentUser.id"
               :disabled="isProcessing"
               @click.prevent.stop="addFollow(user.id)"
             >
@@ -70,25 +66,31 @@ export default {
       isProcessing: false,
     };
   },
-  computed: {
-    ...mapState(["currentUser", "isAuthenticated" , "followBtnClickedStatus"]),
-  },
+  computed: mapState({
+    currentUser: (state) => state.currentUserModule.currentUser,
+    isAuthenticated: (state) => state.a.isAuthenticated,
+    followBtnClickedStatus: (state) =>
+      state.statusControlModule.followBtnClickedStatus,
+  }),
+  // {
+  //   ...mapState(["currentUser", "isAuthenticated" , "followBtnClickedStatus"]),
+  // },
   created() {
     this.fetchTopUsers();
   },
-  watch:{
-    followBtnClickedStatus(){
-      this.fetchTopUsers()
-    }
+  watch: {
+    followBtnClickedStatus() {
+      this.fetchTopUsers();
+    },
   },
   methods: {
     async fetchTopUsers() {
       try {
         const response = await usersAPI.getTopUsers();
-        if (response.status !== 200)  throw new Error(response.statusText);
+        if (response.status !== 200) throw new Error(response.statusText);
         this.topUsers = [...response.data];
       } catch (error) {
-        console.log('error', error)
+        console.log("error", error);
         Toast.fire({
           icon: "error",
           title: "無法取得人氣使用者名單",
@@ -117,7 +119,7 @@ export default {
         });
 
         this.isProcessing = false;
-        this.$store.commit('toggleFollowClickStatus')
+        this.$store.commit("statusControlModule/toggleFollowClickStatus");
       } catch (error) {
         this.isProcessing = false;
         Toast.fire({
@@ -151,7 +153,7 @@ export default {
         });
 
         this.isProcessing = false;
-        this.$store.commit('toggleFollowClickStatus')
+        this.$store.commit("statusControlModule/toggleFollowClickStatus");
       } catch (error) {
         console.log(error);
         this.isProcessing = false;

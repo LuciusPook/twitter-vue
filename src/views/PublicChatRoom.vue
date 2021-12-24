@@ -47,7 +47,7 @@
           </div>
           <div class="chat_room-part-container scrollbar">
             <div class="chat-content">
-              <ChatMessage/>
+              <ChatMessage />
             </div>
           </div>
           <div class="chat_room-part-input">
@@ -61,7 +61,7 @@
                 placeholder="輸入訊息..."
                 @keypress.enter="handleSendChatBtnClicked"
               ></textarea>
-              <div 
+              <div
                 class="input-button cursor-pointer"
                 @click="handleSendChatBtnClicked"
               >
@@ -82,32 +82,38 @@ import ChatMessage from "../components/ChatMessage.vue";
 import { mapState } from "vuex";
 
 export default {
-  name: 'PublicChatRoom',
+  name: "PublicChatRoom",
   components: {
     ChatMessage,
   },
-  data(){
+  data() {
     return {
-      user:{},
-      inputMessage:'',
-      isLoading:false
-    }
+      user: {},
+      inputMessage: "",
+      isLoading: false,
+    };
   },
-  computed: {
-    ...mapState(["currentUser"]),
+  computed: mapState({
+    currentUser: (state) => state.currentUserModule.currentUser,
+  }),
+  // {
+  //   ...mapState(["currentUser"]),
+  // },
+  created() {
+    this.$store.commit(
+      "statusControlModule/toggleTopUsersDisplayStatus",
+      "public-chatroom"
+    );
   },
-  created(){
-    this.$store.commit('toggleTopUsersDisplayStatus' , 'public-chatroom')
-  },
-  methods:{
-    handleSendChatBtnClicked(){
-        this.$socket.emit('sendMessage', {
-          userId: this.currentUser.id, 
-          name: this.currentUser.name, 
-          message: this.inputMessage
-        });
-        this.inputMessage = ''
-    }
+  methods: {
+    handleSendChatBtnClicked() {
+      this.$socket.emit("sendMessage", {
+        roomName: "public",
+        userId: this.currentUser.id,
+        message: this.inputMessage,
+      });
+      this.inputMessage = "";
+    },
   },
 };
 </script>

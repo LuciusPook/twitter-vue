@@ -110,8 +110,10 @@ export default {
   },
 
   computed: {
-    ...mapState(["currentUser"]),
-
+    ...mapState({
+      currentUser: (state) => state.currentUserModule.currentUser,
+      // currentUser:"currentUser"
+    }),
     accountRemaining() {
       return this.account.length;
     },
@@ -120,7 +122,10 @@ export default {
     },
   },
   created() {
-    this.$store.commit('toggleTopUsersDisplayStatus' , 'setting')
+    this.$store.commit(
+      "statusControlModule/toggleTopUsersDisplayStatus",
+      "setting"
+    );
     const { id } = this.$route.params;
     this.fetchUserData(id);
   },
@@ -153,12 +158,14 @@ export default {
     async handleSubmit(id) {
       this.isProcessing = true;
       try {
-        if (this.account.trim().length < 1 || 
-            this.name.trim().length < 1 ||
-            this.account.trim().length < 1 ||
-            this.email.trim().length < 1 ||
-            this.password.trim().length < 1 ||
-            this.checkPassword.trim().length < 1) {
+        if (
+          this.account.trim().length < 1 ||
+          this.name.trim().length < 1 ||
+          this.account.trim().length < 1 ||
+          this.email.trim().length < 1 ||
+          this.password.trim().length < 1 ||
+          this.checkPassword.trim().length < 1
+        ) {
           Toast.fire({
             icon: "warning",
             title: "欄位不可留白",
@@ -207,16 +214,16 @@ export default {
           checkPassword: this.checkPassword,
         };
         const response = await usersAPI.updateUserAccont({ formData });
-        const data = response.data
-        console.log(response)
-        console.log(data)
-        if (data.status !== 'success'){
+        const data = response.data;
+        console.log(response);
+        console.log(data);
+        if (data.status !== "success") {
           Toast.fire({
             icon: "error",
             title: data.message,
           });
           throw new Error(data.message);
-        } 
+        }
         Toast.fire({
           icon: "success",
           title: "儲存完成",

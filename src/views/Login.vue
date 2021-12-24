@@ -70,7 +70,7 @@ export default {
         // 將後端提供使用者token存入瀏覽器localStorage
         localStorage.setItem("token", data.token);
         // 登入後透過vuex mutation將使用者資訊commmit到vuex state保存，方便全域使用
-        this.$store.commit("setCurrentUser", data.user);
+        this.$store.commit("currentUserModule/setCurrentUser", data.user);
 
         Toast.fire({
           icon: "success",

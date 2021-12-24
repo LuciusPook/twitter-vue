@@ -47,7 +47,7 @@
               @click="deleteLike(tweet.id)"
             />
             <img
-              v-else-if="!tweet.isLiked&&!isProcessing"
+              v-else-if="!tweet.isLiked && !isProcessing"
               src="./../assets/Vector_like-icon.svg"
               alt=""
               class="likes--icon"
@@ -83,12 +83,15 @@ export default {
   data() {
     return {
       userTweets: this.initialTweets,
-      isProcessing:false
+      isProcessing: false,
     };
   },
-  computed: {
-    ...mapState(["currentUser"]),
-  },
+  computed: mapState({
+    currentUser: (state) => state.currentUserModule.currentUser,
+  }),
+  // {
+  //   ...mapState(["currentUser"]),
+  // },
   watch: {
     initialTweets(newValue) {
       this.userTweets = [...newValue];
@@ -99,23 +102,23 @@ export default {
       this.$emit("after-reply-clicked", tweetId);
     },
     async addLike(tweetId) {
-      this.isProcessing = true
+      this.isProcessing = true;
       try {
         const response = await tweetsAPI.like.addLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
-        this.userTweets.map( tweet => {
-          if(tweet.id === tweetId){
-            tweet.isLiked = true
-            tweet.like_count++
+        this.userTweets.map((tweet) => {
+          if (tweet.id === tweetId) {
+            tweet.isLiked = true;
+            tweet.like_count++;
           }
-        })
+        });
         Toast.fire({
           icon: "success",
           title: "成功對推文按讚",
         });
-      this.isProcessing = false
+        this.isProcessing = false;
       } catch (error) {
-        this.isProcessing = false
+        this.isProcessing = false;
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -124,24 +127,23 @@ export default {
       }
     },
     async deleteLike(tweetId) {
-      this.isProcessing = true
+      this.isProcessing = true;
       try {
         const response = await tweetsAPI.like.deleteLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
-        this.userTweets.map( tweet => {
-          if(tweet.id === tweetId){
-            tweet.isLiked = false
-            tweet.like_count--
-
+        this.userTweets.map((tweet) => {
+          if (tweet.id === tweetId) {
+            tweet.isLiked = false;
+            tweet.like_count--;
           }
-        })
+        });
         Toast.fire({
           icon: "success",
           title: "成功取消推文按讚",
         });
-      this.isProcessing = false
+        this.isProcessing = false;
       } catch (error) {
-        this.isProcessing = false
+        this.isProcessing = false;
         console.log("error", error);
         Toast.fire({
           icon: "error",

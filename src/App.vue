@@ -7,7 +7,11 @@
 
     <router-view />
 
-    <PopularList v-if="isAuthenticated && currentUser.role !== 'admin' && topUsersDisplayStatus" />
+    <PopularList
+      v-if="
+        isAuthenticated && currentUser.role !== 'admin' && topUsersDisplayStatus
+      "
+    />
 
     <NewPostModal
       v-if="isEditingCreateModal"
@@ -40,21 +44,24 @@ export default {
     return {
       isEditingCreateModal: false,
       checked: false,
-      isProcessing: false
+      isProcessing: false,
     };
   },
-  computed: {
-    ...mapState(["currentUser", "isAuthenticated","topUsersDisplayStatus"]),
-  },
+  computed: mapState({
+    currentUser: (state) => state.currentUserModule.currentUser,
+    isAuthenticated: (state) => state.currentUserModule.isAuthenticated,
+    topUsersDisplayStatus: (state) =>
+      state.statusControlModule.topUsersDisplayStatus,
+  }),
+  // ...mapState(["currentUser", "isAuthenticated","topUsersDisplayStatus"]),
   methods: {
     toggleCreateTweetModal() {
       this.isEditingCreateModal = !this.isEditingCreateModal;
     },
     async createNewTweet(payload) {
-      this.isProcessing = true
+      this.isProcessing = true;
       try {
         if (payload.length === 0) {
-
           Toast.fire({
             icon: "warning",
             title: "內文不能留白！",
@@ -75,10 +82,10 @@ export default {
           title: "成功新增推文",
         });
         this.toggleCreateTweetModal();
-        this.$store.commit('togglePostClickedStatus')
-        this.isProcessing = false
+        this.$store.commit("statusControlModule/togglePostClickedStatus");
+        this.isProcessing = false;
       } catch (error) {
-        this.isProcessing = false
+        this.isProcessing = false;
         console.log("error", error);
         Toast.fire({
           icon: "error",
@@ -103,8 +110,8 @@ export default {
 #twitter {
   position: relative;
   display: flex;
-  max-width: 1440px;
-  max-height: 1200px;
+  width: 1440px;
+  height: 1200px;
   margin: 0 auto;
 }
 </style>

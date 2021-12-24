@@ -22,28 +22,6 @@
 
 <script>
 // import { io }  from 'socket.io-client';
-// const dummyData =[
-//   {
-//     id:1,
-//     name:'user1',
-//     message:'hellohellohellohellohellohellhellohellohellohellhellohellohellohellhellohellohellohellhellohellohellohellohellohello'
-//   },
-//   {
-//     id:2,
-//     name:'user2',
-//     message:'hello'
-//   },
-//   {
-//     id:3,
-//     name:'user3',
-//     message:'hello'
-//   },
-//   {
-//     id:4,
-//     name:'user4',
-//     message:'hello'
-//   }
-// ]
 import { mapState } from "vuex";
 export default {
   name: "ChatMessage",
@@ -52,9 +30,12 @@ export default {
       chats:[],
     }
   },
-  computed: {
-    ...mapState(["currentUser"]),
-  },
+  computed: mapState({
+    currentUser: state => state.currentUserModule.currentUser
+  }),
+  // {
+  //   // ...mapState(["currentUser"]),
+  // },
   sockets: {
     connect() {
       console.log("socket connected");
@@ -68,7 +49,7 @@ export default {
     newMessage(newMessage){
       this.chats.push(newMessage) 
       console.log(newMessage)
-    }
+    },
     // message(data) {
     //   this.content = data;
     //   this.contents.push(this.content);
@@ -80,9 +61,9 @@ export default {
     //   this.logged = data;
     //   this.contents.push({ online: data });
     // },
-    // // disconnected() {
-    // //   this.$socket.emit("disconnect", this.currentUser.id);
-    // // },
+    disconnected() {
+      this.$socket.emit("disconnect", this.currentUser.id);
+    },
 		// messageNotRead(data) {
 		// 	this.$store.commit("updateReadMessage",data)
     // },

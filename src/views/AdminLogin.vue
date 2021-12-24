@@ -31,7 +31,7 @@ export default {
       password: "",
       isProcessing: false,
       checked: false,
-      warningMessage:''
+      warningMessage: "",
     };
   },
   methods: {
@@ -53,15 +53,15 @@ export default {
           password,
         });
         if (data.status !== 200) {
-          this.warningMessage = data.message
+          this.warningMessage = data.message;
           Toast.fire({
             icon: "error",
-            title: data.message
+            title: data.message,
           });
           throw new Error(data.message);
         }
         localStorage.setItem("token", data.token);
-        this.$store.commit("setCurrentUser", data.user);
+        this.$store.commit("currentUserModule/setCurrentUser", data.user);
 
         Toast.fire({
           icon: "success",
@@ -73,7 +73,7 @@ export default {
         this.password = "";
         this.checked = true;
         this.isProcessing = false;
-        console.log('error' , error)
+        console.log("error", error);
       }
     },
   },

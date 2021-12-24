@@ -35,8 +35,8 @@
           >
             <div class="follow__avatar--container">
               <router-link
-                  :to="{name:'user' , params:{id:userFollower.followerId}}"
-                >
+                :to="{ name: 'user', params: { id: userFollower.followerId } }"
+              >
                 <img
                   :src="userFollower.followerAvatar | emptyImage"
                   alt=""
@@ -48,7 +48,10 @@
               <div class="follow__title">
                 <h2 class="follow__name">{{ userFollower.followerName }}</h2>
                 <router-link
-                  :to="{name:'user' , params:{id:userFollower.followerId}}"
+                  :to="{
+                    name: 'user',
+                    params: { id: userFollower.followerId },
+                  }"
                 >
                   <div class="follow__account">
                     @{{ userFollower.followerAccount }}
@@ -59,17 +62,27 @@
                 {{ userFollower.followerIntro }}
               </p>
               <button
-                v-if="userFollower.isFollowed && userFollower.followerId !== currentUser.id"
-                :class="['follow__btn', { active: userFollower.isFollowed}]"
-                @click="handleUnfollowBtnClicked(userFollower.followerId, 'follower')"
+                v-if="
+                  userFollower.isFollowed &&
+                  userFollower.followerId !== currentUser.id
+                "
+                :class="['follow__btn', { active: userFollower.isFollowed }]"
+                @click="
+                  handleUnfollowBtnClicked(userFollower.followerId, 'follower')
+                "
                 :disabled="isProcessing"
               >
                 正在跟隨
               </button>
               <button
-                v-else-if="!userFollower.isFollowed && userFollower.followerId !== currentUser.id"
-                :class="['follow__btn', { active: userFollower.isFollowed}]"
-                @click="handleFollowBtnClicked(userFollower.followerId, 'follower')"
+                v-else-if="
+                  !userFollower.isFollowed &&
+                  userFollower.followerId !== currentUser.id
+                "
+                :class="['follow__btn', { active: userFollower.isFollowed }]"
+                @click="
+                  handleFollowBtnClicked(userFollower.followerId, 'follower')
+                "
                 :disabled="isProcessing"
               >
                 跟隨
@@ -77,8 +90,8 @@
             </div>
           </li>
         </ul>
-        <ul 
-          v-show="displayMode === 'followings' && userFollowings" 
+        <ul
+          v-show="displayMode === 'followings' && userFollowings"
           class="user__followings user__follow"
         >
           <li
@@ -88,7 +101,10 @@
           >
             <div class="follow__avatar--container">
               <router-link
-                  :to="{name:'user' , params:{id:userFollowing.followingId}}"
+                :to="{
+                  name: 'user',
+                  params: { id: userFollowing.followingId },
+                }"
               >
                 <img
                   :src="userFollowing.followingAvatar | emptyImage"
@@ -101,7 +117,10 @@
               <div class="follow__title">
                 <h2 class="follow__name">{{ userFollowing.followingName }}</h2>
                 <router-link
-                  :to="{name:'user' , params:{id:userFollowing.followingId}}"
+                  :to="{
+                    name: 'user',
+                    params: { id: userFollowing.followingId },
+                  }"
                 >
                   <div class="follow__account">
                     @{{ userFollowing.followingAccount }}
@@ -112,18 +131,30 @@
                 {{ userFollowing.followingIntro }}
               </p>
               <button
-                v-if="userFollowing.isFollowed && userFollowing.followingId !== currentUser.id"
-                :class="['follow__btn', { active: userFollowing.isFollowed}]"
-                @click="handleUnfollowBtnClicked(userFollowing.followingId, 'following')"
+                v-if="
+                  userFollowing.isFollowed &&
+                  userFollowing.followingId !== currentUser.id
+                "
+                :class="['follow__btn', { active: userFollowing.isFollowed }]"
+                @click="
+                  handleUnfollowBtnClicked(
+                    userFollowing.followingId,
+                    'following'
+                  )
+                "
                 :disabled="isProcessing"
               >
                 正在跟隨
               </button>
               <button
-                
-                v-else-if="!userFollowing.isFollowed && userFollowing.followingId !== currentUser.id"
-                :class="['follow__btn', { active: userFollowing.isFollowed}]"
-                @click="handleFollowBtnClicked(userFollowing.followingId, 'following')"
+                v-else-if="
+                  !userFollowing.isFollowed &&
+                  userFollowing.followingId !== currentUser.id
+                "
+                :class="['follow__btn', { active: userFollowing.isFollowed }]"
+                @click="
+                  handleFollowBtnClicked(userFollowing.followingId, 'following')
+                "
                 :disabled="isProcessing"
               >
                 跟隨
@@ -137,160 +168,164 @@
 </template>
 
 <script>
-import userAPI from "./../apis/users"
-import { Toast } from "./../utils/helpers"
-import { emptyImageFilter } from './../utils/mixins'
-import Spinner from './../components/Spinner.vue'
-import { mapState} from 'vuex'
+import userAPI from "./../apis/users";
+import { Toast } from "./../utils/helpers";
+import { emptyImageFilter } from "./../utils/mixins";
+import Spinner from "./../components/Spinner.vue";
+import { mapMutations , mapState } from "vuex";
 export default {
   name: "UserFollow",
-  components:{
-    Spinner
+  components: {
+    Spinner,
   },
-  mixins:[emptyImageFilter],
-  props:{
-    userId:{
-      type:Number,
-      required:true
-    }
+  mixins: [emptyImageFilter],
+  props: {
+    userId: {
+      type: Number,
+      required: true,
+    },
   },
-  data(){
+  data() {
     return {
-      displayMode:'followers',
+      displayMode: "followers",
       isFollowed: true,
-      userFollowers:[],
-      userFollowings:[],
-      isLoading:false,
-      isProcessing:false
-    }
+      userFollowers: [],
+      userFollowings: [],
+      isLoading: false,
+      isProcessing: false,
+    };
   },
-  computed:{
-    ...mapState(['currentUser','followBtnClickedStatus'])
+  computed: mapState({
+    currentUser: (state) => state.currentUserModule.currentUser,
+    followBtnClickedStatus: (state) =>
+      state.statusControlModule.followBtnClickedStatus,
+  }),
+  // {
+  //   ...mapState(['currentUser','followBtnClickedStatus'])
+  // },
+  created() {
+    this.handleFollowersPillClicked(this.userId);
   },
-  created(){
-    this.handleFollowersPillClicked(this.userId)
-  },
-  watch:{
-    followBtnClickedStatus(){
-        this.handleFollowingsPillClicked(this.userId)
-    }
-  },
-  methods:{
-    handleFollowersPillClicked(userId){
-      this.displayMode = 'followers'
-      this.fetchUserFollowers(userId)
+  watch: {
+    followBtnClickedStatus() {
+      this.handleFollowingsPillClicked(this.userId);
     },
-    handleFollowingsPillClicked(userId){
-      this.displayMode = 'followings'
-      this.fetchUserFollowings(userId)
+  },
+  methods: {
+    ...mapMutations('statusControlModule' , ['toggleFollowClickStatus' , 'toggleTopUsersFollowClickStatus']),
+    handleFollowersPillClicked(userId) {
+      this.displayMode = "followers";
+      this.fetchUserFollowers(userId);
     },
-    async handleFollowBtnClicked(id , btnType){
-      this.isProcessing = true
-      try{
-        const response = await userAPI.followship.addFollowing({ userId: id})
-        if(response.status !== 200) throw new Error(response.statusText)
-        if(btnType === 'follower'){
-          this.userFollowers.map( userFollower => {
-            if(userFollower.followerId === id){
-              userFollower.isFollowed = true       
+    handleFollowingsPillClicked(userId) {
+      this.displayMode = "followings";
+      this.fetchUserFollowings(userId);
+    },
+    async handleFollowBtnClicked(id, btnType) {
+      this.isProcessing = true;
+      try {
+        const response = await userAPI.followship.addFollowing({ userId: id });
+        if (response.status !== 200) throw new Error(response.statusText);
+        if (btnType === "follower") {
+          this.userFollowers.map((userFollower) => {
+            if (userFollower.followerId === id) {
+              userFollower.isFollowed = true;
             }
-          })
-          this.isProcessing = false
-          this.$store.commit('toggleFollowClickStatus')
-        }else{
-          this.userFollowings.map( userFollowing => {
-            if(userFollowing.followingId === id){
-              userFollowing.isFollowed = true
+          });
+          this.isProcessing = false;
+          this.toggleFollowClickStatus();
+        } else {
+          this.userFollowings.map((userFollowing) => {
+            if (userFollowing.followingId === id) {
+              userFollowing.isFollowed = true;
             }
-          })
-          this.isProcessing = false
-        } 
+          });
+          this.isProcessing = false;
+        }
         Toast.fire({
-          icon:'success',
-          title:'成功追蹤使用者'
-        })
-      }catch(error){
-        this.isLoading = false
-        console.log('error' , error)
+          icon: "success",
+          title: "成功追蹤使用者",
+        });
+      } catch (error) {
+        this.isLoading = false;
+        console.log("error", error);
         Toast.fire({
-          icon: 'error',
-          title: '無法追蹤使用者，請稍後再試'
-        })
+          icon: "error",
+          title: "無法追蹤使用者，請稍後再試",
+        });
       }
     },
-    async handleUnfollowBtnClicked(id , btnType){
-      this.isProcessing = true
-      try{
-        const response = await userAPI.followship.deleteFollowing({ userId: id})
-        if(response.status !== 200) throw new Error(response.statusText)
-        if(btnType === 'follower'){
-          this.userFollowers.map( userFollower => {
-            if(userFollower.followerId === id){
-              userFollower.isFollowed = false   
-            }          
-          })
-          this.isProcessing = false
-        }else{
-          this.userFollowings.map( userFollowing => {
-            if(userFollowing.followingId === id){
-              userFollowing.isFollowed = false          
+    async handleUnfollowBtnClicked(id, btnType) {
+      this.isProcessing = true;
+      try {
+        const response = await userAPI.followship.deleteFollowing({
+          userId: id,
+        });
+        if (response.status !== 200) throw new Error(response.statusText);
+        if (btnType === "follower") {
+          this.userFollowers.map((userFollower) => {
+            if (userFollower.followerId === id) {
+              userFollower.isFollowed = false;
             }
-          })
-          this.isProcessing = false
-        this.$store.commit('toggleFollowClickStatus')
-        } 
+          });
+          this.isProcessing = false;
+        } else {
+          this.userFollowings.map((userFollowing) => {
+            if (userFollowing.followingId === id) {
+              userFollowing.isFollowed = false;
+            }
+          });
+          this.isProcessing = false;
+          this.toggleFollowClickStatus();
+        }
         Toast.fire({
-          icon:'success',
-          title:'成功取消追蹤使用者'
-        })
-      }catch(error){
-        this.isProcessing = false
-        console.log('error' , error)
+          icon: "success",
+          title: "成功取消追蹤使用者",
+        });
+      } catch (error) {
+        this.isProcessing = false;
+        console.log("error", error);
         Toast.fire({
-          icon: 'error',
-          title: '無法取取消追蹤使用者，請稍後再試'
-        })
+          icon: "error",
+          title: "無法取消追蹤使用者，請稍後再試",
+        });
       }
     },
-    async fetchUserFollowers(userId){
-      this.isLoading = true
-      try{
-        const response = await userAPI.followship.getUserFollowers({ userId })
-        if(response.status !== 200) throw new Error(response.statusText)
-        const data = response.data
-        this.userFollowers = data[0].followerId === null? [] : [...data]
-        this.isLoading = false
-        this.$store.commit('toggleTopUsersFollowClickStatus')
-      }catch(error){
-        this.$store.commit('toggleTopUsersFollowClickStatus')
-        this.isLoading = false
-        console('error' , error)
+    async fetchUserFollowers(userId) {
+      this.isLoading = true;
+      try {
+        const response = await userAPI.followship.getUserFollowers({ userId });
+        if (response.status !== 200) throw new Error(response.statusText);
+        const data = response.data;
+        this.userFollowers = data[0].followerId === null ? [] : [...data];
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        console("error", error);
         Toast.fire({
-          icon: 'error',
-          title: '無法取得使用者跟隨者資料，請稍後再試!'
-        })
+          icon: "error",
+          title: "無法取得使用者跟隨者資料，請稍後再試!",
+        });
       }
     },
-    async fetchUserFollowings(userId){
-      this.isLoading = true
-      try{
-        const response = await userAPI.followship.getUserFollowings({ userId })
-        if(response.status !== 200) throw new Error(response.statusText)
-        const data = response.data
-        this.userFollowings = data[0].followingId === null? []:[...data]
-        this.isLoading = false
-        this.$store.commit('toggleTopUsersFollowClickStatus')
-      }catch(error){
-        this.$store.commit('toggleTopUsersFollowClickStatus')
-        this.isLoading = false
-        console('error' , error)
+    async fetchUserFollowings(userId) {
+      this.isLoading = true;
+      try {
+        const response = await userAPI.followship.getUserFollowings({ userId });
+        if (response.status !== 200) throw new Error(response.statusText);
+        const data = response.data;
+        this.userFollowings = data[0].followingId === null ? [] : [...data];
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        console("error", error);
         Toast.fire({
-          icon: 'error',
-          title: '無法取得使用者正在跟隨者資料，請稍後再試!'
-        })
+          icon: "error",
+          title: "無法取得使用者正在跟隨者資料，請稍後再試!",
+        });
       }
     },
-  }
+  },
 };
 </script>
 

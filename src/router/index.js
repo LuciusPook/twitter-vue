@@ -91,7 +91,7 @@ router.beforeEach(async (to, from, next) => {
   let isAuthenticated = store.state.isAuthenticated
 
   if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
-    isAuthenticated = await store.dispatch('fetchCurrentUser')
+    isAuthenticated = await store.dispatch('currentUserModule/fetchCurrentUser')
   }
 
   const pathsWithoutAuthentication = ['login', 'admin-login', 'register']
