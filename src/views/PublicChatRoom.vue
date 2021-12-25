@@ -47,7 +47,9 @@
           </div>
           <div class="chat_room-part-container scrollbar">
             <div class="chat-content">
-              <ChatMessage />
+              <ChatMessage 
+              
+              />
             </div>
           </div>
           <div class="chat_room-part-input">
@@ -104,12 +106,15 @@ export default {
       "statusControlModule/toggleTopUsersDisplayStatus",
       "public-chatroom"
     );
+    this.$socket.emit('public' , {
+      roomName: 'public'
+    })
   },
   methods: {
     handleSendChatBtnClicked() {
       this.$socket.emit("sendMessage", {
         roomName: "public",
-        userId: this.currentUser.id,
+        UserId: this.currentUser.id,
         message: this.inputMessage,
       });
       this.inputMessage = "";

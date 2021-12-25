@@ -3,17 +3,17 @@
     <li 
       v-for="chat in chats" 
       :key="chat.id"
-      :class="['chat__content',{user__chat:chat.name !== currentUser.name}]">
+      :class="['chat__content',{user__chat:chat.UserId !== currentUser.id}]">
       <div class="chat__container">
         <div
-          v-if="chat.name !== currentUser.name" 
+          v-if="chat.UserId !== currentUser.id" 
           class="chat__avatar--container"
         >
-          <img class="chat__avatar" src="./../assets/Photo_avatar.png" alt="">
+          <img class="chat__avatar" :src="chat.User.avatar | emptyImage" alt="">
         </div>
         <div class="chat__content--info">
-          <p class="chat__content--message">{{chat.message}}</p>
-          <span class="chat__content--createdAt">few second ago...</span>
+          <p class="chat__content--message">{{chat.content}}</p>
+          <span class="chat__content--createdAt">{{ chat.createdAt | fromNow }}</span>
         </div>
       </div> 
     </li>
@@ -23,6 +23,7 @@
 <script>
 // import { io }  from 'socket.io-client';
 import { mapState } from "vuex";
+import { fromNowFilter , emptyImageFilter} from "./../utils/mixins"
 export default {
   name: "ChatMessage",
   data(){
@@ -30,6 +31,7 @@ export default {
       chats:[],
     }
   },
+  mixins:[fromNowFilter , emptyImageFilter],
   computed: mapState({
     currentUser: state => state.currentUserModule.currentUser
   }),
@@ -46,9 +48,12 @@ export default {
       this.chats = [...allMessage]
       console.log(allMessage)
     },
-    newMessage(newMessage){
-      this.chats.push(newMessage) 
-      console.log(newMessage)
+    // newMessage(newMessage){
+    //   this.chats.push(newMessage) 
+    //   console.log(newMessage)
+    // },
+    loginMsg(loginMsg){
+      console.log(loginMsg)
     },
     // message(data) {
     //   this.content = data;
