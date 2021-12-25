@@ -2,7 +2,7 @@
   <ul class="chats__content">
     <li 
       v-for="chat in chats" 
-      :key="chat.id"
+      :key="chat.chatId"
       :class="['chat__content',{user__chat:chat.UserId !== currentUser.id}]">
       <div class="chat__container">
         <div

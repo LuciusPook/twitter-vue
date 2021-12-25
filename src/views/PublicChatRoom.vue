@@ -80,6 +80,7 @@
 
 <script>
 import ChatMessage from "../components/ChatMessage.vue";
+import {v4 as uuidv4} from 'uuid'
 // import Spinner from "./../components/Spinner.vue"
 import { mapState } from "vuex";
 
@@ -113,9 +114,10 @@ export default {
   methods: {
     handleSendChatBtnClicked() {
       this.$socket.emit("sendMessage", {
+        chatId: uuidv4(),
         roomName: "public",
         UserId: this.currentUser.id,
-        message: this.inputMessage,
+        content: this.inputMessage,
       });
       this.inputMessage = "";
     },
