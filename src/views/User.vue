@@ -210,7 +210,7 @@ export default {
   },
   created() {
     this.$store.commit(
-      "statusControlModule/toggleTopUsersDisplayStatus"
+      "statusControlModule/toggleTopUsersDisplayStatus" , "user"
     );
     const { id } = this.$route.params;
     this.fetchUser(id);

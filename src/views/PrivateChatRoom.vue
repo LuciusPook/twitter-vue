@@ -82,6 +82,11 @@ export default {
     components: {
     ChatMessage,
   },
+  created(){
+    this.$store.commit(
+      "statusControlModule/toggleTopUsersDisplayStatus" , "private-chatroom"
+    );
+  }
 }
 </script>
 <style lang="scss" scoped>
