@@ -3,13 +3,16 @@
     <div class="online_users">
       <div class="online_users-part">
         <div class="user-title">
-          <p>上線用戶(1)</p>
+          <p>上線用戶({{loginUsers.length}})</p>
         </div>
         <div class="online_user">
           <router-link to="#" class="user-avatar-link">
-            <div class="online_user-image">
+            <div 
+              v-for="loginUser in loginUsers"
+              :key="loginUser.id"
+              class="online_user-image">
               <img
-                src="./../assets/Photo_avatar.png"
+                :src="loginUser.avatar"
                 class="user-image"
                 alt=""
               />
@@ -17,26 +20,9 @@
           </router-link>
           <div class="online_user-info">
             <router-link to="#" class="user-name-link">
-              <div class="user-name">User1</div>
+              <div class="user-name">{{loginUser.name}}</div>
             </router-link>
-            <div class="user-account">@account</div>
-          </div>
-        </div>
-        <div class="online_user">
-          <router-link to="#" class="user-avatar-link">
-            <div class="online_user-image">
-              <img
-                src="./../assets/Photo_avatar.png"
-                class="user-image"
-                alt=""
-              />
-            </div>
-          </router-link>
-          <div class="online_user-info">
-            <router-link to="#" class="user-name-link">
-              <div class="user-name">User2</div>
-            </router-link>
-            <div class="user-account">@account</div>
+            <div class="user-account">@{{loginUser.account}}</div>
           </div>
         </div>
       </div>
@@ -80,7 +66,7 @@
 
 <script>
 import ChatMessage from "../components/ChatMessage.vue";
-import {v4 as uuidv4} from 'uuid'
+// import {v4 as uuidv4} from 'uuid'
 // import Spinner from "./../components/Spinner.vue"
 import { mapState } from "vuex";
 
@@ -94,6 +80,7 @@ export default {
       user: {},
       inputMessage: "",
       isLoading: false,
+      loginUsers:[]
     };
   },
   computed: mapState({
@@ -111,10 +98,15 @@ export default {
       roomName: 'public'
     })
   },
+  sockets:{
+    loginUsers(loginUsers){
+      this.loginUsers = [...loginUsers]
+    }
+  },
   methods: {
     handleSendChatBtnClicked() {
       this.$socket.emit("sendMessage", {
-        chatId: uuidv4(),
+        // chatId: uuidv4(),
         roomName: "public",
         UserId: this.currentUser.id,
         content: this.inputMessage,
