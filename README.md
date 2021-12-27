@@ -64,7 +64,7 @@ npm run lint
 ## **Author**
 - [Jack Huo](https://github.com/JackJackHuo)
 - [Tim](https://github.com/TimZXJ)
-- [Daniel](https://github.com/JackJackHuo)
+- [Daniel](https://github.com/rayray1010)
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
