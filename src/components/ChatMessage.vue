@@ -1,21 +1,38 @@
 <template>
   <ul class="chats__content">
-    <li 
-      v-for="chat in chats" 
+    <li
+      v-for="chat in chats"
       :key="chat.id"
-      :class="['chat__content',{user__chat:chat.UserId !== currentUser.id}]">
-      <div class="chat__container">
+      :class="['chat__content', { user__chat: chat.UserId && chat.UserId !== currentUser.id }]"
+    >
+      <div 
+        v-if="!chat.loginMsg && !chat.logoutMsg" 
+        class="chat__container">
         <div
-          v-if="chat.UserId !== currentUser.id" 
+          v-if=" chat.UserId && chat.UserId !== currentUser.id"
           class="chat__avatar--container"
         >
-          <img class="chat__avatar" :src="chat.User.avatar | emptyImage" alt="">
+          <img
+            class="chat__avatar"
+            :src="chat.avatar | emptyImage"
+            alt=""
+          />
         </div>
         <div class="chat__content--info">
-          <p class="chat__content--message">{{chat.content}}</p>
-          <span class="chat__content--createdAt">{{ chat.createdAt | fromNow }}</span>
+          <p class="chat__content--message">{{ chat.content }}</p>
+          <span class="chat__content--createdAt">{{
+            chat.createdAt | fromNow
+          }}</span>
         </div>
-      </div> 
+      </div>
+      <template v-else>
+        <span v-if="chat.loginMsg" class="chat__logMsg">{{
+          chat.loginMsg
+        }}</span>
+        <span v-if="chat.logoutMsg" class="chat__logMsg">{{
+          chat.logoutMsg
+        }}</span>
+      </template>
     </li>
   </ul>
 </template>
@@ -23,17 +40,17 @@
 <script>
 // import { io }  from 'socket.io-client';
 import { mapState } from "vuex";
-import { fromNowFilter , emptyImageFilter} from "./../utils/mixins"
+import { fromNowFilter, emptyImageFilter } from "./../utils/mixins";
 export default {
   name: "ChatMessage",
-  data(){
-    return{
-      chats:[],
-    }
+  data() {
+    return {
+      chats: [],
+    };
   },
-  mixins:[fromNowFilter , emptyImageFilter],
+  mixins: [fromNowFilter, emptyImageFilter],
   computed: mapState({
-    currentUser: state => state.currentUserModule.currentUser
+    currentUser: (state) => state.currentUserModule.currentUser,
   }),
   // {
   //   // ...mapState(["currentUser"]),
@@ -44,16 +61,21 @@ export default {
       // this.socketConnect();
       // this.$socket.emit("login");
     },
-    allMessage(allMessage){
-      this.chats = [...allMessage]
-      console.log(allMessage)
+    allMessage(allMessage) {
+      this.chats = [...allMessage];
+      console.log(allMessage);
     },
-    // newMessage(newMessage){
-    //   this.chats.push(newMessage) 
-    //   console.log(newMessage)
-    // },
+    newMessage(newMessage){
+      this.chats.push(newMessage)
+      console.log(newMessage)
+    },
     loginMsg(loginMsg){
-      console.log(loginMsg)
+      this.chats.push(loginMsg)
+      console.log(loginMsg);
+    },
+    logoutMsg(logoutMsg){
+      this.chats.push(logoutMsg)
+      console.log(logoutMsg);
     },
     // message(data) {
     //   this.content = data;
@@ -69,87 +91,84 @@ export default {
     disconnected() {
       this.$socket.emit("disconnect", this.currentUser.id);
     },
-		// messageNotRead(data) {
-		// 	this.$store.commit("updateReadMessage",data)
+    // messageNotRead(data) {
+    // 	this.$store.commit("updateReadMessage",data)
     // },
   },
   mounted() {
     this.$socket.open();
   },
   // created() {
-  //   this.chats = [...dummyData]
-  //   this.socket = io('https://simple-twitter-tim.herokuapp.com/')
-  //   this.socket.on('online' , (onlineCount) => {
-  //     console.log('user connected',onlineCount)
-  //   })
-  //   this.socket.on('allMessage' , (allMessage) => {
-  //     this.chats = [...allMessage]
-  //     console.log(allMessage)
-  //   })
-  //   this.socket.on('newMessage' , (newMessage) => {
-  //     this.chat.push(newMessage) 
-  //     console.log(newMessage)
-  //   })
+  //   console.log(this.chats)
   // },
 };
 </script>
 
 <style lang="scss" scoped>
-.chats__content{
+.chats__content {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   height: 100%;
   width: 100%;
-  li{
+  li {
     width: 100%;
-    margin: 1rem .5rem;
-    .chat__container{
+    margin: 1rem 0.5rem;
+    .chat__container {
       display: flex;
       justify-content: flex-end;
-      .chat__avatar--container{
+      .chat__avatar--container {
         position: relative;
         width: 50px;
-        img{
-          position:absolute;
+        img {
+          position: absolute;
           left: 50%;
           transform: translateX(-50%);
-          top:0;
+          top: 0;
           width: 40px;
           height: 40px;
+          border-radius: 50%;
         }
       }
-      .chat__content--info{
+      .chat__content--info {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        .chat__content--message{
+        .chat__content--message {
           max-width: 400px;
           overflow-wrap: break-word;
-          background-color: #FF6600;
-          color:$white;
+          background-color: #ff6600;
+          color: $white;
           font-size: 15px;
           padding: 10px;
           border-radius: 25px 25px 0px 25px;
         }
-        .chat__content--createdAt{
-          color:#657786;
+        .chat__content--createdAt {
+          color: #657786;
           font-size: 13px;
-
         }
       }
+      .chat__logMsg {
+        margin: 0 auto;
+        padding: 7px 14px;
+        border-radius: 50px;
+        height: 29px;
+        color: #657786;
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 15px;
+      }
     }
-
   }
-  li.user__chat{
-    .chat__container{
+  li.user__chat {
+    .chat__container {
       justify-content: flex-start;
-      .chat__content--info{
+      .chat__content--info {
         align-items: flex-start;
-        .chat__content--message{
-          background-color: #E6ECF0;
-          color:black;
-          border-radius: 25px 25px 25px 0px ;
+        .chat__content--message {
+          background-color: #e6ecf0;
+          color: black;
+          border-radius: 25px 25px 25px 0px;
         }
       }
     }

@@ -5,11 +5,11 @@
         <div class="user-title">
           <p>上線用戶({{loginUsers.length}})</p>
         </div>
-        <div class="online_user">
+        <div class="online_user" v-for="loginUser in loginUsers"
+              :key="loginUser.id">
           <router-link to="#" class="user-avatar-link">
             <div 
-              v-for="loginUser in loginUsers"
-              :key="loginUser.id"
+              
               class="online_user-image">
               <img
                 :src="loginUser.avatar"
@@ -78,9 +78,9 @@ export default {
   data() {
     return {
       user: {},
-      inputMessage: "",
+      inputMessage: '',
       isLoading: false,
-      loginUsers:[]
+      loginUsers: [],
     };
   },
   computed: mapState({
@@ -94,14 +94,18 @@ export default {
       "statusControlModule/toggleTopUsersDisplayStatus",
       "public-chatroom"
     );
-    this.$socket.emit('public' , {
-      roomName: 'public'
-    })
+    this.joinRoom();
   },
-  sockets:{
-    loginUsers(loginUsers){
-      this.loginUsers = [...loginUsers]
-    }
+  beforeDestroy() {
+    this.leaveRoom();
+  },
+  mounted() {
+    this.$socket.open();
+  },
+  sockets: {
+    loginUsers(loginUsers) {
+      this.loginUsers = [...loginUsers];
+    },
   },
   methods: {
     handleSendChatBtnClicked() {
@@ -112,6 +116,16 @@ export default {
         content: this.inputMessage,
       });
       this.inputMessage = "";
+    },
+    joinRoom() {
+      this.$socket.emit("public",
+        "public",
+      );
+    },
+    leaveRoom() {
+      this.$socket.emit("leave-room",
+        "public",
+      );
     },
   },
 };

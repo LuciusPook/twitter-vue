@@ -15,6 +15,7 @@ import VueSocketIO from 'vue-socket.io'
 // )
 
 const token = localStorage.getItem('token')
+// const token = localStorage.getItem('token')
 Vue.use(new VueSocketIO({
   debug: true,
   connection: SocketIO('https://simple-twitter-tim.herokuapp.com/', { auth: { token }, autoConnect: false }),
@@ -32,3 +33,5 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+
+

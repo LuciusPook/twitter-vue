@@ -76,6 +76,7 @@ export default {
           icon: "success",
           title: `${data.user.name}, 歡迎回來`,
         });
+        this.$router.go(0) //登入新使用者時重整頁面，讓main.js重跑，抓新登入的token給socket傳到後端抓取currentUser
         this.$router.push("/main");
       } catch (error) {
         this.checked = true;

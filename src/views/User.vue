@@ -491,6 +491,7 @@ export default {
   .user__page--container {
     display: flex;
     flex-direction: column;
+    overflow:hidden;
     .userCard {
       position: relative;
       height: 410px;
@@ -517,6 +518,7 @@ export default {
         position: relative;
         flex: 1;
         padding: 4.5rem 0 2rem 1rem;
+        overflow:hidden;
         .user__interaction--other {
           position: absolute;
           top: 1rem;
@@ -610,6 +612,7 @@ export default {
         line-height: 3rem;
         color: $navPills;
         font-weight: bold;
+        overflow:hidden;
         cursor: pointer;
         &.active,
         &:hover {

@@ -260,6 +260,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow:hidden;
   .navbar {
     // height: 100%;
     padding: 14px 0 0 70px;

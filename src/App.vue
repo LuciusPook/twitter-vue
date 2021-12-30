@@ -110,7 +110,7 @@ export default {
 #twitter {
   position: relative;
   display: flex;
-  width: 1440px;
+  max-width: 1440px;
   height: 1200px;
   margin: 0 auto;
 }
