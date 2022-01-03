@@ -1,6 +1,8 @@
 <template>
   <ul class="chats__content">
+    <Spinner v-if="isLoading"/>
     <li
+      v-else
       v-for="chat in chats"
       :key="chat.id"
       :class="['chat__content', { user__chat: chat.UserId && chat.UserId !== currentUser.id }]"
@@ -41,11 +43,16 @@
 // import { io }  from 'socket.io-client';
 import { mapState } from "vuex";
 import { fromNowFilter, emptyImageFilter } from "./../utils/mixins";
+import Spinner from "./../components/Spinner.vue"
 export default {
   name: "ChatMessage",
+  components:{
+    Spinner
+  },
   data() {
     return {
       chats: [],
+      isLoading: false,
     };
   },
   mixins: [fromNowFilter, emptyImageFilter],
@@ -55,52 +62,35 @@ export default {
   // {
   //   // ...mapState(["currentUser"]),
   // },
+  updated(){
+      this.$emit('after-retrieve-allMessage')
+  },
   sockets: {
     connect() {
       console.log("socket connected");
-      // this.socketConnect();
-      // this.$socket.emit("login");
     },
     allMessage(allMessage) {
+      this.isLoading = true
       this.chats = [...allMessage];
-      console.log(allMessage);
+      this.isLoading = false
     },
     newMessage(newMessage){
       this.chats.push(newMessage)
-      console.log(newMessage)
     },
     loginMsg(loginMsg){
       this.chats.push(loginMsg)
-      console.log(loginMsg);
     },
     logoutMsg(logoutMsg){
       this.chats.push(logoutMsg)
-      console.log(logoutMsg);
     },
-    // message(data) {
-    //   this.content = data;
-    //   this.contents.push(this.content);
-    // },
-    // loginUser(data) {
-    //   this.loginUser = data;
-    // },
-    // loginStatus(data) {
-    //   this.logged = data;
-    //   this.contents.push({ online: data });
-    // },
     disconnected() {
       this.$socket.emit("disconnect", this.currentUser.id);
     },
     // messageNotRead(data) {
-    // 	this.$store.commit("updateReadMessage",data)
+      // 	this.$store.commit("updateReadMessage",data)
     // },
+    
   },
-  mounted() {
-    this.$socket.open();
-  },
-  // created() {
-  //   console.log(this.chats)
-  // },
 };
 </script>
 
@@ -109,10 +99,9 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  height: 100%;
   width: 100%;
   li {
-    width: 100%;
+    // width: 100%;
     margin: 1rem 0.5rem;
     .chat__container {
       display: flex;

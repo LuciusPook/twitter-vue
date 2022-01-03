@@ -5,10 +5,10 @@
     <AccountForm
       :Account="account"
       :Password="password"
-      @after-submit="handleAfterSubmit"
       :is-processing="isProcessing"
       :checked="checked"
       :warningMessage="warningMessage"
+      @after-submit="handleAfterSubmit"
     />
     <div class="form-link">
       <router-link to="/login">前台登入</router-link>

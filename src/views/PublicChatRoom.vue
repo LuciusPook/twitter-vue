@@ -31,12 +31,10 @@
           <div class="chat-title">
             <p>公開聊天室</p>
           </div>
-          <div class="chat_room-part-container scrollbar">
-            <div class="chat-content">
-              <ChatMessage 
-              
-              />
-            </div>
+          <div class="chat_room-part-container scrollbar" ref="chatContainer">
+            <ChatMessage
+              @after-retrieve-allMessage="scrollToBottom"
+            />
           </div>
           <div class="chat_room-part-input">
             <div class="input-container">
@@ -66,8 +64,6 @@
 
 <script>
 import ChatMessage from "../components/ChatMessage.vue";
-// import {v4 as uuidv4} from 'uuid'
-// import Spinner from "./../components/Spinner.vue"
 import { mapState } from "vuex";
 
 export default {
@@ -79,7 +75,6 @@ export default {
     return {
       user: {},
       inputMessage: '',
-      isLoading: false,
       loginUsers: [],
     };
   },
@@ -110,22 +105,27 @@ export default {
   methods: {
     handleSendChatBtnClicked() {
       this.$socket.emit("sendMessage", {
-        // chatId: uuidv4(),
         roomName: "public",
         UserId: this.currentUser.id,
         content: this.inputMessage,
       });
       this.inputMessage = "";
+      this.scrollToBottom()
+    },
+    scrollToBottom(){
+      this.$refs.chatContainer.scrollTo({
+        top:4000,
+        behavior: 'smooth'
+      })
+      console.log(this.$refs.chatContainer,'scroll to bottom')
+      console.log('scroll-height',this.$refs.chatContainer.scrollHeight)
+      console.log('client-height',this.$refs.chatContainer.clientHeight)
     },
     joinRoom() {
-      this.$socket.emit("public",
-        "public",
-      );
+      this.$socket.emit("public","public");
     },
     leaveRoom() {
-      this.$socket.emit("leave-room",
-        "public",
-      );
+      this.$socket.emit("leave-room","public");
     },
   },
 };
@@ -211,16 +211,9 @@ export default {
     display: flex;
     flex-direction: column;
     &-container {
-      height: 100%;
+      height: 1047px;
       width: 100%;
       padding: 8px;
-      overflow: scroll;
-      .chat-content {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        height: 100%;
-      }
     }
     &-input {
       width: 100%;
