@@ -3,7 +3,7 @@
 ![AlphaCamp](https://media-exp1.licdn.com/dms/image/C560BAQEJME754QmfcQ/company-logo_200_200/0/1519883768060?e=2159024400&v=beta&t=kkL_dJb9_NqeeioYh76B4eY6mzQUaIvqTQ2u6RVzvz0)
 ***
 ## **App Function**
-- 後台
+- 前台
   - 使用者可以在註冊時設定及編輯自己的 account、name、email 和 password
   - 使用者能編輯自己的暱稱、自我介紹、個人頭像與封面
   - 使用者能在首頁瀏覽所有的推文 
