@@ -8,7 +8,7 @@
       :class="['chat__content', { user__chat: chat.UserId && chat.UserId !== currentUser.id }]"
     >
       <div 
-        v-if="!chat.loginMsg && !chat.logoutMsg" 
+        v-show="!chat.loginMsg && !chat.logoutMsg"
         class="chat__container">
         <div
           v-if=" chat.UserId && chat.UserId !== currentUser.id"
@@ -27,13 +27,15 @@
           }}</span>
         </div>
       </div>
-      <template v-else>
-        <span v-if="chat.loginMsg" class="chat__logMsg">{{
-          chat.loginMsg
-        }}</span>
-        <span v-if="chat.logoutMsg" class="chat__logMsg">{{
-          chat.logoutMsg
-        }}</span>
+      <template>
+        <div class="logMessageContainer">
+          <span v-show="chat.loginMsg" class="chat__logMsg">{{
+            chat.loginMsg
+          }}</span>
+          <span v-show="chat.logoutMsg" class="chat__logMsg">{{
+            chat.logoutMsg
+          }}</span>
+        </div>
       </template>
     </li>
   </ul>
@@ -63,7 +65,7 @@ export default {
   //   // ...mapState(["currentUser"]),
   // },
   updated(){
-      this.$emit('after-retrieve-allMessage')
+    this.$emit('after-retrieve-allMessage')
   },
   sockets: {
     connect() {
@@ -76,14 +78,15 @@ export default {
     },
     newMessage(newMessage){
       this.chats.push(newMessage)
+      console.log(newMessage)
     },
     loginMsg(loginMsg){
-      this.chats.push(loginMsg)
+      this.chats.push({loginMsg})
     },
     logoutMsg(logoutMsg){
-      this.chats.push(logoutMsg)
+      this.chats.push({logoutMsg})
     },
-    disconnected() {
+    disconnected() {  
       this.$socket.emit("disconnect", this.currentUser.id);
     },
     // messageNotRead(data) {
@@ -137,11 +140,17 @@ export default {
           font-size: 13px;
         }
       }
-      .chat__logMsg {
-        margin: 0 auto;
+    }
+    .logMessageContainer{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      .chat__logMsg{
+        height: 29px;
+        background-color: #E5E5E5;
+        border-radius: 50px;
         padding: 7px 14px;
         border-radius: 50px;
-        height: 29px;
         color: #657786;
         font-weight: 500;
         font-size: 15px;

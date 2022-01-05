@@ -119,10 +119,12 @@ export default {
       })
     },
     joinRoom() {
-      this.$socket.emit("public","public");
+      const roomName = 'public'
+      this.$socket.emit("public",roomName);
     },
     leaveRoom() {
-      this.$socket.emit("leave-room","public");
+      const roomName = 'public'
+      this.$socket.emit("leave-room",roomName);
     },
   },
 };
