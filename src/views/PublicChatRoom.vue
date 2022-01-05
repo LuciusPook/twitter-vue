@@ -114,12 +114,9 @@ export default {
     },
     scrollToBottom(){
       this.$refs.chatContainer.scrollTo({
-        top:4000,
+        top:this.$refs.chatContainer.scrollHeight,
         behavior: 'smooth'
       })
-      console.log(this.$refs.chatContainer,'scroll to bottom')
-      console.log('scroll-height',this.$refs.chatContainer.scrollHeight)
-      console.log('client-height',this.$refs.chatContainer.clientHeight)
     },
     joinRoom() {
       this.$socket.emit("public","public");
