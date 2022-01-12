@@ -48,9 +48,7 @@ export default new Vuex.Store({
     toggleReplyModal(state){
       state.isReplying = !state.isReplying
     },
-    // toggleTopUsersFollowClickStatus(state){
-    //   state.topUserFollowBtnClickedStatus = !state.topUserFollowBtnClickedStatus
-    // }
+
     toggleFollowClickStatus(state){
       state.followBtnClickedStatus = !state.followBtnClickedStatus
     },
@@ -78,7 +76,6 @@ export default new Vuex.Store({
         })
         return true
       } catch (error) {
-        console.error(error.message)
 
         // 驗證失敗的話一併觸發登出的行為，以清除 state 中的 token
         commit('revokeAuthentication')
@@ -86,7 +83,5 @@ export default new Vuex.Store({
       }
     }
   },
-  modules: {
-  }
 })
 

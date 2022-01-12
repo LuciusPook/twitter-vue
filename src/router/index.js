@@ -21,9 +21,9 @@ const routes = [
     component: Login,
   },
   {
-    path: '/main',
-    name: 'main',
-    component: Main,
+    path: '/admin/login',
+    name: 'admin-login',
+    component: () => import('../views/AdminLogin.vue')
   },
   {
     path: '/register',
@@ -31,36 +31,48 @@ const routes = [
     component: Register,
   },
   {
-    path: '/users/:id',
-    name: 'user',
-    component: () => import('../views/User.vue'),
-  },
-  {
-    path: '/tweets/:id',
-    name: 'tweet',
-    component: () => import('../views/Tweet.vue'),
-  },
-  {
-    path: '/users/account',
-    name: 'setting',
-    component: () => import('../views/UserAccountSetting.vue')
-  },
-  {
-    path: '/admin/login',
-    name: 'admin-login',
-    component: () => import('../views/AdminLogin.vue')
-  },
-  {
-    path: '/admin/tweets',
-    name: 'admin-tweets',
-    component: () => import('../views/AdminTweets.vue'),
+    path: '/home',
+    component: () => import('./../views/Home'),
+    children: [
+      {
+        path: '',
+        component: () => import('./../views/Twitter'),
+        children: [
+          {
+            path: '/main',
+            name: 'main',
+            component: Main,
+          },
+          {
+            path: '/users/:id',
+            name: 'user',
+            component: () => import('../views/User.vue'),
+          },
+          {
+            path: '/tweets/:id',
+            name: 'tweet',
+            component: () => import('../views/Tweet.vue'),
+          },
+        ],
+      },
+      {
+        path: '/users/account',
+        name: 'setting',
+        component: () => import('../views/UserAccountSetting.vue')
+      },
+      {
+        path: '/admin/tweets',
+        name: 'admin-tweets',
+        component: () => import('../views/AdminTweets.vue'),
 
-  },
-  {
-    path: '/admin/users',
-    name: 'admin-users',
-    component: () => import('../views/AdminUsers.vue'),
+      },
+      {
+        path: '/admin/users',
+        name: 'admin-users',
+        component: () => import('../views/AdminUsers.vue'),
 
+      },
+    ]
   },
   {
     path: '*',

@@ -1,5 +1,5 @@
  <template>
-  <ul class="user__tweets">
+  <ul class="user__tweets scrollbar">
     <li v-for="likedTweet in likedTweets" :key="likedTweet.TweetId">
       <div class="avatar__container">
         <router-link
@@ -45,14 +45,14 @@
           </span>
           <span class="tweet__interaction--likes">
             <img
-              v-if="likedTweet.isLiked && !isLoading"
+              v-if="likedTweet.isLiked && !isProcessing"
               src="./../assets/Vector_redLike-icon.svg"
               alt=""
               class="likes--icon"
               @click="deleteLike(likedTweet.TweetId)"
             />
             <img
-              v-else-if="!likedTweet.isLiked&&!isLoading"
+              v-else
               src="./../assets/Vector_like-icon.svg"
               alt=""
               class="likes--icon"
@@ -101,7 +101,7 @@ export default {
       this.$emit("after-reply-clicked", tweetId);
     },
     async addLike(tweetId) {
-      this.isLoading = true
+      this.isProcessing = true
       try {
         const response = await tweetsAPI.like.addLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -115,9 +115,9 @@ export default {
           icon: "success",
           title: "成功對推文按讚",
         });
-        this.isLoading = false
+        this.isProcessing = false
       } catch (error) {
-        this.isLoading = false
+        this.isProcessing = false
         console.log("error", error);
         Toast.fire({
           icon: "error",

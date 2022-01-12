@@ -1,5 +1,5 @@
  <template>
-  <ul class="user__repliedTweets">
+  <ul class="user__repliedTweets scrollbar">
     <li v-for="repliedTweet in repliedTweets" :key="repliedTweet.id">
       <div class="avatar__container">
         <router-link

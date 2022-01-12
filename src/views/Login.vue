@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="login-container">
     <img src="https://i.ibb.co/WD1YSyW/Logo.jpg" alt="Logo" />
     <h2 class="form-title">登入 Alphitter</h2>
     <AccountForm
@@ -89,7 +89,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.login-container {
+  height: 100%;
   text-align: center;
   padding-top: 4rem;
   flex: 1;

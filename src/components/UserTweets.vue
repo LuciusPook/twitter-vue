@@ -47,7 +47,7 @@
               @click="deleteLike(tweet.id)"
             />
             <img
-              v-else-if="!tweet.isLiked&&!isProcessing"
+              v-else
               src="./../assets/Vector_like-icon.svg"
               alt=""
               class="likes--icon"

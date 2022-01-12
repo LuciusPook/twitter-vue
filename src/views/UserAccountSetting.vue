@@ -253,14 +253,13 @@ export default {
 <style lang="scss" scoped>
 .container {
   width: 100%;
-  height: 1200px;
   display: flex;
   flex-direction: row;
   flex: 1;
 }
 
 .account-container {
-  height: 100%;
+  flex: 1;
 }
 
 .account-title {

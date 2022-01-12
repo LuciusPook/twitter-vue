@@ -1,107 +1,105 @@
 <template>
   <div class="main">
     <Spinner v-if="isLoading" />
-    <template v-else>
-      <ReplyModal
-        v-if="isReplying"
-        @after-submit-reply="afterSubmitReply"
-        :tweetId="clickedTweetId"
-      />
-      <div class="main__navbar">首頁</div>
-      <div class="createTweet">
-        <div class="createTweet__avatar--wrapper">
-          <router-link :to="{ name: 'user', params: { id: currentUser.id } }">
-            <img
-              :src="currentUser.avatar | emptyImage"
-              alt=""
-              class="createTweet__avatar"
-            />
-          </router-link>
-        </div>
-        <div :class="['form__group', { edit: isEditing }]">
-          <textarea
-            class="newTweet form__control"
-            :rows="textareaRows"
-            name="newTweet"
-            id="newTweet"
-            placeholder="有什麼新鮮事?"
-            @focus="handleTextareaFocused"
-            @blur="handleTextareaBlurred"
-            v-model="newTweetText"
-            @keydown="newPostRestriction"
+    <ReplyModal
+      v-if="isReplying"
+      @after-submit-reply="afterSubmitReply"
+      :tweetId="clickedTweetId"
+    />
+    <div class="main__navbar">首頁</div>
+    <div class="createTweet">
+      <div class="createTweet__avatar--wrapper">
+        <router-link :to="{ name: 'user', params: { id: currentUser.id } }">
+          <img
+            :src="currentUser.avatar | emptyImage"
+            alt=""
+            class="createTweet__avatar"
           />
-          <button type="submit" @click="createNewTweet(newTweetText)">
-            推文
-          </button>
-        </div>
+        </router-link>
       </div>
-      <div class="main__tweets--container scrollbar">
-        <ul class="main__tweets">
-          <li class="main__tweet" v-for="tweet in tweets" :key="tweet.id">
-            <div class="tweet__avatar--wrapper">
-              <router-link :to="{ name: 'user', params: { id: tweet.UserId } }">
-                <img
-                  :src="tweet.User.avatar | emptyImage"
-                  alt=""
-                  class="tweet__avatar"
-                />
-              </router-link>
-            </div>
-            <div class="tweet__content">
-              <p class="tweet__title">
-                <span class="tweet__tweeter--name">{{ tweet.name }}</span>
-                <router-link
-                  :to="{ name: 'user', params: { id: tweet.UserId } }"
-                  class="tweet__tweeter--account"
-                  >@{{ tweet.User.account }}
-                </router-link>
-                <span class="tweet__createdTime"
-                  >．{{ tweet.createdAt | fromNow }}</span
-                >
-              </p>
+      <div :class="['form__group', { edit: isEditing }]">
+        <textarea
+          class="newTweet form__control"
+          :rows="textareaRows"
+          name="newTweet"
+          id="newTweet"
+          placeholder="有什麼新鮮事?"
+          @focus="handleTextareaFocused"
+          @blur="handleTextareaBlurred"
+          v-model="newTweetText"
+          @keydown="newPostRestriction"
+        />
+        <button type="submit" @click="createNewTweet(newTweetText)">
+          推文
+        </button>
+      </div>
+    </div>
+    <div class="main__tweets--container scrollbar">
+      <ul class="main__tweets">
+        <li class="main__tweet" v-for="tweet in tweets" :key="tweet.id">
+          <div class="tweet__avatar--wrapper">
+            <router-link :to="{ name: 'user', params: { id: tweet.UserId } }">
+              <img
+                :src="tweet.User.avatar | emptyImage"
+                alt=""
+                class="tweet__avatar"
+              />
+            </router-link>
+          </div>
+          <div class="tweet__content">
+            <p class="tweet__title">
+              <span class="tweet__tweeter--name">{{ tweet.name }}</span>
               <router-link
-                class="tweet__text--container"
-                :to="{ name: 'tweet', params: { id: tweet.id } }"
-              >
-                <p class="tweet__text">
-                  {{ tweet.description }}
-                </p>
+                :to="{ name: 'user', params: { id: tweet.UserId } }"
+                class="tweet__tweeter--account"
+                >@{{ tweet.User.account }}
               </router-link>
-              <div class="tweet__content--interaction">
-                <span class="tweet__interaction--replies">
-                  <img
-                    src="./../assets/Vector_reply-icon.svg"
-                    alt=""
-                    class="interaction__replies--icon"
-                    @click="handleReplyModalToggle(tweet.id)"
-                  />
-                  <span class="interaction__replies--counts">{{
-                    tweet.reply_count
-                  }}</span>
-                </span>
-                <span class="tweet__interaction--likes">
-                  <img
-                    v-if="tweet.isLiked && !isProcessing"
-                    src="./../assets/Vector_redLike-icon.svg"
-                    alt=""
-                    class="likes--icon"
-                    @click="deleteLike(tweet.id)"
-                  />
-                  <img
-                    v-else-if="!tweet.isLiked && !isProcessing"
-                    src="./../assets/Vector_like-icon.svg"
-                    alt=""
-                    class="likes--icon"
-                    @click="addLike(tweet.id)"
-                  />
-                  <span class="likes--counts">{{ tweet.like_count }}</span>
-                </span>
-              </div>
+              <span class="tweet__createdTime"
+                >．{{ tweet.createdAt | fromNow }}</span
+              >
+            </p>
+            <router-link
+              class="tweet__text--container"
+              :to="{ name: 'tweet', params: { id: tweet.id } }"
+            >
+              <p class="tweet__text">
+                {{ tweet.description }}
+              </p>
+            </router-link>
+            <div class="tweet__content--interaction">
+              <span class="tweet__interaction--replies">
+                <img
+                  src="./../assets/Vector_reply-icon.svg"
+                  alt=""
+                  class="interaction__replies--icon"
+                  @click="handleReplyModalToggle(tweet.id)"
+                />
+                <span class="interaction__replies--counts">{{
+                  tweet.reply_count
+                }}</span>
+              </span>
+              <span class="tweet__interaction--likes">
+                <img
+                  v-if="tweet.isLiked && !isProcessing"
+                  src="./../assets/Vector_redLike-icon.svg"
+                  alt=""
+                  class="likes--icon"
+                  @click="deleteLike(tweet.id)"
+                />
+                <img
+                  v-else
+                  src="./../assets/Vector_like-icon.svg"
+                  alt=""
+                  class="likes--icon"
+                  @click="addLike(tweet.id)"
+                />
+                <span class="likes--counts">{{ tweet.like_count }}</span>
+              </span>
             </div>
-          </li>
-        </ul>
-      </div>
-    </template>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -121,6 +119,7 @@ export default {
     ReplyModal,
     Spinner,
   },
+
   data() {
     return {
       tweets: [],
@@ -129,30 +128,42 @@ export default {
       isEditing: false,
       textareaRows: 3,
       isLoading: true,
-      isProcessing:false,
-      clickedLikedId:undefined
+      isProcessing: false,
+      clickedLikedId: undefined,
     };
   },
+
   created() {
     this.fetchTweets();
   },
+
   computed: {
     ...mapState(["currentUser", "isReplying"]),
   },
+
   methods: {
+    async fetchTweets() {
+      try {
+        this.isLoading = true;
+        const { data } = await tweetsAPI.getTweets();
+        if (!data) throw new Error();
+        this.tweets = [...data];
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        Toast({
+          icon: "error",
+          title: "無法取得推文，請稍後再試!",
+        });
+      }
+    },
+
     async createNewTweet(newTweetText) {
       this.isLoading = true;
-      // if(newTweetText.trim().length === 0){
-      //   Toast.fire({
-      //     icon: 'warning',
-      //     title: '內文不能留白'     
-      //   })
-      // } 
       try {
         const response = await tweetsAPI.postTweet({
           description: newTweetText,
         });
-        console.log(response)
         if (response.status !== 200) throw new Error(response.status);
         this.newTweetText = "";
         this.handleTextareaBlurred();
@@ -169,23 +180,24 @@ export default {
         });
       }
     },
-    newPostRestriction(e){
-      console.log(e)
-      if(this.newTweetText.length >= 140 && e.keyCode !== 8){
-        e.returnValue = false
+
+    newPostRestriction(e) {
+      if (this.newTweetText.length >= 140 && e.keyCode !== 8) {
+        e.returnValue = false;
         Toast.fire({
-          icon: 'warning',
-          title: '新增推文字數超過上限140字'
-        })
-        return
+          icon: "warning",
+          title: "新增推文字數超過上限140字",
+        });
+        return;
       }
     },
+
     handleReplyModalToggle(tweetId) {
       this.$store.commit("toggleReplyModal");
       this.clickedTweetId = tweetId;
     },
+
     afterSubmitReply(payload) {
-      console.log(payload);
       if (payload.status === 200) {
         this.tweets.map((tweet) => {
           if (tweet.id === payload.tweetId) {
@@ -203,8 +215,9 @@ export default {
         });
       }
     },
+
     async addLike(tweetId) {
-      this.isProcessing = true
+      this.isProcessing = true;
       try {
         const response = await tweetsAPI.like.addLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -218,18 +231,18 @@ export default {
           icon: "success",
           title: "成功對推文按讚",
         });
-        this.isProcessing = false
+        this.isProcessing = false;
       } catch (error) {
-        this.isProcessing = false
-        console.log("error", error);
+        this.isProcessing = false;
         Toast.fire({
           icon: "error",
           title: "無法對推文按讚，請稍後再試",
         });
       }
     },
+
     async deleteLike(tweetId) {
-      this.isProcessing = true
+      this.isProcessing = true;
       try {
         const response = await tweetsAPI.like.deleteLike({ tweetId });
         if (response.status !== 200) throw new Error(response.statusText);
@@ -243,40 +256,24 @@ export default {
           icon: "success",
           title: "成功取消推文按讚",
         });
-        this.isProcessing = false
+        this.isProcessing = false;
       } catch (error) {
-        this.isProcessing = false
-        console.log("error", error);
+        this.isProcessing = false;
         Toast.fire({
           icon: "error",
           title: "無法取消推文按讚，請稍後再試",
         });
       }
     },
+
     handleTextareaFocused() {
       this.textareaRows = 15;
       this.isEditing = true;
     },
+
     handleTextareaBlurred() {
       this.textareaRows = 3;
       this.isEditing = false;
-    },
-    async fetchTweets() {
-      try {
-        this.isLoading = true;
-        const { data } = await tweetsAPI.getTweets();
-        if (!data) throw new Error();
-        this.tweets = [...data];
-        this.isLoading = false;
-      } catch (error) {
-        this.isLoading = false;
-
-        console.log("error", error);
-        Toast({
-          icon: "error",
-          title: "無法取得推文，請稍後再試!",
-        });
-      }
     },
   },
 };
@@ -287,7 +284,6 @@ export default {
   flex: 1;
   overflow: overlay;
   background-color: $tweet-border;
-  height: 1200px;
   .main__navbar {
     height: 55px;
     font-size: 18px;

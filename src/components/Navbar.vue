@@ -204,13 +204,13 @@ export default {
 <style lang="scss" scoped>
 .menu {
   width: 25%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  border-right: 1px solid #e6ecf0;
   .navbar {
-    // height: 100%;
     padding: 14px 0 0 70px;
-    border-right: 1px solid #e6ecf0;
   }
 }
 

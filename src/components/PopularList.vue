@@ -169,7 +169,6 @@ export default {
 
 <style lang="scss" scoped>
 .popular {
-  width: 30%;
   height: 100%;
   overflow: overlay;
   display: flex;
@@ -181,7 +180,7 @@ export default {
 .popular-items {
   width: 350px;
   height: 756px;
-  margin: 15px 80px 20px 30px;
+  margin: 15px 40px 20px 30px;
   background: #f5f8fa;
   border-radius: 14px;
 }
