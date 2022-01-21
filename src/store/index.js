@@ -71,7 +71,7 @@ const statusControlModule = {
     isReplying: false,
     followBtnClickedStatus: false,
     postSubmitClickedStatus: false,
-    topUsersDisplayStatus: undefined
+    topUsersDisplayStatus: undefined,
   },
   mutations: {
     toggleReplyModal(state) {
@@ -86,7 +86,7 @@ const statusControlModule = {
     },
     togglePostClickedStatus(state) {
       state.postSubmitClickedStatus = !state.postSubmitClickedStatus
-    }
+    },
   },
 }
 const store = new Vuex.Store({

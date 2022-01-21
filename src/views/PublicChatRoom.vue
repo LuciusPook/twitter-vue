@@ -34,6 +34,7 @@
           <div class="chat_room-part-container scrollbar" ref="chatContainer">
             <ChatMessage
               @after-retrieve-allMessage="scrollToBottom"
+              :roomName="roomName"
             />
           </div>
           <div class="chat_room-part-input">
@@ -76,6 +77,7 @@ export default {
       user: {},
       inputMessage: '',
       loginUsers: [],
+      roomName:'public'
     };
   },
   computed: mapState({
@@ -89,13 +91,11 @@ export default {
       "statusControlModule/toggleTopUsersDisplayStatus",
       "public-chatroom"
     );
+    this.$socket.open();
     this.joinRoom();
   },
   beforeDestroy() {
     this.leaveRoom();
-  },
-  mounted() {
-    this.$socket.open();
   },
   sockets: {
     loginUsers(loginUsers) {
@@ -120,7 +120,7 @@ export default {
     },
     joinRoom() {
       const roomName = 'public'
-      this.$socket.emit("public",roomName);
+      this.$socket.emit("join-room",roomName);
     },
     leaveRoom() {
       const roomName = 'public'

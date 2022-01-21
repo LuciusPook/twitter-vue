@@ -6,11 +6,16 @@
           <p>訊息</p>
           <img src="./../assets/Vector_newChat.svg" alt="">
         </div>
-        <div class="online_user">
+        <div 
+          v-for="user in users" 
+          :key="user.UserId"
+          class="online_user"
+          @click="getRoomName(user.UserId)"
+        >
           <router-link to="#" class="user-avatar-link">
             <div class="online_user-image">
               <img
-                src="./../assets/Photo_avatar.png"
+                :src="user.avatar"
                 class="user-image"
                 alt=""
               />
@@ -18,12 +23,13 @@
           </router-link>
           <div class="online_user-info">
             <router-link to="#" class="user-name-link">
-              <div class="user-name">User1</div>
+              <div class="user-name">{{user.User.name}}</div>
             </router-link>
-            <div class="user-account">@account</div>
+            <div class="user-account">@{{user.User.account}}</div>
           </div>
+          <p class="user-recentchat">{{user.content}}</p>
         </div>
-        <div class="online_user">
+        <!-- <div class="online_user">
           <router-link to="#" class="user-avatar-link">
             <div class="online_user-image">
               <img
@@ -39,16 +45,19 @@
             </router-link>
             <div class="user-account">@account</div>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="chat_room">
         <div class="chat_room-part">
           <div class="chat-title">
             <p>私人聊天室</p>
           </div>
-          <div class="chat_room-part-container scrollbar">
+          <div class="chat_room-part-container scrollbar" ref="chatContainer">
             <div class="chat-content">
-              <ChatMessage/>
+              <ChatMessage
+                @after-retrieve-allMessage="scrollToBottom"
+                :roomName="roomName"
+              />
             </div>
           </div>
           <div class="chat_room-part-input">
@@ -77,15 +86,81 @@
 </template>
 <script>
 import ChatMessage from "./../components/ChatMessage.vue"
+import chatAPI from "./../apis/chat"
+import { mapState } from "vuex"
 export default {
   name: 'PrivateChatRoom',
     components: {
     ChatMessage,
   },
+  data(){
+    return {
+      chatUserId:undefined,
+      users:[],
+      roomName:'',
+      inputMessage:''
+    }
+  },
+  computed:{
+    ...mapState({
+      currentUser: state => state.currentUserModule.currentUser
+    })
+  },
   created(){
     this.$store.commit(
       "statusControlModule/toggleTopUsersDisplayStatus" , "private-chatroom"
     );
+    this.$socket.open();
+    const { id } = this.$route.params
+    this.chatUserId = id
+    this.fetchLatest()
+  },
+  beforeDestroy() {
+    this.leaveRoom();
+  },
+  methods:{
+    async fetchLatest(){
+      try{
+        const response = await chatAPI.getLatest()
+        if (response.status !== 200) throw new Error(response.statusText);
+        this.users = response.data
+        this.getRoomName(this.chatUserId)
+
+      }catch(error){
+        console.log(error)
+      }
+    },
+    getRoomName(id){
+      const userId = id ? id : this.users[0].UserId
+      const tempt = [ this.currentUser.id , userId]
+      tempt.sort(( a , b ) => a - b)
+      tempt.splice(1,0,'R')
+      this.roomName = tempt.join('')
+      this.joinRoom();
+      console.log(tempt)
+      console.log(this.roomName)
+    },
+    handleSendChatBtnClicked() {
+      this.$socket.emit("sendMessage", {
+        roomName: this.roomName,
+        UserId: this.currentUser.id,
+        content: this.inputMessage,
+      });
+      this.inputMessage = "";
+      this.scrollToBottom()
+    },
+    scrollToBottom(){
+      this.$refs.chatContainer.scrollTo({
+        top:this.$refs.chatContainer.scrollHeight,
+        behavior: 'smooth'
+      })
+    },
+    joinRoom() {
+      this.$socket.emit("join-room",this.roomName);
+    },
+    leaveRoom() {
+      this.$socket.emit("leave-room",this.roomName);
+    },
   }
 }
 </script>
@@ -162,6 +237,13 @@ export default {
       font-weight: bold;
       color: #657786;
       margin-left: 8px;
+    }
+    .user-recentchat{
+      width: 300px; 
+      display: -webkit-box; 
+      -webkit-box-orient: vertical; 
+      -webkit-line-clamp: 3; 
+      overflow: hidden;
     }
   }
 }

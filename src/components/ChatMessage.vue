@@ -45,11 +45,23 @@
 // import { io }  from 'socket.io-client';
 import { mapState } from "vuex";
 import { fromNowFilter, emptyImageFilter } from "./../utils/mixins";
+import chatAPI from "./../apis/chat"
 import Spinner from "./../components/Spinner.vue"
 export default {
   name: "ChatMessage",
   components:{
     Spinner
+  },
+  props:{
+    roomName:{
+      type: String,
+      required: true,
+    }
+  },
+  watch:{
+    roomName(){
+      this.fetchHistoryMessage(this.roomName)     
+    }
   },
   data() {
     return {
@@ -64,18 +76,36 @@ export default {
   // {
   //   // ...mapState(["currentUser"]),
   // },
+  created(){
+    this.fetchHistoryMessage(this.roomName)
+  },
+  // 當資料被更新時，觸發updated裡的函式
   updated(){
     this.$emit('after-retrieve-allMessage')
+  },
+  methods:{
+    async fetchHistoryMessage(roomName){
+      try{
+        this.isLoading = true
+        const response = await chatAPI.getHistory({roomName})
+        if (response.status !== 200) throw new Error(response.statusText);
+        this.chats = [...response.data];
+        this.isLoading = false
+      }catch(error){
+        this.isLoading = false
+        console.log(error)
+      }
+    }
   },
   sockets: {
     connect() {
       console.log("socket connected");
     },
-    allMessage(allMessage) {
-      this.isLoading = true
-      this.chats = [...allMessage];
-      this.isLoading = false
-    },
+    // allMessage(allMessage) {
+    //   this.isLoading = true
+    //   this.chats = [...allMessage];
+    //   this.isLoading = false
+    // },
     newMessage(newMessage){
       this.chats.push(newMessage)
       console.log(newMessage)
@@ -92,7 +122,6 @@ export default {
     // messageNotRead(data) {
       // 	this.$store.commit("updateReadMessage",data)
     // },
-    
   },
 };
 </script>

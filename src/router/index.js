@@ -36,7 +36,7 @@ const routes = [
     component: () => import('../views/PublicChatRoom.vue')
   },
   {
-    path: '/users/chat/private',
+    path: '/users/chat/private/:id',
     name: 'private-chatroom',
     component: () => import('../views/PrivateChatRoom.vue')
   },

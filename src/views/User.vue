@@ -48,12 +48,13 @@
               class="user__interaction--other"
             >
               <button class="mail__btn">
-                <a href="mailto:email@example.com"
-                  ><img
-                    src="./../assets/Vector_mail.svg"
-                    alt=""
-                    class="mail__icon"
-                /></a>
+                <router-link :to="{ name: 'private-chatroom', params: { id: user.id } }">
+                  <img
+                      src="./../assets/Vector_mail.svg"
+                      alt=""
+                      class="mail__icon"
+                  />
+                </router-link>
               </button>
               <button
                 :class="['notification__btn', { active: isNotificationOn }]"
@@ -452,6 +453,9 @@ export default {
         });
       }
     },
+    addToPrivateChat(){
+      
+    }
   },
 };
 </script>
