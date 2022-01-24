@@ -79,6 +79,9 @@ export default {
   created(){
     this.fetchHistoryMessage(this.roomName)
   },
+  // beforeUpdate(){
+  //   this.fetchHistoryMessage(this.roomName)
+  // },
   // 當資料被更新時，觸發updated裡的函式
   updated(){
     this.$emit('after-retrieve-allMessage')
@@ -87,10 +90,12 @@ export default {
     async fetchHistoryMessage(roomName){
       try{
         this.isLoading = true
-        const response = await chatAPI.getHistory({roomName})
-        if (response.status !== 200) throw new Error(response.statusText);
-        this.chats = [...response.data];
-        this.isLoading = false
+        if(roomName){
+          const response = await chatAPI.getHistory({roomName})
+          if (response.status !== 200) throw new Error(response.statusText);
+          this.chats = [...response.data];
+          this.isLoading = false
+        } return
       }catch(error){
         this.isLoading = false
         console.log(error)

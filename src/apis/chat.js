@@ -8,6 +8,6 @@ export default {
     return apiHelper.get(`/chat/messages/${roomName}`)
   },
   getLatest() {
-    return apiHelper.get(`/messages/latest`)
+    return apiHelper.get(`/chat/messages/latest`)
   }
 }

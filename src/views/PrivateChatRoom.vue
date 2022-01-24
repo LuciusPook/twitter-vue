@@ -4,30 +4,26 @@
       <div class="online_users-part">
         <div class="user-title">
           <p>訊息</p>
-          <img src="./../assets/Vector_newChat.svg" alt="">
+          <img src="./../assets/Vector_newChat.svg" alt="" />
         </div>
-        <div 
-          v-for="user in users" 
-          :key="user.UserId"
+        <div
+          v-for="user in users"
+          :key="user.chatUser.id"
           class="online_user"
-          @click="getRoomName(user.UserId)"
+          @click="getRoomName(user.chatUser.id)"
         >
           <router-link to="#" class="user-avatar-link">
             <div class="online_user-image">
-              <img
-                :src="user.avatar"
-                class="user-image"
-                alt=""
-              />
+              <img :src="user.chatUser.avatar" class="user-image" alt="" />
             </div>
           </router-link>
           <div class="online_user-info">
             <router-link to="#" class="user-name-link">
-              <div class="user-name">{{user.User.name}}</div>
+              <div class="user-name">{{ user.chatUser.name }}</div>
             </router-link>
-            <div class="user-account">@{{user.User.account}}</div>
+            <div class="user-account">@{{ user.chatUser.account }}</div>
           </div>
-          <p class="user-recentchat">{{user.content}}</p>
+          <p class="user-recentchat">{{ user.content }}</p>
         </div>
         <!-- <div class="online_user">
           <router-link to="#" class="user-avatar-link">
@@ -71,7 +67,7 @@
                 placeholder="輸入訊息..."
                 @keypress.enter="handleSendChatBtnClicked"
               ></textarea>
-              <div 
+              <div
                 class="input-button cursor-pointer"
                 @click="handleSendChatBtnClicked"
               >
@@ -85,60 +81,76 @@
   </div>
 </template>
 <script>
-import ChatMessage from "./../components/ChatMessage.vue"
-import chatAPI from "./../apis/chat"
-import { mapState } from "vuex"
+import ChatMessage from "./../components/ChatMessage.vue";
+import chatAPI from "./../apis/chat";
+import userAPI from "./../apis/users";
+import { mapState } from "vuex";
 export default {
-  name: 'PrivateChatRoom',
-    components: {
+  name: "PrivateChatRoom",
+  components: {
     ChatMessage,
   },
-  data(){
+  data() {
     return {
-      chatUserId:undefined,
-      users:[],
-      roomName:'',
-      inputMessage:''
-    }
+      chatUserId: undefined,
+      users: [],
+      roomName: "",
+      inputMessage: "",
+    };
   },
-  computed:{
+  computed: {
     ...mapState({
-      currentUser: state => state.currentUserModule.currentUser
-    })
+      currentUser: (state) => state.currentUserModule.currentUser,
+    }),
   },
-  created(){
+  created() {
     this.$store.commit(
-      "statusControlModule/toggleTopUsersDisplayStatus" , "private-chatroom"
+      "statusControlModule/toggleTopUsersDisplayStatus",
+      "private-chatroom"
     );
     this.$socket.open();
-    const { id } = this.$route.params
-    this.chatUserId = id
-    this.fetchLatest()
+    const { id } = this.$route.params;
+    this.chatUserId = id;
+    this.fetchLatest();
   },
   beforeDestroy() {
     this.leaveRoom();
   },
-  methods:{
-    async fetchLatest(){
-      try{
-        const response = await chatAPI.getLatest()
+  methods: {
+    async fetchLatest() {
+      try {
+        const response = await chatAPI.getLatest();
         if (response.status !== 200) throw new Error(response.statusText);
-        this.users = response.data
-        this.getRoomName(this.chatUserId)
-
-      }catch(error){
-        console.log(error)
+        this.users= [...response.data]
+        this.getRoomName(this.chatUserId);
+      } catch (error) {
+        console.log(error);
       }
     },
-    getRoomName(id){
-      const userId = id ? id : this.users[0].UserId
-      const tempt = [ this.currentUser.id , userId]
-      tempt.sort(( a , b ) => a - b)
-      tempt.splice(1,0,'R')
-      this.roomName = tempt.join('')
-      this.joinRoom();
-      console.log(tempt)
-      console.log(this.roomName)
+    async getRoomName(id) {
+      const userId = id ? id : this.users[0].chatUser.id;
+      try {
+        if (!this.users.some((user) => user.chatUser.id === +userId)) {
+          const response = await userAPI.getUsers({ userId });
+          if (response.status !== 200) throw new Error(response.statusText);
+          const data = response.data;
+          const user = {}
+          user.chatUser = {
+            id:data.id,
+            name:data.name,
+            avatar:data.avatar,
+            account:data.account
+          }
+          this.users.push(user) 
+        }
+        const tempt = [this.currentUser.id, userId];
+        tempt.sort((a, b) => a - b);
+        tempt.splice(1, 0, "R");
+        this.roomName = tempt.join("");
+        this.joinRoom();
+      } catch(error) {
+        console.log(error);
+      }
     },
     handleSendChatBtnClicked() {
       this.$socket.emit("sendMessage", {
@@ -147,22 +159,22 @@ export default {
         content: this.inputMessage,
       });
       this.inputMessage = "";
-      this.scrollToBottom()
+      this.scrollToBottom();
     },
-    scrollToBottom(){
+    scrollToBottom() {
       this.$refs.chatContainer.scrollTo({
-        top:this.$refs.chatContainer.scrollHeight,
-        behavior: 'smooth'
-      })
+        top: this.$refs.chatContainer.scrollHeight,
+        behavior: "smooth",
+      });
     },
     joinRoom() {
-      this.$socket.emit("join-room",this.roomName);
+      this.$socket.emit("join-room", this.roomName);
     },
     leaveRoom() {
-      this.$socket.emit("leave-room",this.roomName);
+      this.$socket.emit("leave-room", this.roomName);
     },
-  }
-}
+  },
+};
 </script>
 <style lang="scss" scoped>
 .container {
@@ -194,7 +206,7 @@ export default {
     line-height: 55px;
     margin-left: 15px;
   }
-  img{
+  img {
     height: 22px;
     width: 22px;
     margin-right: 1rem;
@@ -238,11 +250,11 @@ export default {
       color: #657786;
       margin-left: 8px;
     }
-    .user-recentchat{
-      width: 300px; 
-      display: -webkit-box; 
-      -webkit-box-orient: vertical; 
-      -webkit-line-clamp: 3; 
+    .user-recentchat {
+      width: 300px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
       overflow: hidden;
     }
   }
