@@ -5,7 +5,7 @@ export default {
   //   return apiHelper.get('/chats/public')
   // },
   getHistory({ roomName }){
-    return apiHelper.get(`/chat/message/${roomName}`)
+    return apiHelper.get(`/chat/messages/${roomName}`)
   },
   getLatest() {
     return apiHelper.get(`/messages/latest`)
